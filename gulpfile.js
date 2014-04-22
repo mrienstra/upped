@@ -1,9 +1,9 @@
 var gulp = require('gulp');
 var browserify = require('gulp-browserify');
 var connect = require('gulp-connect');
-var extReplace = require('gulp-ext-replace');
 var gulpIf = require('gulp-if');
 var gutil = require('gulp-util');
+var libBundle = require('./gulp-lib-bundle');
 var open = require('open');
 var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
@@ -11,12 +11,15 @@ var uglify = require('gulp-uglify');
 var mainJsFile = 'src/script/main.js';
 var mainSassFile = 'src/style/main.scss';
 
+var libs = ['react/addons', './lib/ratchet-mod.js'];
+
 var port = 8000;
 
 var browserifyConfig = {
   transform: ['reactify'],
   extensions: ['.jsx'],
-  debug : !gutil.env.production
+  debug : !gutil.env.production,
+  external: libs
 };
 
 var sassConfig = {
@@ -60,6 +63,12 @@ gulp.task('html', function () {
     .pipe(connect.reload());
 });
 
+gulp.task('lib', function () {
+  return libBundle(libs, { path: './src/script/libs.js' }) // Fake path, used by libBundle, do not change
+    .pipe(browserify({ require: libs }))
+    .pipe(gulp.dest('./build/js'));
+});
+
 gulp.task('script', function() {
   gulp.src(mainJsFile)
     .pipe(browserify(browserifyConfig).on('error', onError))
@@ -68,7 +77,6 @@ gulp.task('script', function() {
         except: ['require'] // todo: Necessary? Useful?
       }
     })))
-    .pipe(extReplace('.js'))
     .pipe(gulp.dest('build/js'))
     .pipe(connect.reload());
 });
@@ -89,7 +97,7 @@ gulp.task('img', function () {
 
 gulp.task('font', function() {
    gulp.src(path.font)
-   .pipe(gulp.dest('build/fonts'));
+     .pipe(gulp.dest('build/fonts'));
 });
 
 gulp.task('watchdog', function () {
@@ -103,4 +111,4 @@ gulp.task('watchdog', function () {
 });
 
 gulp.task('watch', ['default', 'connect', 'watchdog']);
-gulp.task('default', ['html', 'script', 'sass', 'img', 'font']);
+gulp.task('default', ['html', 'lib', 'script', 'sass', 'img', 'font']);
