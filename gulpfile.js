@@ -8,30 +8,37 @@ var open = require('open');
 var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
 
-var mainJsFile = 'src/script/main.js';
-var mainSassFile = 'src/style/main.scss';
 
-var libs = ['react/addons', './lib/ratchet-mod.js'];
 
 var port = 8000;
 
-var browserifyConfig = {
-  transform: ['reactify'],
-  extensions: ['.jsx'],
-  debug : !gutil.env.production,
-  external: libs
-};
+var libs = ['react/addons', './lib/ratchet-mod.js'];
 
-var sassConfig = {
-  includePaths : ['src/style']
-};
+var mainJsFile = 'src/script/main.js';
+var mainSassFile = 'src/style/main.scss';
+var sassIncludePaths = ['src/style'];
 
 var path = {
-  html: 'src/*.html',
-  script: ['src/script/**/*.{js,jsx}'],
-  style: ['src/style/**/*.{css,scss}'],
-  img: 'src/img/**/*.{png,jpg,jpeg,gif}',
-  font: 'src/fonts/**/*.{ttf,woff,eot,svg}'
+  html: {
+    in: 'src/*.html',
+    out: 'build'
+  },
+  script: {
+    in: 'src/script/**/*.{js,jsx}',
+    out: 'build/js'
+  },
+  style: {
+    in: 'src/style/**/*.{css,scss}',
+    out: 'build/css'
+  },
+  img: {
+    in: 'src/img/**/*.{png,jpg,jpeg,gif}',
+    out: 'build/img'
+  },
+  font: {
+    in: 'src/fonts/**/*.{ttf,woff,eot,svg}',
+    out: 'build/fonts'
+  },
 }
 
 // Handle errors
@@ -58,55 +65,72 @@ gulp.task('connect', function() {
 });
 
 gulp.task('html', function () {
-  gulp.src(path.html)
-    .pipe(gulp.dest('build'))
+  gulp.src(path.html.in, { read: false })
+    .pipe(gulp.dest(path.html.out))
     .pipe(connect.reload());
 });
 
 gulp.task('lib', function () {
   return libBundle(libs, { path: './src/script/libs.js' }) // Fake path, used by libBundle, do not change
-    .pipe(browserify({ require: libs }))
-    .pipe(gulp.dest('./build/js'));
-});
-
-gulp.task('script', function() {
-  gulp.src(mainJsFile)
-    .pipe(browserify(browserifyConfig).on('error', onError))
+    .pipe(browserify({
+      debug : !gutil.env.production,
+      require: libs
+    }))
     .pipe(gulpIf(gutil.env.production, uglify({
       mangle: {
         except: ['require'] // todo: Necessary? Useful?
       }
     })))
-    .pipe(gulp.dest('build/js'))
+    .pipe(gulp.dest(path.script.out));
+});
+
+gulp.task('script', function() {
+  gulp.src(mainJsFile, { read: false })
+    .pipe(browserify({
+      transform: ['reactify'],
+      extensions: ['.jsx'],
+      debug : !gutil.env.production,
+      external: libs
+    })
+    .on('error', onError))
+    .pipe(gulpIf(gutil.env.production, uglify({
+      mangle: {
+        except: ['require'] // todo: Necessary? Useful?
+      }
+    })))
+    .pipe(gulp.dest(path.script.out))
     .pipe(connect.reload());
 });
 
 gulp.task('sass', function () {
-  gulp.src(mainSassFile)
-    .pipe(sass(sassConfig).on('error', onError))
+  gulp.src(mainSassFile, { read: false })
+    .pipe(sass({
+      includePaths : sassIncludePaths
+    })
+    .on('error', onError))
     .pipe(gutil.env.production ? minifyCSS() : gutil.noop())
     .pipe(gutil.env.production ? rev() : gutil.noop())
-    .pipe(gulp.dest('build/css'));
+    .pipe(gulp.dest(path.style.out));
 });
 
 gulp.task('img', function () {
-  gulp.src(path.img)
-    .pipe(gulp.dest('build/img'))
+  gulp.src(path.img.in, { read: false })
+    .pipe(gulp.dest(path.img.out))
     .pipe(connect.reload());
 });
 
 gulp.task('font', function() {
-   gulp.src(path.font)
-     .pipe(gulp.dest('build/fonts'));
+   gulp.src(path.font.in, { read: false })
+     .pipe(gulp.dest(path.font.out));
 });
 
 gulp.task('watchdog', function () {
   watching = true; // used by `onError`
-  gulp.watch(path.html, ['html']);
-  gulp.watch(path.script, ['script']);
-  gulp.watch(path.style, ['sass']);
-  gulp.watch(path.img, ['img']);
-  gulp.watch(path.font, ['font']);
+  gulp.watch(path.html.in, ['html']);
+  gulp.watch(path.script.in, ['script']);
+  gulp.watch(path.style.in, ['sass']);
+  gulp.watch(path.img.in, ['img']);
+  gulp.watch(path.font.in, ['font']);
   open('http://localhost:' + port);
 });
 
