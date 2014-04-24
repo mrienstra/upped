@@ -57,9 +57,21 @@
           <li id="slide_2" data-slide="2"></li>
            <li id="slide_3" data-slide="3"></li>
         </ul>
-        <button>Log In with Facebook</button>
+        <button class="btn disabled" disabled>Log In with Facebook</button>
       </div>
     </div>
+
+    <!-- Facebook SDK -->
+    <div id="fb-root"></div>
+    <script>
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = '//connect.facebook.net/en_US/all/debug.js'; /* todo: remove "/debug" for prod */
+         fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
 
     <!-- Scripts -->
     <script type="text/javascript" src="js/libs.js"></script>

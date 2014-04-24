@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
 
+var remote = require('./remote.js');
+
 var stub = {
   locations: {
     locations: [
@@ -79,6 +81,8 @@ var stub = {
   }
 };
 
+
+
 var handleLocationsChange = function (event) {
   console.log('handleLocationsChange', event);
   var LocationsScreen = require('./screen/locations.jsx');
@@ -115,12 +119,51 @@ var handlePostChange = function (event) {
   );
 };
 
-var signInButton = document.querySelector('.welcome .bottom button');
-window.addEventListener('click', function (event) {
-  if (event.target === signInButton) {
-    // todo: remove this hack
-    document.querySelector('body').classList.remove('welcome');
 
-    handleLocationsChange();
-  }
-});
+
+var continuePastWelcomeScreen = function(){
+  // todo: remove this hack
+  document.querySelector('body').classList.remove('welcome');
+
+  handleLocationsChange();
+};
+
+var handleRejectedLogin = function(){
+  alert('handleRejectedLogin: todo');
+};
+
+var wireUpSignInButton = function(){
+  var signInButton = document.querySelector('.welcome .bottom button');
+  signInButton.classList.remove('disabled');
+  signInButton.removeAttribute('disabled');
+  window.addEventListener('click', function (event) {
+    if (event.target === signInButton) {
+      remote.fb.login(continuePastWelcomeScreen, handleRejectedLogin);
+    }
+  });
+};
+
+
+
+// Init
+
+if (remote.fb.status === void 0) {
+  // Scenario 1: We don't yet know if they need to login with Facebook or not
+  // Listen to find out
+  var handleFbInitialization = function (event) {
+    window.removeEventListener('fbInitialized', handleFbInitialization);
+    if (remote.fb.status === 'connected') {
+      continuePastWelcomeScreen();
+    } else {
+      wireUpSignInButton();
+    }
+  };
+
+  window.addEventListener('fbInitialized', handleFbInitialization);
+} else if (remote.fb.status === 'connected') {
+  // Scenario 2: Good to go
+  continuePastWelcomeScreen();
+} else {
+  // Scenario 3: Activate login button
+  wireUpSignInButton();
+}

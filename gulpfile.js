@@ -65,7 +65,7 @@ gulp.task('connect', function() {
 });
 
 gulp.task('html', function () {
-  gulp.src(path.html.in, { read: false })
+  gulp.src(path.html.in)
     .pipe(gulp.dest(path.html.out))
     .pipe(connect.reload());
 });
@@ -110,7 +110,8 @@ gulp.task('sass', function () {
     .on('error', onError))
     .pipe(gutil.env.production ? minifyCSS() : gutil.noop())
     .pipe(gutil.env.production ? rev() : gutil.noop())
-    .pipe(gulp.dest(path.style.out));
+    .pipe(gulp.dest(path.style.out))
+    .pipe(connect.reload());
 });
 
 gulp.task('img', function () {
