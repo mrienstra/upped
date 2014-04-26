@@ -9,7 +9,7 @@ var PostsListItem = React.createClass({
 
     return (
       <li className="table-view-cell">
-        <a className="navigate-right" onClick={this.props.handlePostChange.bind(null, this.props)}>
+        <a className="navigate-right" onTouchEnd={this.props.handlePostChange.bind(null, this.props)}>
           <img src={this.props.from.picture} />
           <div className="copy">
             <h4>{this.props.from.name}<span className="time">{moment(this.props.time).fromNow()}</span></h4>
@@ -91,8 +91,8 @@ var PostsScreen = React.createClass({
     return (
       <div>
         <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onClick={this.props.handleLocationsChange} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
-          <a className="icon icon-compose pull-right" onClick={this.props.handleCreatePost.bind(null, this.props)}></a>
+          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleLocationsChange} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
+          <a className="icon icon-compose pull-right" onTouchEnd={this.props.handleCreatePost.bind(null, this.props)}></a>
           <h1 className="title">{this.props.name}</h1>
         </header>
 

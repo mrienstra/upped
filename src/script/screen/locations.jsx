@@ -8,7 +8,7 @@ var LocationListItem = React.createClass({
   render: function() {
     return (
       <li className="table-view-cell media">
-        <a className="navigate-right" onClick={this.props.handleLocationChange.bind(null, this.props)} data-transition="slide-in">
+        <a className="navigate-right" onTouchEnd={this.props.handleLocationChange.bind(null, this.props)} data-transition="slide-in">
           <div className="media-body">
             <h4>{this.props.name}</h4>
             <p>{this.props.checkedInCount ? this.props.checkedInCount + ' checked in, ' : ''}{this.props.distance}</p>
