@@ -115,13 +115,13 @@ gulp.task('sass', function () {
 });
 
 gulp.task('img', function () {
-  gulp.src(path.img.in, { read: false })
+  gulp.src(path.img.in)
     .pipe(gulp.dest(path.img.out))
     .pipe(connect.reload());
 });
 
 gulp.task('font', function() {
-   gulp.src(path.font.in, { read: false })
+   gulp.src(path.font.in)
      .pipe(gulp.dest(path.font.out));
 });
 
