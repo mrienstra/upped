@@ -2,80 +2,38 @@
 
 var remote = require('./remote.js');
 
+var reactDomRoot = document.querySelector('#container');
+
 var stub = {
   locations: {
     locations: [
       {
         name: 'The Red Room',
+        fbId: 111627012207432,
         checkedInCount: 4,
-        distance: '500 ft away'
+        address1: '343 Cedar St',
+        address2: 'Santa Cruz, CA 95060',
+        distance: '500 ft away',
+        promotion: {
+          title: 'Score Free Drinks',
+          message: 'Every 50th BarChat posted to our wall scores the poster a free penny drink, courtesy of The Red Room!'
+        }
       },
       {
-        name: 'One Double Oh Seven',
-        slug: 'One-Double-Oh-Seven-Smoking-Parlor',
+        name: 'The Rush Inn',
+        fbId: 460268814089550, // Alternate: 100000701335606
         checkedInCount: 3,
-        distance: '.6 mi away'
+        address1: '113 Knight St',
+        address2: 'Santa Cruz, CA 95060',
+        distance: '.2 mi away'
       },
       {
         name: 'Rosie McCann’s',
-        slug: 'RosieMcCanns',
+        fbId: 1710649235,
         checkedInCount: 1,
+        address1: '1220 Pacific St',
+        address2: 'Santa Cruz, CA 95060',
         distance: '.1 mi away'
-      }
-    ]
-  },
-  locationDetail: {
-    handlePostChange: handlePostChange,
-    name: 'The Red Room',
-    checkedInCount: 1,
-    address1: '343 Cedar St',
-    address2: 'Santa Cruz, CA 95060',
-    promotion: {
-      title: 'Score Free Drinks',
-      message: 'Every 50th BarChat posted to our wall scores the poster a free penny drink, courtesy of The Red Room!'
-    },
-    posts: [
-      {
-        name: 'Justin',
-        time: 'just now',
-        message: 'Hey ladies, Justin Bieber is in the house tonight.\nCome and get me while I\'m still single!',
-        likes: 0,
-        comments: 0
-      },
-      {
-        name: 'Ron',
-        time: '23 mins',
-        message: 'Who let this guy in? Doesn\'t anybody check IDs anymore?',
-        likes: 1,
-        comments: 1
-      },
-      {
-        name: 'Laticia',
-        time: '57 mins',
-        message: 'Actually, I think he\'s kind of cute.',
-        likes: 2,
-        comments: 2
-      }
-    ]
-  },
-  post: {
-    location: 'The Red Room',
-    name: 'Justin',
-    time: 'just now',
-    message: 'Hey ladies, Justin Bieber is in the house tonight.\nCome and get me while I\'m still single!',
-    likes: 1,
-    commentCount: 1,
-    comments: [
-      {
-        name: 'Jacinda',
-        time: 'just now',
-        emotes: 'Likes this post.'
-      },
-      {
-        name: 'Ron',
-        time: '23 mins',
-        message: 'I\'m looking for you, Bieber. Where are you?',
-        likes: 0
       }
     ]
   }
@@ -83,39 +41,62 @@ var stub = {
 
 
 
-var handleLocationsChange = function (event) {
-  console.log('handleLocationsChange', event);
+var handleLocationsChange = function(){
+  console.log('handleLocationsChange', this, arguments);
   var LocationsScreen = require('./screen/locations.jsx');
   var props = stub.locations;
 
   React.renderComponent(
     <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange}></LocationsScreen>
     ,
-    document.body
+    reactDomRoot
   );
 };
 
-var handleLocationChange = function (event) {
-  console.log('handleLocationChange', event);
+var handleLocationChange = function (props) {
+  console.log('handleLocationChange', this, arguments);
+
   var PostsScreen = require('./screen/posts.jsx');
-  var props = stub.locationDetail;
+
+  var getPostsAsync = function(successCallback, failureCallback){
+    remote.fb.getPosts(props.fbId, successCallback, failureCallback);
+  }
 
   React.renderComponent(
-    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} handlePostChange={handlePostChange}></PostsScreen>
+    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleLocationsChange={handleLocationsChange} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPostsAsync={getPostsAsync}></PostsScreen>
     ,
-    document.body
+    reactDomRoot
   );
 };
 
-var handlePostChange = function (event) {
-  console.log('handlePostChange', event);
+var handlePostChange = function (props) {
+  console.log('handlePostChange', this, arguments);
+
   var PostScreen = require('./screen/post.jsx');
-  var props = stub.post;
 
   React.renderComponent(
-    <PostScreen location={props.location} name={props.name} time={props.time} message={props.message} likes={props.likes} commentCount={props.commentCount} comments={props.comments}></PostScreen>
+    <PostScreen location={props.location} from={props.from} time={props.time} post={props.post} likes={props.likes} comments={props.comments}></PostScreen>
     ,
-    document.body
+    reactDomRoot
+  );
+};
+
+
+
+var handleCreatePost = function (props) {
+  console.log('handleCreatePost', this, arguments);
+
+  remote.fb.createPost(
+    {
+      fbId: props.fbId,
+      message: "This is a test message from " + props.name + "!!!"
+    },
+    function (response) {
+      console.log('handleCreatePost response', response);
+    },
+    function (response) {
+      console.error('handleCreatePost response', response);
+    }
   );
 };
 

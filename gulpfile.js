@@ -12,7 +12,7 @@ var uglify = require('gulp-uglify');
 
 var port = 8000;
 
-var libs = ['react/addons', './lib/ratchet-mod.js'];
+var libs = ['react/addons', './lib/ratchet-mod.js', 'moment'];
 
 var mainJsFile = 'src/script/main.js';
 var mainSassFile = 'src/style/main.scss';
@@ -103,7 +103,7 @@ gulp.task('script', function() {
 });
 
 gulp.task('sass', function () {
-  gulp.src(mainSassFile, { read: false })
+  gulp.src(mainSassFile)
     .pipe(sass({
       includePaths : sassIncludePaths
     })

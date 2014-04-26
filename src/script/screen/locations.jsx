@@ -8,7 +8,7 @@ var LocationListItem = React.createClass({
   render: function() {
     return (
       <li className="table-view-cell media">
-        <a className="navigate-right" onClick={this.props.handleLocationChange} data-transition="slide-in">
+        <a className="navigate-right" onClick={this.props.handleLocationChange.bind(null, this.props)} data-transition="slide-in">
           <div className="media-body">
             <h4>{this.props.name}</h4>
             <p>{this.props.checkedInCount ? this.props.checkedInCount + ' checked in, ' : ''}{this.props.distance}</p>
@@ -36,7 +36,7 @@ var LocationList = React.createClass({
       return true;
     });
     var locationNodes = locations.map(function (location, index) {
-      return <LocationListItem key={keys[index]} name={location.name} checkedInCount={location.checkedInCount} distance={location.distance} handleLocationChange={that.props.handleLocationChange}></LocationListItem>;
+      return <LocationListItem key={keys[index]} name={location.name} fbId={location.fbId} checkedInCount={location.checkedInCount} address1={location.address1} address2={location.address2} promotion={location.promotion} distance={location.distance} handleLocationChange={that.props.handleLocationChange}></LocationListItem>;
     });
     return (
       <div className="content content-main">

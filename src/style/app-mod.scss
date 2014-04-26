@@ -113,8 +113,19 @@ header.bar-nav .status.badge { padding: 2px 5px 3px; font-weight: normal; }
 .welcome .slide-img3 { top: 30%; height: 33.5rem; width: 100%; background: url('/img/img_welcome_chat.png') no-repeat center 0; max-width: 100% }
 .welcome .slide-img4 { top: 30%; height: 33.5rem; width: 100%; background: url('/img/img_welcome_chat.png') no-repeat center 0; max-width: 100% }
 
+/* ----------- */
 /* To organize */
-.emotes { font-style: italic; } /* See `script/post/post_single.jsx` */
+/* ----------- */
+
+.emotes { font-style: italic; }
+
+/* todo: hack, do this properly */
+.fullWidth {
+  position: relative;
+  top: -11px;
+  left: -15px;
+  width: 120%;
+}
 
 .list-item-enter {
   opacity: 0.01;

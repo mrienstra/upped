@@ -1,15 +1,16 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
+var moment = require('moment');
 
 var CommentListItem = React.createClass({
   render: function() {
     return (
       <li className="table-view-cell">
-        <img src="http://placehold.it/50x50" />
+        <img src={this.props.from.picture} />
         <div className="copy">
-          <h4>{this.props.name}<span className="time">{this.props.time}</span></h4>
-          <p className={this.props.emotes ? 'emotes' : ''}>{this.props.emotes ? this.props.emotes : this.props.message}</p>
+          <h4>{this.props.from.name}<span className="time">{moment(this.props.time).fromNow()}</span></h4>
+          <p>{this.props.message}</p>
         </div>
       </li>
     );
@@ -19,18 +20,22 @@ var CommentListItem = React.createClass({
 var PostSingle = React.createClass({
   render: function() {
     var that = this;
+
+    var commentCount = this.props.comments.length;
+
     var commentsNodes = this.props.comments.map(function (comment, index) {
-      return <CommentListItem key={index} name={comment.name} time={comment.time} message={comment.message} emotes={comment.emotes} likes={comment.likes}></CommentListItem>;
+      return <CommentListItem key={index} from={comment.from} time={comment.time} message={comment.message} likes={comment.likes} liked={comment.liked}></CommentListItem>;
     });
     return (
       <ul className="table-view flush">
         <li className="table-view-cell">
-          <img src="http://placehold.it/50x50" />
+          <img className="fullWidth" src={this.props.post.picture} />
+          <img src={this.props.from.picture} />
           <div className="copy">
-            <h4>{this.props.name}<span className="time">{this.props.time}</span></h4>
-            <p>{this.props.message}</p>
+            <h4>{this.props.from.name}<span className="time">{moment(this.props.time).fromNow()}</span></h4>
+           <p className={this.props.post.story ? 'emotes' : ''}>{this.props.post.story ? this.props.post.story : this.props.post.message}</p>
             <p className="stats"><span className="icon ion-thumbsup"></span> {!this.props.likes ? 'No likes' : this.props.likes === 1 ? '1 like' : this.props.likes + ' likes'}
-              <span className="icon ion-chatbubble"></span> {!this.props.commentCount ? 'No comments' : this.props.commentCount === 1 ? '1 comment' : this.props.commentCount + ' comments'}</p>
+              <span className="icon ion-chatbubble"></span> {!commentCount ? 'No comments' : commentCount === 1 ? '1 comment' : commentCount + ' comments'}</p>
           </div>
         </li>
         <li className="table-view-cell table-view-divider">
@@ -59,7 +64,7 @@ var PostScreen = React.createClass({
         </div>
 
         <div className="content">
-          <PostSingle name={this.props.name} message={this.props.message} likes={this.props.likes} commentCount={this.props.commentCount} comments={this.props.comments}></PostSingle>
+          <PostSingle from={this.props.from} time={this.props.time} post={this.props.post} likes={this.props.likes} comments={this.props.comments}></PostSingle>
         </div>
       </div>
     );
