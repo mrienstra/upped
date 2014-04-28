@@ -82,7 +82,6 @@ var initFB = function() {
   });
 
   var handleFirstStatusChange = function(response) {
-    alert('foo1');
     FB.Event.unsubscribe('auth.statusChange', handleFirstStatusChange);
     remote.fb.status = response.status;
     remote.fb.authResponse = response.authResponse;

@@ -34,13 +34,13 @@ var PostSingle = React.createClass({
           <div className="copy">
             <h4>{this.props.from.name}<span className="time">{moment(this.props.time).fromNow()}</span></h4>
            <p className={this.props.post.story ? 'emotes' : ''}>{this.props.post.story ? this.props.post.story : this.props.post.message}</p>
-            <p className="stats"><span className="icon ion-thumbsup"></span> {!this.props.likes ? 'No likes' : this.props.likes === 1 ? '1 like' : this.props.likes + ' likes'}
+            <p className="stats"><span className="icon ion-heart"></span> {!this.props.likes ? 'No likes' : this.props.likes === 1 ? '1 like' : this.props.likes + ' likes'}
               <span className="icon ion-chatbubble"></span> {!commentCount ? 'No comments' : commentCount === 1 ? '1 comment' : commentCount + ' comments'}</p>
           </div>
         </li>
         <li className="table-view-cell table-view-divider">
           <div className="copy">
-            <div className="buttons"><a className="btn"><span className="icon ion-thumbsup"></span> Like</a> <a className="btn"><span className="icon ion-chatbubble"></span> Comment</a> <a className="btn"><span className="icon ion-beer"></span> Gift</a></div>
+            <div className="buttons"><a className="btn"><span className="icon ion-heart"></span> Like</a> <a className="btn"><span className="icon ion-chatbubble"></span> Comment</a> <a className="btn"><span className="icon ion-beer"></span> Gift</a></div>
           </div>
         </li>
         {commentsNodes}
