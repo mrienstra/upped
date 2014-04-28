@@ -114,6 +114,7 @@ var handleRejectedLogin = function(){
 };
 
 var wireUpSignInButton = function(){
+  alert('foo');
   var signInButton = document.querySelector('.welcome .bottom button');
   signInButton.classList.remove('disabled');
   signInButton.removeAttribute('disabled');
