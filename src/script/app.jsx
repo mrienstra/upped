@@ -116,7 +116,7 @@ var handleRejectedLogin = function(){
 // showFirstScreen
 // Test is user already has a BarChat account. if so, log them in. if not, show the welcome screen
 var showFirstScreen = function(){
-  remote.parse.init(showWelcomeScreen,continuePastWelcomeScreen); // Initialize Parse JS SDK
+  remote.parse.init(); // Initialize Parse JS SDK
   if (remote.parse.userExists) {
     remote.parse.login(continuePastWelcomeScreen, handleRejectedLogin);
   }
