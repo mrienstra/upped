@@ -114,7 +114,7 @@ var handleRejectedLogin = function(){
 };
 
 // showFirstScreen
-// Test is user already has a BarChat account. if so, log them in. if not, show the welcome screen
+// Test if user already has a BarChat account. if so, log them in. if not, show the welcome screen
 var showFirstScreen = function(){
   var afterInit = function(){
     if (remote.parse.userExists) {

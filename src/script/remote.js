@@ -111,13 +111,11 @@ var remote = {
     login: function(successCallback, failureCallback) {
       Parse.FacebookUtils.logIn("basic_info,email,user_likes,publish_actions,publish_stream", { // todo: is publish_actions necessary?
         success: function(user) {
-          alert('foolsz');
           remote.parse.user = user;
           remote.parse.user.ftu = user.existed() ? false : true;
           successCallback();
         },
         error: function(user, error) {
-          alert('foolszzz');
           failureCallback();
         }
       });
@@ -128,12 +126,5 @@ var remote = {
     }
   }
 };
-
-// Initialize FB JS SDK, synchronous or asynchronously
-//if (window.Parse && window.FB) {
-//  remote.fb.init();
-//} else {
-//  window.fbAsyncInit = remote.fb.init;
-//}
 
 module.exports = remote;
