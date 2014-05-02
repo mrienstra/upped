@@ -1,17 +1,35 @@
 var remote = {
   fb: {
-    login: function (successCallback, failureCallback) {
-      FB.login(function(response) {
-        console.log('FB.login', response);
-        if (response.authResponse) {
-          remote.fb.status = response.status;
-          remote.fb.authResponse = response.authResponse;
-          successCallback();
-        } else {
-          failureCallback();
-        }
-      }, {scope: 'basic_info,publish_actions,publish_stream'}); // todo: we probably only need `publish_stream`
+    init: function(){
+      Parse.FacebookUtils.init({
+        appId     : '637656759644763',
+        cookie    : true, // enable cookies to allow Parse to access the session
+        xfbml     : true  // parse XFBML
+      });
+
+      // TODO: fix this code
+      // var handleFirstStatusChange = function(response) {
+      //   FB.Event.unsubscribe('auth.statusChange', handleFirstStatusChange);
+      //   remote.fb.status = response.status;
+      //   remote.fb.authResponse = response.authResponse;
+      //   var event = new CustomEvent('fbInitialized');
+      //   window.dispatchEvent(event);
+      // };
+      // 
+      // FB.Event.subscribe('auth.statusChange', handleFirstStatusChange);
     },
+    // login: function (successCallback, failureCallback) { // note: this function is deprecated and has been replaced by parse.login
+    //   FB.login(function(response) {
+    //     console.log('FB.login', response);
+    //     if (response.authResponse) {
+    //       remote.fb.status = response.status;
+    //       remote.fb.authResponse = response.authResponse;
+    //       successCallback();
+    //     } else {
+    //       failureCallback();
+    //     }
+    //   }, {scope: 'basic_info,email,user_likes,publish_actions,publish_stream'}); // todo: we probably only need `publish_stream`
+    // },
     getPosts: function(fbId, successCallback, failureCallback) {
       FB.api(
         fbId + '/tagged?fields=from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,message,like_count,user_likes)',
@@ -72,31 +90,40 @@ var remote = {
         }
       );
     }
+  },
+  parse: {
+    getUser: function(){
+      return Parse.User.current();
+    },
+    init: function() {
+      Parse.initialize("LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1", "mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM");
+    },
+    login: function(successCallback, failureCallback) {
+      Parse.FacebookUtils.logIn("basic_info,email,user_likes,publish_actions,publish_stream", { // todo: is publish_actions necessary?
+        success: function(user) {
+          alert('foolsz');
+          remote.parse.user = user;
+          remote.parse.user.ftu = user.existed() ? false : true;
+          successCallback();
+        },
+        error: function(user, error) {
+          alert('foolszzz');
+          failureCallback();
+        }
+      });
+    },
+    userExists: function(){
+      if (typeof(parse.getUser()) != 'null') return true;
+      else return false;
+    }
   }
 };
 
-var initFB = function() {
-  FB.init({
-    appId: '197721303747805',
-    status: true
-  });
-
-  var handleFirstStatusChange = function(response) {
-    FB.Event.unsubscribe('auth.statusChange', handleFirstStatusChange);
-    remote.fb.status = response.status;
-    remote.fb.authResponse = response.authResponse;
-    var event = new CustomEvent('fbInitialized');
-    window.dispatchEvent(event);
-  };
-
-  FB.Event.subscribe('auth.statusChange', handleFirstStatusChange);
-};
-
-if (window.FB) {
-  initFB();
+// Initialize FB JS SDK, synchronous or asynchronously
+if (window.Parse && window.FB) {
+  remote.fb.init();
 } else {
-  // Will be Called automatically by Facebook Javascript SDK
-  window.fbAsyncInit = initFB;
+  window.fbAsyncInit = remote.fb.init;
 }
 
 module.exports = remote;

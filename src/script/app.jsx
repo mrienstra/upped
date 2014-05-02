@@ -40,7 +40,6 @@ var stub = {
 };
 
 
-
 var handleLocationsChange = function(){
   console.log('handleLocationsChange', this, arguments);
   var LocationsScreen = require('./screen/locations.jsx');
@@ -103,8 +102,9 @@ var handleCreatePost = function (props) {
 
 
 var continuePastWelcomeScreen = function(){
-  // todo: remove this hack
-  document.querySelector('body').classList.remove('welcome');
+  // todo: remove below testing code make FTU experience more "welcoming"!
+  if (remote.parse.user.ftu) console.log ('new user!');
+  else console.log ('returning user!')
 
   handleLocationsChange();
 };
@@ -113,39 +113,59 @@ var handleRejectedLogin = function(){
   alert('handleRejectedLogin: todo');
 };
 
+// showFirstScreen
+// Test is user already has a BarChat account. if so, log them in. if not, show the welcome screen
+var showFirstScreen = function(){
+  remote.parse.init(showWelcomeScreen,continuePastWelcomeScreen); // Initialize Parse JS SDK
+  if (remote.parse.userExists) {
+    remote.parse.login(continuePastWelcomeScreen, handleRejectedLogin);
+  }
+  else showWelcomeScreen();
+}
+
+var showWelcomeScreen = function(){
+  var WelcomeScreen = require('./screen/welcome.jsx');
+
+  React.renderComponent(
+    <WelcomeScreen></WelcomeScreen>
+    ,
+    reactDomRoot
+  );
+  wireUpSignInButton();
+}
+
 var wireUpSignInButton = function(){
-  alert('foo');
   var signInButton = document.querySelector('.welcome .bottom button');
   signInButton.classList.remove('disabled');
   signInButton.removeAttribute('disabled');
   window.addEventListener('click', function (event) {
     if (event.target === signInButton) {
-      remote.fb.login(continuePastWelcomeScreen, handleRejectedLogin);
+      remote.parse.login(continuePastWelcomeScreen, handleRejectedLogin);
     }
   });
 };
 
 
-
 // Init
-
-if (remote.fb.status === void 0) {
-  // Scenario 1: We don't yet know if they need to login with Facebook or not
-  // Listen to find out
-  var handleFbInitialization = function (event) {
-    window.removeEventListener('fbInitialized', handleFbInitialization);
-    if (remote.fb.status === 'connected') {
-      continuePastWelcomeScreen();
-    } else {
-      wireUpSignInButton();
-    }
-  };
-
-  window.addEventListener('fbInitialized', handleFbInitialization);
-} else if (remote.fb.status === 'connected') {
-  // Scenario 2: Good to go
-  continuePastWelcomeScreen();
-} else {
-  // Scenario 3: Activate login button
-  wireUpSignInButton();
-}
+  showFirstScreen();
+  
+// if (remote.fb.status === void 0) {
+//   // Scenario 1: We don't yet know if they need to login with Facebook or not
+//   // Listen to find out
+//   var handleFbInitialization = function (event) {
+//     window.removeEventListener('fbInitialized', handleFbInitialization);
+//     if (remote.fb.status === 'connected') {
+//       continuePastWelcomeScreen();
+//     } else {
+//       wireUpSignInButton();
+//     }
+//   };
+// 
+//   window.addEventListener('fbInitialized', handleFbInitialization);
+// } else if (remote.fb.status === 'connected') {
+//   // Scenario 2: Good to go
+//   continuePastWelcomeScreen();
+// } else {
+//   // Scenario 3: Activate login button
+//   wireUpSignInButton();
+// }

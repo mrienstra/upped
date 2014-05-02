@@ -15,6 +15,7 @@ var port = 8000;
 var libs = ['react/addons', './lib/ratchet-mod.js', 'moment'];
 
 var mainJsFile = 'src/script/main.js';
+var parseJsFile = 'src/lib/parse-1.2.18/js/parse-1.2.18.min.js';
 var mainSassFile = 'src/style/main.scss';
 var sassIncludePaths = ['src/style'];
 
@@ -98,6 +99,9 @@ gulp.task('script', function() {
         except: ['require'] // todo: Necessary? Useful?
       }
     })))
+    .pipe(gulp.dest(path.script.out))
+    .pipe(connect.reload());
+  gulp.src(parseJsFile)
     .pipe(gulp.dest(path.script.out))
     .pipe(connect.reload());
 });

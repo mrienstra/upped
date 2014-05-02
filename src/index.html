@@ -8,59 +8,13 @@
     <link rel="stylesheet" href="css/main.css">
     <link href="http://code.ionicframework.com/ionicons/1.4.1/css/ionicons.min.css" rel="stylesheet"> <!-- hack so Ion CSS can override Ratchet CSS -->
    </head>
-  <body class="welcome">
-
-    <div id="container">
-      <div class="content">
-        <div class="slider" id="mySlider">
-          <div class="ribbon_bg">&nbsp;</div>
-          <div class="slide-group">
-            <div class="slide">
-              <div class="top">
-                <h1><span class="dwyer">BarChat</span></h1>
-                <p>The easiest way to meet<br>new people when you go out.</p>
-                <div class="slide-img slide-img1"></div>
-                <p class="ribbon">Swipe to see how easy &raquo;</p>
-              </div>
-            </div>
-            <div class="slide">
-              <div class="top">
-                <h2><span class="dwyer">BarChat</span></h2>
-                <p>Check in to any bar.</p>
-                <div class="slide-img slide-img2"></div>
-                <p class="ribbon">See who&#8217;s chatting.</p>
-              </div>
-            </div>
-            <div class="slide">
-              <div class="top">
-                <h2><span class="dwyer">BarChat</span></h2>
-                <p>Spark a conversation.</p>
-                <div class="slide-img slide-img3"></div>
-                <p class="ribbon">Share text and pics.</p>
-              </div>
-            </div>
-            <div class="slide">
-              <div class="top">
-                <h2><span class="dwyer">BarChat</span></h2>
-                <p>Get liked, score points.</p>
-                <div class="slide-img slide-img4"></div>
-                <p class="ribbon">Use points for gifts!</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bottom">
-          <span class="arrow"></span>
-          <ul class="paginator">
-            <li id="slide_0" class="selected" data-slide="0"></li>
-            <li id="slide_1" data-slide="1"></li>
-            <li id="slide_2" data-slide="2"></li>
-             <li id="slide_3" data-slide="3"></li>
-          </ul>
-          <button class="btn disabled" disabled>Log In with Facebook</button>
-        </div>
-      </div>
-    </div>
+  <body>
+		<div id="container">
+			<div class="splash">
+				<h1>Mixing your drinks&hellip;</h1>
+				<span class="icon ion-loading-d"></span>
+			</div>
+		</div>
 
     <!-- Facebook SDK -->
     <div id="fb-root"></div>
@@ -75,6 +29,7 @@
     </script>
 
     <!-- Scripts -->
+    <script type="text/javascript" src="js/parse-1.2.18.min.js"></script>
     <script type="text/javascript" src="js/libs.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
   </body>

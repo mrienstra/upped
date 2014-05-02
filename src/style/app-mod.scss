@@ -242,6 +242,16 @@ header.bar-nav {
 .table-view.flush { margin-bottom: -1px; }
 
 /* === PAGES === */
+.splash {
+  position: absolute;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  background: $primary-color;
+  h1 { margin-top: 20rem; font-size: 150%; }
+  .icon { font-size: 200%; }
+}
+
 .welcome {
   .content {
     background: $primary-color;
