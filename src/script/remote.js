@@ -1,11 +1,13 @@
 var remote = {
   fb: {
-    init: function(){
+    init: function(aCallback){
       Parse.FacebookUtils.init({
         appId     : '637656759644763',
         cookie    : true, // enable cookies to allow Parse to access the session
         xfbml     : true  // parse XFBML
       });
+
+      aCallback();
 
       // TODO: fix this code
       // var handleFirstStatusChange = function(response) {
@@ -95,8 +97,16 @@ var remote = {
     getUser: function(){
       return Parse.User.current();
     },
-    init: function() {
+    init: function(aCallback) {
       Parse.initialize("LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1", "mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM");
+
+      if (window.FB) {
+        remote.fb.init(aCallback);
+      } else {
+        window.fbAsyncInit = function(){
+          remote.fb.init(aCallback);
+        }
+      }
     },
     login: function(successCallback, failureCallback) {
       Parse.FacebookUtils.logIn("basic_info,email,user_likes,publish_actions,publish_stream", { // todo: is publish_actions necessary?
@@ -120,10 +130,10 @@ var remote = {
 };
 
 // Initialize FB JS SDK, synchronous or asynchronously
-if (window.Parse && window.FB) {
-  remote.fb.init();
-} else {
-  window.fbAsyncInit = remote.fb.init;
-}
+//if (window.Parse && window.FB) {
+//  remote.fb.init();
+//} else {
+//  window.fbAsyncInit = remote.fb.init;
+//}
 
 module.exports = remote;
