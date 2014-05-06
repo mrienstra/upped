@@ -20,3 +20,8 @@ Build scaffolding based on [fforw/gulp-react](https://github.com/fforw/gulp-reac
 Use `gulp` to just build, and `gulp watch` to enable streaming build.
 
 See `gulpfile.js` for details.
+
+To do
+-----
+
+Use browserify "directly" rather than using gulp-browserify. See http://viget.com/extend/gulp-browserify-starter-faq

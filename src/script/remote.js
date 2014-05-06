@@ -1,4 +1,72 @@
+var when = require('when');
+
 var remote = {
+  init: function (successCallback, failureCallback) {
+    var fbLoginSuccessRan;
+
+    var fbLoginSuccess = function (session) {
+      if (fbLoginSuccessRan) {
+        return; // only run once
+      } else {
+        fbLoginSuccessRan = true;
+      }
+
+      var myExpDate = new Date();
+      myExpDate.setMonth( myExpDate.getMonth( ) + 2 );
+      myExpDate = myExpDate.toISOString();
+
+      var facebookAuthData = {
+        'id': session.authResponse.userID,
+        'access_token': session.authResponse.accessToken,
+        'expiration_date': myExpDate 
+      }
+
+      /* Parse.FacebookUtils.init({
+        appId      : '637656759644763',
+        status     : false, // check login status
+        cookie     : true, // enable cookies to allow Parse to access the session
+        xfbml      : false  // parse XFBML
+      }); */
+
+      Parse.FacebookUtils.logIn(facebookAuthData, {
+        success: function(_user) {
+          remote.parse.user = _user;
+          remote.parse.user.ftu = _user.existed() ? false : true;
+
+          successCallback();
+        },
+        error: function(error1, error2){
+          console.log('Unable to create/login to as Facebook user.\n' +
+                      'ERROR1 = ' + JSON.stringify(error1) + '\n' +
+                      'ERROR2 = ' + JSON.stringify(error2));
+          failureCallback();
+        }
+      });
+    }
+
+    var fbLogin = function(){
+      FB.init({appId: '637656759644763'});
+      FB.login(
+        fbLoginSuccess,
+        {scope: 'basic_info,email,user_likes,publish_actions,publish_stream'}
+      );
+    };
+
+    Parse.initialize('LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1', 'mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM');
+
+    if (window.facebookConnectPlugin) {
+      facebookConnectPlugin.login(['basic_info'],
+        fbLoginSuccess,
+        function (error) { alert('' + error) }
+      );
+    } else {
+      if (window.FB) {
+        fbLogin();
+      } else {
+        window.fbAsyncInit = fbLogin;
+      }
+    }
+  },
   fb: {
     init: function(aCallback){
       Parse.FacebookUtils.init({
@@ -32,14 +100,15 @@ var remote = {
     //     }
     //   }, {scope: 'basic_info,email,user_likes,publish_actions,publish_stream'}); // todo: we probably only need `publish_stream`
     // },
-    getPosts: function(fbId, successCallback, failureCallback) {
+    getPosts: function(fbId) {
+      console.log('remote.getPosts', this, arguments);
+      var deferred = when.defer();
       FB.api(
         fbId + '/tagged?fields=from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,message,like_count,user_likes)',
         'GET',
         function(response){
-          console.log('remote.getPosts', response);
+          console.log('remote.getPosts response', response);
           if (response && !response.error) {
-            console.log('response.data', response.data);
             var posts = response.data.map(function (post) {
               return {
                 from: {
@@ -69,19 +138,21 @@ var remote = {
               };
             });
 
-            successCallback(posts);
+            deferred.resolve(posts);
           } else {
-            failureCallback(response);
+            deferred.reject(response);
           }
         }
       );
+
+      return deferred.promise;
     },
     createPost: function (post, successCallback, failureCallback) {
       FB.api(
-        "/" + post.fbId + "/feed",
-        "POST",
+        '/' + post.fbId + '/feed',
+        'POST',
         {
-          "message": post.message
+          'message': post.message
         },
         function (response) {
           if (response && !response.error) {
@@ -98,7 +169,7 @@ var remote = {
       return Parse.User.current();
     },
     init: function(aCallback) {
-      Parse.initialize("LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1", "mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM");
+      Parse.initialize('LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1', 'mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM');
 
       if (window.FB) {
         remote.fb.init(aCallback);
@@ -109,7 +180,7 @@ var remote = {
       }
     },
     login: function(successCallback, failureCallback) {
-      Parse.FacebookUtils.logIn("basic_info,email,user_likes,publish_actions,publish_stream", { // todo: is publish_actions necessary?
+      Parse.FacebookUtils.logIn('basic_info,email,user_likes,publish_actions,publish_stream', { // todo: is publish_actions necessary?
         success: function(user) {
           remote.parse.user = user;
           remote.parse.user.ftu = user.existed() ? false : true;

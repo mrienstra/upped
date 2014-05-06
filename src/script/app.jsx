@@ -40,31 +40,43 @@ var stub = {
 };
 
 
+
+var app = {
+  init: function () {
+    var ReactScreens = require('../lib/react-screens/react-screens.jsx');
+
+    this.screens = new ReactScreens(reactDomRoot);
+
+    handleLocationsChange();
+  }
+};
+
+
+
+var handleBack = function(){
+  console.log('handleBack', this, arguments);
+  app.screens.back();
+};
+
 var handleLocationsChange = function(){
   console.log('handleLocationsChange', this, arguments);
   var LocationsScreen = require('./screen/locations.jsx');
   var props = stub.locations;
 
-  React.renderComponent(
+  app.screens.addScreen(
     <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange}></LocationsScreen>
-    ,
-    reactDomRoot
   );
 };
 
 var handleLocationChange = function (props) {
   console.log('handleLocationChange', this, arguments);
 
+  var postsDeferred = remote.fb.getPosts(props.fbId);
+
   var PostsScreen = require('./screen/posts.jsx');
 
-  var getPostsAsync = function(successCallback, failureCallback){
-    remote.fb.getPosts(props.fbId, successCallback, failureCallback);
-  }
-
-  React.renderComponent(
-    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleLocationsChange={handleLocationsChange} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPostsAsync={getPostsAsync}></PostsScreen>
-    ,
-    reactDomRoot
+  app.screens.addScreen(
+    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} postsDeferred={postsDeferred}></PostsScreen>
   );
 };
 
@@ -73,10 +85,8 @@ var handlePostChange = function (props) {
 
   var PostScreen = require('./screen/post.jsx');
 
-  React.renderComponent(
-    <PostScreen location={props.location} from={props.from} time={props.time} post={props.post} likes={props.likes} comments={props.comments}></PostScreen>
-    ,
-    reactDomRoot
+  app.screens.addScreen(
+    <PostScreen location={props.location} from={props.from} time={props.time} post={props.post} likes={props.likes} comments={props.comments} handleBack={handleBack}></PostScreen>
   );
 };
 
@@ -106,24 +116,17 @@ var continuePastWelcomeScreen = function(){
   if (remote.parse.user.ftu) console.log ('new user!');
   else console.log ('returning user!')
 
-  handleLocationsChange();
+  app.init();
 };
 
 var handleRejectedLogin = function(){
   alert('handleRejectedLogin: todo');
 };
 
-// showFirstScreen
-// Test if user already has a BarChat account. if so, log them in. if not, show the welcome screen
 var showFirstScreen = function(){
-  var afterInit = function(){
-    if (remote.parse.userExists) {
-      remote.parse.login(continuePastWelcomeScreen, handleRejectedLogin);
-    }
-    else showWelcomeScreen();
-  };
-
-  remote.parse.init(afterInit); // Initialize Parse JS SDK
+  // Todo: show welcome screen when needed
+  // showWelcomeScreen();
+  remote.init(continuePastWelcomeScreen, handleRejectedLogin);
 }
 
 var showWelcomeScreen = function(){
@@ -149,26 +152,6 @@ var wireUpSignInButton = function(){
 };
 
 
+
 // Init
-  showFirstScreen();
-  
-// if (remote.fb.status === void 0) {
-//   // Scenario 1: We don't yet know if they need to login with Facebook or not
-//   // Listen to find out
-//   var handleFbInitialization = function (event) {
-//     window.removeEventListener('fbInitialized', handleFbInitialization);
-//     if (remote.fb.status === 'connected') {
-//       continuePastWelcomeScreen();
-//     } else {
-//       wireUpSignInButton();
-//     }
-//   };
-// 
-//   window.addEventListener('fbInitialized', handleFbInitialization);
-// } else if (remote.fb.status === 'connected') {
-//   // Scenario 2: Good to go
-//   continuePastWelcomeScreen();
-// } else {
-//   // Scenario 3: Activate login button
-//   wireUpSignInButton();
-// }
+showFirstScreen();

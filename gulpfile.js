@@ -12,7 +12,7 @@ var uglify = require('gulp-uglify');
 
 var port = 8000;
 
-var libs = ['react/addons', './lib/ratchet-mod.js', 'moment'];
+var libs = ['react/addons', '../lib/ratchet-mod/ratchet-mod.js', 'moment', 'lodash', 'when', '../lib/react-screens/react-screens.jsx'];
 
 var mainJsFile = 'src/script/main.js';
 var parseJsFile = 'src/lib/parse-1.2.18/js/parse-1.2.18.min.js';
@@ -72,8 +72,10 @@ gulp.task('html', function () {
 });
 
 gulp.task('lib', function () {
-  return libBundle(libs, { path: './src/script/libs.js' }) // Fake path, used by libBundle, do not change
+  libBundle(libs, { path: './src/script/libs.js' }) // Fake path, used by libBundle, do not change
     .pipe(browserify({
+      transform: ['reactify'],
+      extensions: ['.jsx'],
       debug : !gutil.env.production,
       require: libs
     }))

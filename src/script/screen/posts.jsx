@@ -51,29 +51,50 @@ var PostsList = React.createClass({
 
 var PostsScreen = React.createClass({
   getInitialState: function() {
-    return {status: 'init'};
+    return {
+      status: 'loading',
+      posts: []
+    };
   },
-  componentWillMount: function() {
+  handleDeferred: function (postsDeferred) {
     var that = this;
-    this.setState({status: 'loading'});
-
-    this.props.getPostsAsync(
+    postsDeferred.then(
       function(posts){
-        console.log('PostsScreen.componentWillMount getPostsAsync', posts);
+        console.log('PostsScreen postsDeferred', posts);
 
-        that.setState({status: 'loaded'});
-        that.setProps({posts: posts});
+        that.setState({
+          status: 'loaded',
+          posts: posts
+        });
       },
       function(response){
-        alert('PostsScreen.componentWillMount getPostsAsync call failed!');
+        alert('PostsScreen postsDeferred failed!');
         console.warn('bad', response);
 
-        that.setState({status: 'loaded'});
-        that.setProps({posts: []});
+        that.setState({
+          status: 'loaded',
+          posts: []
+        });
       }
     );
   },
+  componentWillMount: function(){
+    console.log('PostsScreen.componentWillMount()', this, arguments);
+
+    this.handleDeferred(this.props.postsDeferred);
+  },
+  componentWillReceiveProps: function (nextProps) {
+    console.log('PostsScreen.componentWillReceiveProps()', this, arguments);
+
+    this.setState({
+      status: 'loading',
+      posts: []
+    });
+
+    this.handleDeferred(nextProps.postsDeferred);
+  },
   render: function() {
+    console.log('PostsScreen.render()', this, arguments);
     var promotion;
     if (this.props.promotion) {
       promotion = (
@@ -88,10 +109,12 @@ var PostsScreen = React.createClass({
       );
     };
 
+    var posts = (this.state.posts.length) ? this.state.posts : this.props.posts;
+
     return (
       <div>
         <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleLocationsChange} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
+          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
           <a className="icon icon-compose pull-right" onTouchEnd={this.props.handleCreatePost.bind(null, this.props)}></a>
           <h1 className="title">{this.props.name}</h1>
         </header>
@@ -112,7 +135,7 @@ var PostsScreen = React.createClass({
 
           {promotion}
 
-          <PostsList posts={this.props.posts} status={this.state.status} handlePostChange={this.props.handlePostChange}></PostsList>
+          <PostsList posts={posts} status={this.state.status} handlePostChange={this.props.handlePostChange}></PostsList>
         </div>
       </div>
     );

@@ -54,7 +54,7 @@ var PostScreen = React.createClass({
     return (
       <div>
         <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" href="#todo" data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
+          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
           <a className="icon icon-compose pull-right" href="#composeModal"></a>
           <h1 className="title">Wall Post</h1>
         </header>
