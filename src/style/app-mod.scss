@@ -127,6 +127,67 @@ header.bar-nav {
   }
 }
 
+.bar-footer {
+  height: auto;
+  background-color: $primary-color;
+  color: $text-knockout-color;
+	.left, .right { 
+    position: absolute;
+    bottom: 0;
+	  width: 6rem;
+	}
+  .left {
+    left: 0;
+  }
+  .right {
+    right: 0;
+  }
+  .left a, .right a {
+    color: $text-knockout-color;
+    margin-right: 0;
+    margin-left: 0;
+  }
+	.left a {
+	  float: right;
+	  font-size: 200%;
+	  line-height: 2rem;
+	}
+	.right a {
+	  float: left;
+	  line-height: 4rem;
+	  text-transform: uppercase;
+	}
+	.center {
+	  margin: 0 6rem;
+	}
+	.center.textarea-container {
+    position: relative;
+    margin-top: .4rem;
+    margin-bottom: .4rem;
+    textarea, .textarea-size {
+      height: 100%;
+      min-height: 3rem;
+      padding: .4rem;
+      overflow: hidden;
+    	border-radius: 0;
+      color: $text-copy-color;
+  	  @include border-radius(0);
+    }
+    textarea {
+    	position: absolute;
+    	left: 0;
+      resize: none;
+      white-space: normal;
+    }
+    .textarea-size {
+      visibility: hidden;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+	}
+}
+
 .content {
   background-color: $page-bg-color;
   .subhead {

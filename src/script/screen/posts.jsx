@@ -49,6 +49,38 @@ var PostsList = React.createClass({
   }
 });
 
+var PostToolbar = React.createClass({
+  componentDidMount: function() {
+    var textContainer, textareaSize, input;
+    var autoSize = function () {
+      textareaSize.innerHTML = input.value + '\n';
+    };
+    barFooter = document.querySelector('.bar-footer');
+    textContainer = barFooter.querySelector('.textarea-container');
+    textareaSize = barFooter.querySelector('.textarea-size');
+    input = barFooter.querySelector('textarea');
+
+    autoSize();
+    input.addEventListener('input', autoSize);
+  },
+  render: function() {
+    return (
+      <div className="bar bar-standard bar-footer">
+    		<div className="left">
+    	  	<a className="icon ion-camera" href="#"></a>
+    		</div>
+    		<div className="right">
+    	  	<a href="#">Post</a>
+    		</div>
+    		<div className="center textarea-container">
+    		  <textarea placeholder="What are you up to?"></textarea>
+    		  <div className="textarea-size"></div>
+    		</div>
+    	</div>
+    );
+  }
+});
+
 var PostsScreen = React.createClass({
   getInitialState: function() {
     return {
@@ -136,6 +168,7 @@ var PostsScreen = React.createClass({
           {promotion}
 
           <PostsList posts={posts} status={this.state.status} handlePostChange={this.props.handlePostChange}></PostsList>
+          <PostToolbar></PostToolbar>
         </div>
       </div>
     );
