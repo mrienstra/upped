@@ -68,7 +68,7 @@ var LocationsScreen = React.createClass({
         <div className="side-menu-siblings-wrapper">
           <header className="bar bar-nav">
             <a className="icon icon-bars pull-left" href="#sideMenu"></a>
-            <a className="icon ion-log-in pull-right" href="#todo"></a>
+            <a className="icon ion-search pull-right" href="#todo"></a>
             <h1 className="logo"><span className="dwyer">BarChat</span></h1>
             <div className="status badge badge-negative">1</div>
           </header>
