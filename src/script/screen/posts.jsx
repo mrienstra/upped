@@ -168,8 +168,8 @@ var PostsScreen = React.createClass({
           {promotion}
 
           <PostsList posts={posts} status={this.state.status} handlePostChange={this.props.handlePostChange}></PostsList>
-          <PostToolbar></PostToolbar>
         </div>
+        <PostToolbar></PostToolbar>
       </div>
     );
   }

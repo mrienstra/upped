@@ -128,6 +128,7 @@ header.bar-nav {
 }
 
 .bar-footer {
+  border: 0;
   height: auto;
   background-color: $primary-color;
   color: $text-knockout-color;
@@ -147,7 +148,7 @@ header.bar-nav {
     margin-right: 0;
     margin-left: 0;
   }
-	.left a {
+  .left a {
 	  float: right;
 	  font-size: 200%;
 	  line-height: 2rem;
@@ -162,7 +163,7 @@ header.bar-nav {
 	}
 	.center.textarea-container {
     position: relative;
-    margin-top: .4rem;
+    margin-top: .5rem;
     margin-bottom: .4rem;
     textarea, .textarea-size {
       height: 100%;
