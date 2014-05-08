@@ -92,13 +92,17 @@ var handlePostChange = function (props) {
 
 
 
-var handleCreatePost = function (props) {
+var handleCreatePost = function(){
   console.log('handleCreatePost', this, arguments);
+
+  var msg = this.getDOMNode().querySelector('textarea').value.trim();
+
+  if (!msg) return;
 
   remote.fb.createPost(
     {
-      fbId: props.fbId,
-      message: "This is a test message from " + props.name + "!!!"
+      fbId: this.props.fbId,
+      message: msg
     },
     function (response) {
       console.log('handleCreatePost response', response);

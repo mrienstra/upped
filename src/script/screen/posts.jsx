@@ -66,17 +66,17 @@ var PostToolbar = React.createClass({
   render: function() {
     return (
       <div className="bar bar-standard bar-footer">
-    		<div className="left">
-    	  	<a className="icon ion-camera" href="#"></a>
-    		</div>
-    		<div className="right">
-    	  	<a href="#">Post</a>
-    		</div>
-    		<div className="center textarea-container">
-    		  <textarea placeholder="What are you up to?"></textarea>
-    		  <div className="textarea-size"></div>
-    		</div>
-    	</div>
+        <div className="left">
+          <a className="icon ion-camera" onTouchEnd={function(){alert('Todo');}}></a>
+        </div>
+        <div className="right">
+          <a onTouchEnd={this.props.handleCreatePost.bind(this)}>Post</a>
+        </div>
+        <div className="center textarea-container">
+          <textarea placeholder="What are you up to?"></textarea>
+          <div className="textarea-size"></div>
+        </div>
+      </div>
     );
   }
 });
@@ -169,7 +169,7 @@ var PostsScreen = React.createClass({
 
           <PostsList posts={posts} status={this.state.status} handlePostChange={this.props.handlePostChange}></PostsList>
         </div>
-        <PostToolbar></PostToolbar>
+        <PostToolbar fbId={this.props.fbId} handleCreatePost={this.props.handleCreatePost}></PostToolbar>
       </div>
     );
   }
