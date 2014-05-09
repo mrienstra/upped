@@ -9,13 +9,16 @@ var PostsListItem = React.createClass({
 
     return (
       <li className="table-view-cell">
-        <a className="navigate-right" onTouchEnd={this.props.handlePostChange.bind(null, this.props)}>
-          <img src={this.props.from.picture} />
+        <a onTouchEnd={this.props.handlePostChange.bind(null, this.props)}>
+          <div className="details">
+            <img src={this.props.from.picture} />
+            <h4>{this.props.from.name}</h4>
+            <div className="time">{moment(this.props.time).fromNow()}</div>
+            <div className="stats"><span className="likes"><span className="count">{this.props.likes}</span><span className="icon ion-ios7-heart-outline"></span></span>
+              <span className="comments"><span className="count">{commentCount ? commentCount : ' '}</span><span className="icon ion-ios7-chatboxes-outline"></span></span></div>
+          </div>
           <div className="copy">
-            <h4>{this.props.from.name}<span className="time">{moment(this.props.time).fromNow()}</span></h4>
             <p className={this.props.post.story ? 'emotes' : ''}>{this.props.post.story ? this.props.post.story : this.props.post.message}</p>
-            <p className="stats"><span className="icon ion-heart"></span> {!this.props.likes ? 'No likes' : this.props.likes === 1 ? '1 like' : this.props.likes + ' likes'}
-              <span className="icon ion-chatbubble"></span> {!commentCount ? 'No comments' : commentCount === 1 ? '1 comment' : commentCount + ' comments'}</p>
           </div>
         </a>
       </li>
@@ -41,7 +44,7 @@ var PostsList = React.createClass({
       });
     }
     return (
-        <ul className="table-view">
+        <ul className="table-view posts-list">
           <li className="table-view-cell table-view-divider">Recent Activity</li>
           {postsNodes}
         </ul>

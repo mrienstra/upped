@@ -217,6 +217,7 @@ header.bar-nav {
     line-height: 1.75rem;
   }
   li {
+    position: relative;
     font-family: $helvetica;
     line-height: 1.375em;
   }
@@ -225,33 +226,66 @@ header.bar-nav {
     margin: 0;
     padding: 0;
   }
-  .copy {
-    margin-left: 6rem;
-    p {
-      margin-top: .3rem;
-      color: $text-copy-color;
-    }
-    .time {
-      float: right;
-      font-size: 1.2rem;
-      color: $text-detail-color;
-      margin-right: -4.5rem;
-    }
-    p.stats {
-      font-size: 1.2rem;
-    }
-    p .icon {
-      color: $text-active-color;
-      padding: 0 .2rem 0 1rem;
-      @include font-size(15);
-    }
-    p .icon:first-child {
-      padding-left: 0;
-    }
-  }
 }
 .content > .table-view:first-child {
   margin-top: 0;
+}
+
+.posts-list {
+  img {
+    border: 1px solid $text-detail-color;
+  }
+  li {
+    background-color: $table-bg-color;
+    border-color: $table-border-color;
+  }
+  h4, .time {
+    margin-left: 6rem;
+  }
+  h4 {
+    @include font-size(12);
+    padding: .8rem 0 0;
+    line-height: 1.4rem;
+    color: $primary-text-color;
+  }
+  .time {
+    color: $text-detail-color;
+    font-size: 1.3rem;
+  }
+  .stats {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+    color: $text-active-color;
+  }
+  .stats .likes, .stats .comments {
+    padding-left: .8rem;
+  }
+  .stats .count {
+    position: relative;
+    top: -.5rem;
+    font-size: 1.4rem;
+    font-weight: normal;
+  }
+  .stats .icon {
+    color: $text-active-color;
+    padding: 0 .2rem 0 .5rem;
+    @include font-size(20);
+  }
+  .stats .icon:first-child {
+    padding-left: 0;
+  }
+  .copy {
+    margin-left: 6rem;
+    margin-right: -4rem;
+    p {
+      margin-top: .8rem;
+      margin-bottom: .8rem;
+      color: $text-copy-color;
+      font-size: 1.5rem;
+      white-space: pre-wrap;
+    }
+  }
 }
 
 .content-main .table-view {
