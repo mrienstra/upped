@@ -7,13 +7,20 @@ var PostsListItem = React.createClass({
   render: function() {
     var commentCount = this.props.comments.length;
 
+    var time = moment(this.props.time);
+    if (time.isValid()) {
+      time = time.fromNow();
+    } else {
+      time = this.props.time;
+    }
+
     return (
       <li className="table-view-cell">
         <a onTouchEnd={this.props.handlePostChange.bind(null, this.props)}>
           <div className="details">
             <img src={this.props.from.picture} />
             <h4>{this.props.from.name}</h4>
-            <div className="time">{moment(this.props.time).fromNow()}</div>
+            <div className="time">{time}</div>
             <div className="stats"><span className="likes"><span className="count">{this.props.likes}</span><span className="icon ion-ios7-heart-outline"></span></span>
               <span className="comments"><span className="count">{commentCount ? commentCount : ' '}</span><span className="icon ion-ios7-chatboxes-outline"></span></span></div>
           </div>
@@ -53,6 +60,19 @@ var PostsList = React.createClass({
 });
 
 var PostToolbar = React.createClass({
+  handlePostSubmit: function(){
+    console.log('PostToolbar handlePostSubmit', this, arguments);
+
+    var input = this.getDOMNode().querySelector('textarea');
+
+    var msg = input.value.trim();
+
+    if (!msg) return;
+
+    input.value = '';
+
+    this.props.handlePostSubmit(msg);
+  },
   componentDidMount: function() {
     var thisDOMNode, textareaSize, input;
 
@@ -73,7 +93,7 @@ var PostToolbar = React.createClass({
           <a className="icon ion-camera" onTouchEnd={function(){alert('Todo');}}></a>
         </div>
         <div className="right">
-          <a onTouchEnd={this.props.handleCreatePost.bind(this)}>Post</a>
+          <a onTouchEnd={this.handlePostSubmit}>Post</a>
         </div>
         <div className="center textarea-container">
           <textarea onInput={this.autoSize} placeholder="What are you up to?"></textarea>
@@ -91,11 +111,20 @@ var PostsScreen = React.createClass({
       posts: []
     };
   },
-  handleDeferred: function (postsDeferred) {
+  handlePromise: function (postsPromise, options) {
     var that = this;
-    postsDeferred.then(
+
+    if (!options || !options.quietStart) {
+      this.setState({
+        postsPromise: postsPromise,
+        status: 'loading',
+        posts: []
+      });
+    }
+
+    postsPromise.then(
       function(posts){
-        console.log('PostsScreen postsDeferred', posts);
+        console.log('PostsScreen postsPromise', posts);
 
         that.setState({
           status: 'loaded',
@@ -103,7 +132,7 @@ var PostsScreen = React.createClass({
         });
       },
       function(response){
-        alert('PostsScreen postsDeferred failed!');
+        alert('PostsScreen postsPromise failed!');
         console.warn('bad', response);
 
         that.setState({
@@ -113,20 +142,51 @@ var PostsScreen = React.createClass({
       }
     );
   },
+  handlePostSubmit: function (msg) {
+    console.log('PostsScreen handlePostSubmit', this, arguments);
+
+    var refresh = this.refresh.bind(this);
+
+    var pendingPost = {
+      from: {
+        // todo: handle `this.props.user` not being available
+        picture: this.props.user.picture,
+        name: this.props.user.name
+      },
+      time: 'pending',
+      post: {
+        message: msg
+      },
+      comments:[]
+    };
+
+    var posts = this.state.posts;
+    var newPosts = [pendingPost].concat(posts);
+    this.setState({posts: newPosts});
+
+    this.props.handleCreatePost(
+      msg,
+      refresh
+    );
+  },
+  refresh: function(){
+    var postsPromise = this.props.getPosts();
+
+    this.handlePromise(postsPromise, {quietStart: true});
+  },
   componentWillMount: function(){
     console.log('PostsScreen.componentWillMount()', this, arguments);
 
-    this.handleDeferred(this.props.postsDeferred);
+    var postsPromise = this.props.getPosts();
+
+    this.handlePromise(postsPromise);
   },
   componentWillReceiveProps: function (nextProps) {
     console.log('PostsScreen.componentWillReceiveProps()', this, arguments);
 
-    this.setState({
-      status: 'loading',
-      posts: []
-    });
+    var postsPromise = nextProps.getPosts();
 
-    this.handleDeferred(nextProps.postsDeferred);
+    this.handlePromise(postsPromise);
   },
   render: function() {
     console.log('PostsScreen.render()', this, arguments);
@@ -150,7 +210,7 @@ var PostsScreen = React.createClass({
       <div>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
-          <a className="icon ion-search pull-right" onTouchEnd={this.props.handleCreatePost.bind(null, this.props)}></a>
+          <a className="icon ion-search pull-right" onTouchEnd={function(){alert('Todo');}}></a>
           <h1 className="title">{this.props.name}</h1>
         </header>
 
@@ -172,7 +232,7 @@ var PostsScreen = React.createClass({
 
           <PostsList posts={posts} status={this.state.status} handlePostChange={this.props.handlePostChange}></PostsList>
         </div>
-        <PostToolbar fbId={this.props.fbId} handleCreatePost={this.props.handleCreatePost}></PostToolbar>
+        <PostToolbar handlePostSubmit={this.handlePostSubmit}></PostToolbar>
       </div>
     );
   }

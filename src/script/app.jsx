@@ -71,12 +71,12 @@ var handleLocationsChange = function(){
 var handleLocationChange = function (props) {
   console.log('handleLocationChange', this, arguments);
 
-  var postsDeferred = remote.fb.getPosts(props.fbId);
+  var getPosts = remote.fb.getPosts.bind(remote.fb, props.fbId);
 
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} postsDeferred={postsDeferred}></PostsScreen>
+    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts}></PostsScreen>
   );
 };
 
@@ -92,23 +92,21 @@ var handlePostChange = function (props) {
 
 
 
-var handleCreatePost = function(){
+var handleCreatePost = function (msg, refresh) {
   console.log('handleCreatePost', this, arguments);
-
-  var msg = this.getDOMNode().querySelector('textarea').value.trim();
-
-  if (!msg) return;
 
   remote.fb.createPost(
     {
-      fbId: this.props.fbId,
+      fbId: this.fbId,
       message: msg
     },
     function (response) {
       console.log('handleCreatePost response', response);
+      refresh();
     },
     function (response) {
       console.error('handleCreatePost response', response);
+      alert('Todo: Handle createPost error');
     }
   );
 };

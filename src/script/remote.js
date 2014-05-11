@@ -11,6 +11,14 @@ var remote = {
         fbLoginSuccessRan = true;
       }
 
+      remote.user = {};
+      FB.api('/me', function(response) {
+        remote.user.name = response.name;
+      });
+      FB.api('/me/picture', function(response) {
+        remote.user.picture = response.data.url;
+      });
+
       var myExpDate = new Date();
       myExpDate.setMonth( myExpDate.getMonth( ) + 2 );
       myExpDate = myExpDate.toISOString();
