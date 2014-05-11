@@ -54,17 +54,17 @@ var PostsList = React.createClass({
 
 var PostToolbar = React.createClass({
   componentDidMount: function() {
-    var textContainer, textareaSize, input;
-    var autoSize = function () {
+    var thisDOMNode, textareaSize, input;
+
+    thisDOMNode = this.getDOMNode();
+    textareaSize = thisDOMNode.querySelector('.textarea-size');
+    input = thisDOMNode.querySelector('textarea');
+
+    this.autoSize = function () {
       textareaSize.innerHTML = input.value + '\n';
     };
-    barFooter = document.querySelector('.bar-footer');
-    textContainer = barFooter.querySelector('.textarea-container');
-    textareaSize = barFooter.querySelector('.textarea-size');
-    input = barFooter.querySelector('textarea');
 
-    autoSize();
-    input.addEventListener('input', autoSize);
+    this.autoSize();
   },
   render: function() {
     return (
@@ -76,7 +76,7 @@ var PostToolbar = React.createClass({
           <a onTouchEnd={this.props.handleCreatePost.bind(this)}>Post</a>
         </div>
         <div className="center textarea-container">
-          <textarea placeholder="What are you up to?"></textarea>
+          <textarea onInput={this.autoSize} placeholder="What are you up to?"></textarea>
           <div className="textarea-size"></div>
         </div>
       </div>
