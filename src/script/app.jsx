@@ -114,44 +114,40 @@ var handleCreatePost = function (msg, refresh) {
 
 
 var continuePastWelcomeScreen = function(){
-  // todo: remove below testing code make FTU experience more "welcoming"!
+  window.removeEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+
+  // todo: remove below testing code; make FTU experience more "welcoming"!
   if (remote.parse.user.ftu) console.log ('new user!');
   else console.log ('returning user!')
 
   app.init();
 };
 
-var handleRejectedLogin = function(){
-  alert('handleRejectedLogin: todo');
-};
-
 var showFirstScreen = function(){
-  // Todo: show welcome screen when needed
-  // showWelcomeScreen();
-  remote.init(continuePastWelcomeScreen, handleRejectedLogin);
+  window.addEventListener('fbLoginNeeded', showWelcomeScreen);
+
+  window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+
+  remote.init();
 }
 
 var showWelcomeScreen = function(){
+  window.removeEventListener('fbLoginNeeded', showWelcomeScreen);
+
   var WelcomeScreen = require('./screen/welcome.jsx');
 
+  var handleLoginButton = function(){
+    // Todo: visual indicator that things are happening
+
+    remote.login();
+  };
+
   React.renderComponent(
-    <WelcomeScreen></WelcomeScreen>
+    <WelcomeScreen handleLoginButton={handleLoginButton}></WelcomeScreen>
     ,
     reactDomRoot
   );
-  wireUpSignInButton();
 }
-
-var wireUpSignInButton = function(){
-  var signInButton = document.querySelector('.welcome .bottom button');
-  signInButton.classList.remove('disabled');
-  signInButton.removeAttribute('disabled');
-  window.addEventListener('click', function (event) {
-    if (event.target === signInButton) {
-      remote.parse.login(continuePastWelcomeScreen, handleRejectedLogin);
-    }
-  });
-};
 
 
 

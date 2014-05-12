@@ -1,113 +1,133 @@
 var when = require('when');
 
-var remote = {
-  init: function (successCallback, failureCallback) {
-    var fbLoginSuccessRan;
+var settings = {
+  fbAppId: '637656759644763',
+  parse: {
+    appId: 'LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1',
+    jsKey: 'mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM'
+  },
+  fbInitialPermissions: [
+    'basic_info', 'email', 'user_likes', 'publish_actions', 'publish_stream'
+    // Asking for 'publish_actions' and/or 'publish_stream' using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
+  ]
+};
 
-    var fbLoginSuccess = function (session) {
-      if (fbLoginSuccessRan) {
-        return; // only run once
+var _remote = {
+  fb: {
+    init: function(){
+      FB.init({
+        appId: settings.fbAppId,
+        status: true
+      });
+
+      FB.getLoginStatus(_remote.fb.getLoginStatusCallback);
+    },
+    getLoginStatusCallback: function (response) {
+      if (response.status === 'connected') {
+        _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
-        fbLoginSuccessRan = true;
-      }
+        remote.login = _remote.fb.login;
 
-      remote.user = {};
-      FB.api('/me', function(response) {
-        remote.user.name = response.name;
-      });
-      FB.api('/me/picture', function(response) {
-        remote.user.picture = response.data.url;
-      });
+        var event = new CustomEvent('fbLoginNeeded');
+        window.dispatchEvent(event);
+      }
+    },
+    login: function(){
+      FB.login(
+        _remote.fb.loginCallback,
+        {scope: settings.fbInitialPermissions.join(',')}
+      );
+    },
+    loginCallback: function (response) {
+      console.log('_remote.fb.loginCallback:', response);
+
+      if (response.status === 'connected') {
+        _remote.parse.loginWithFBAuthResponse(response.authResponse);
+      } else {
+        console.log('Game over!'); // Todo?
+      }
+    }
+  },
+  fcp: {
+    init: function(){
+      facebookConnectPlugin.getLoginStatus(_remote.fcp.getLoginStatusCallback);
+    },
+    getLoginStatusCallback: function (response) {
+      if (response.status === 'connected') {
+        _remote.parse.loginWithFBAuthResponse(response.authResponse);
+      } else {
+        remote.login = _remote.fcp.login;
+
+        var event = new CustomEvent('fbLoginNeeded');
+        window.dispatchEvent(event);
+      }
+    },
+    login: function(){
+      facebookConnectPlugin.login(
+        settings.fbInitialPermissions,
+        _remote.fb.loginCallback, // Done with `fcp`-specific code, switching to `fb`
+        _remote.fcp.loginFailureCallback
+        // Todo: neither callback is invoked when "saying no" to FB login in iOS Simulator.
+      );
+    },
+    loginFailureCallback: function (err) {
+      console.log('_remote.fcp.loginFailureCallback', this, arguments);
+      alert('Todo: _remote.fcp.loginFailureCallback: ' + err);
+    }
+  },
+  parse: {
+    loginWithFBAuthResponse: function (authResponse) {
+      Parse.initialize(settings.parse.appId, settings.parse.jsKey);
 
       var myExpDate = new Date();
-      myExpDate.setMonth( myExpDate.getMonth( ) + 2 );
+      myExpDate.setMonth(myExpDate.getMonth() + 2);
       myExpDate = myExpDate.toISOString();
 
       var facebookAuthData = {
-        'id': session.authResponse.userID,
-        'access_token': session.authResponse.accessToken,
-        'expiration_date': myExpDate 
+        'id': authResponse.userID,
+        'access_token': authResponse.accessToken,
+        'expiration_date': myExpDate
       }
-
-      /* Parse.FacebookUtils.init({
-        appId      : '637656759644763',
-        status     : false, // check login status
-        cookie     : true, // enable cookies to allow Parse to access the session
-        xfbml      : false  // parse XFBML
-      }); */
 
       Parse.FacebookUtils.logIn(facebookAuthData, {
         success: function(_user) {
           remote.parse.user = _user;
           remote.parse.user.ftu = _user.existed() ? false : true;
 
-          successCallback();
+          remote.user = {};
+          FB.api('/me', function(response) {
+            remote.user.name = response.name;
+          });
+          FB.api('/me/picture', function(response) {
+            remote.user.picture = response.data.url;
+          });
+
+          var event = new CustomEvent('fbAndParseLoginSuccess');
+          window.dispatchEvent(event);
         },
-        error: function(error1, error2){
-          console.log('Unable to create/login to as Facebook user.\n' +
-                      'ERROR1 = ' + JSON.stringify(error1) + '\n' +
-                      'ERROR2 = ' + JSON.stringify(error2));
-          failureCallback();
+        error: function(){
+          console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
         }
       });
     }
+  }
+};
 
-    var fbLogin = function(){
-      FB.init({appId: '637656759644763'});
-      FB.login(
-        fbLoginSuccess,
-        {scope: 'basic_info,email,user_likes,publish_actions,publish_stream'}
-      );
-    };
 
-    Parse.initialize('LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1', 'mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM');
 
-    if (window.facebookConnectPlugin) {
-      facebookConnectPlugin.login(['basic_info'],
-        fbLoginSuccess,
-        function (error) { alert('' + error) }
-      );
+var remote = {
+  init: function (successCallback, failureCallback) {
+    if (window.cordova) {
+      document.addEventListener('deviceready', _remote.fcp.init, false);
     } else {
       if (window.FB) {
-        fbLogin();
+        _remote.fb.init();
       } else {
-        window.fbAsyncInit = fbLogin;
+        window.fbAsyncInit = _remote.fb.init;
       }
     }
   },
   fb: {
-    init: function(aCallback){
-      Parse.FacebookUtils.init({
-        appId     : '637656759644763',
-        cookie    : true, // enable cookies to allow Parse to access the session
-        xfbml     : true  // parse XFBML
-      });
-
-      aCallback();
-
-      // TODO: fix this code
-      // var handleFirstStatusChange = function(response) {
-      //   FB.Event.unsubscribe('auth.statusChange', handleFirstStatusChange);
-      //   remote.fb.status = response.status;
-      //   remote.fb.authResponse = response.authResponse;
-      //   var event = new CustomEvent('fbInitialized');
-      //   window.dispatchEvent(event);
-      // };
-      // 
-      // FB.Event.subscribe('auth.statusChange', handleFirstStatusChange);
-    },
-    // login: function (successCallback, failureCallback) { // note: this function is deprecated and has been replaced by parse.login
-    //   FB.login(function(response) {
-    //     console.log('FB.login', response);
-    //     if (response.authResponse) {
-    //       remote.fb.status = response.status;
-    //       remote.fb.authResponse = response.authResponse;
-    //       successCallback();
-    //     } else {
-    //       failureCallback();
-    //     }
-    //   }, {scope: 'basic_info,email,user_likes,publish_actions,publish_stream'}); // todo: we probably only need `publish_stream`
-    // },
     getPosts: function(fbId) {
       console.log('remote.getPosts', this, arguments);
       var deferred = when.defer();
@@ -172,38 +192,18 @@ var remote = {
       );
     }
   },
+  login: void 0, // Search for "remote.login" to see usage
   parse: {
     getUser: function(){
       return Parse.User.current();
     },
-    init: function(aCallback) {
-      Parse.initialize('LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1', 'mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM');
-
-      if (window.FB) {
-        remote.fb.init(aCallback);
-      } else {
-        window.fbAsyncInit = function(){
-          remote.fb.init(aCallback);
-        }
-      }
-    },
-    login: function(successCallback, failureCallback) {
-      Parse.FacebookUtils.logIn('basic_info,email,user_likes,publish_actions,publish_stream', { // todo: is publish_actions necessary?
-        success: function(user) {
-          remote.parse.user = user;
-          remote.parse.user.ftu = user.existed() ? false : true;
-          successCallback();
-        },
-        error: function(user, error) {
-          failureCallback();
-        }
-      });
-    },
+    user: void 0, // Search for "remote.parse.user" to see usage
     userExists: function(){
       if (typeof(parse.getUser()) != 'null') return true;
       else return false;
     }
-  }
+  },
+  user: void 0 // Search for "remote.user" to see usage
 };
 
 module.exports = remote;

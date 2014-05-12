@@ -106,8 +106,8 @@ header.bar-nav {
     height: 2.5rem;
     width: 10.6rem;
     margin: 0 auto;
-    background: url('/img/logo_head.png') no-repeat 0 0 transparent;
-    @include image-2x('/img/logo_head_2x.png', 10.6rem, 2.5rem);
+    background: url('../img/logo_head.png') no-repeat 0 0 transparent;
+    @include image-2x('../img/logo_head_2x.png', 10.6rem, 2.5rem);
   }
   .status {
     position: absolute;
@@ -132,11 +132,11 @@ header.bar-nav {
   height: auto;
   background-color: $primary-color;
   color: $text-knockout-color;
-	.left, .right { 
+  .left, .right { 
     position: absolute;
     bottom: 0;
-	  width: 6rem;
-	}
+    width: 6rem;
+  }
   .left {
     left: 0;
   }
@@ -149,19 +149,19 @@ header.bar-nav {
     margin-left: 0;
   }
   .left a {
-	  float: right;
-	  font-size: 200%;
-	  line-height: 2rem;
-	}
-	.right a {
-	  float: left;
-	  line-height: 4rem;
-	  text-transform: uppercase;
-	}
-	.center {
-	  margin: 0 6rem;
-	}
-	.center.textarea-container {
+    float: right;
+    font-size: 200%;
+    line-height: 2rem;
+  }
+  .right a {
+    float: left;
+    line-height: 4rem;
+    text-transform: uppercase;
+  }
+  .center {
+    margin: 0 6rem;
+  }
+  .center.textarea-container {
     position: relative;
     margin-top: .5rem;
     margin-bottom: .4rem;
@@ -170,13 +170,13 @@ header.bar-nav {
       min-height: 3rem;
       padding: .4rem;
       overflow: hidden;
-    	border-radius: 0;
+      border-radius: 0;
       color: $text-copy-color;
-  	  @include border-radius(0);
+      @include border-radius(0);
     }
     textarea {
-    	position: absolute;
-    	left: 0;
+      position: absolute;
+      left: 0;
       resize: none;
       white-space: normal;
     }
@@ -186,7 +186,7 @@ header.bar-nav {
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
-	}
+  }
 }
 
 .content {
@@ -369,14 +369,14 @@ header.bar-nav {
       height: 30%;
       margin: 0 auto;
       padding: 0;
-      background: url('/img/logo_splash.png') no-repeat 0 bottom;
+      background: url('../img/logo_splash.png') no-repeat 0 bottom;
     }
     h2 {
       width: 15.4rem;
       height: 15%;
       margin: 0 auto;
       padding: 0;
-      background: url('/img/logo_splash.png') no-repeat 0 bottom;
+      background: url('../img/logo_splash.png') no-repeat 0 bottom;
     }
     p {
       color: $text-knockout-color;
@@ -409,7 +409,7 @@ header.bar-nav {
     height: 25%;
     min-height: 10rem;
     width: 100%;
-    background: url('/img/bg_zigzag.png') repeat center center;
+    background: url('../img/bg_zigzag.png') repeat center center;
     .arrow {
       position: absolute;
       display: table;
@@ -472,28 +472,28 @@ header.bar-nav {
   .slide-img1 {
     height: 17.4rem;
     width: 100%;
-    background: url('/img/img_welcome_drink.png') no-repeat center 0;
+    background: url('../img/img_welcome_drink.png') no-repeat center 0;
     max-width: 100%
   }
   .slide-img2 {
     top: 30%;
     height: 33.5rem;
     width: 100%;
-    background: url('/img/img_welcome_chat.png') no-repeat center 0;
+    background: url('../img/img_welcome_chat.png') no-repeat center 0;
     max-width: 100%
   }
   .slide-img3 {
     top: 30%;
     height: 33.5rem;
     width: 100%;
-    background: url('/img/img_welcome_chat.png') no-repeat center 0;
+    background: url('../img/img_welcome_chat.png') no-repeat center 0;
     max-width: 100%
   }
   .slide-img4 {
     top: 30%;
     height: 33.5rem;
     width: 100%;
-    background: url('/img/img_welcome_chat.png') no-repeat center 0;
+    background: url('../img/img_welcome_chat.png') no-repeat center 0;
     max-width: 100%
   }
 }

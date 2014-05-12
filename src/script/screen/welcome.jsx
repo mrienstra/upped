@@ -54,7 +54,7 @@ var WelcomeScreen = React.createClass({
             <li id="slide_2" data-slide="2"></li>
              <li id="slide_3" data-slide="3"></li>
           </ul>
-          <button className="btn disabled" disabled>Log In with Facebook</button>
+          <button className="btn" onTouchEnd={this.props.handleLoginButton}>Log In with Facebook</button>
         </div>
       </div>
     );
