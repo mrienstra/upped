@@ -1,6 +1,8 @@
 var gulp = require('gulp');
 var browserify = require('gulp-browserify');
+var concatCss = require('gulp-concat-css');
 var connect = require('gulp-connect');
+var flatten = require('gulp-flatten');
 var gulpIf = require('gulp-if');
 var gutil = require('gulp-util');
 var libBundle = require('./gulp-lib-bundle');
@@ -14,8 +16,10 @@ var port = 8000;
 
 var libs = ['react/addons', '../lib/ratchet-mod/ratchet-mod.js', 'moment', 'lodash', 'when', '../lib/react-screens/react-screens.jsx'];
 
+var cssLibs = 'src/lib/{react-screens/react-screens,ratchet-mod/ratchet-mod,ionicons-1.4.1/ionicons}.css';
+
 var mainJsFile = 'src/script/main.js';
-var parseJsFile = 'src/lib/parse-1.2.18/js/parse-1.2.18.min.js';
+var parseJsFile = 'src/lib/parse-1.2.18/parse-1.2.18.min.js';
 var mainSassFile = 'src/style/main.scss';
 var sassIncludePaths = ['src/style'];
 
@@ -37,8 +41,8 @@ var path = {
     out: 'build/img'
   },
   font: {
-    in: 'src/fonts/**/*.{ttf,woff,eot,svg}',
-    out: 'build/fonts'
+    in: 'src/lib/**/*.{ttf,woff,eot,svg}',
+    out: 'build/css/fonts'
   },
 }
 
@@ -85,6 +89,13 @@ gulp.task('lib', function () {
       }
     })))
     .pipe(gulp.dest(path.script.out));
+
+  gulp.src(parseJsFile)
+    .pipe(gulp.dest(path.script.out));
+
+  gulp.src(cssLibs)
+    .pipe(concatCss('libs.css'))
+    .pipe(gulp.dest(path.style.out));
 });
 
 gulp.task('script', function() {
@@ -101,9 +112,6 @@ gulp.task('script', function() {
         except: ['require'] // todo: Necessary? Useful?
       }
     })))
-    .pipe(gulp.dest(path.script.out))
-    .pipe(connect.reload());
-  gulp.src(parseJsFile)
     .pipe(gulp.dest(path.script.out))
     .pipe(connect.reload());
 });
@@ -127,8 +135,9 @@ gulp.task('img', function () {
 });
 
 gulp.task('font', function() {
-   gulp.src(path.font.in)
-     .pipe(gulp.dest(path.font.out));
+  gulp.src(path.font.in)
+    .pipe(flatten())
+    .pipe(gulp.dest(path.font.out));
 });
 
 gulp.task('watchdog', function () {
