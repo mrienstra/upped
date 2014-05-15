@@ -96,6 +96,7 @@ var _remote = {
 
           remote.user = {};
           FB.api('/me', function(response) {
+            remote.user.fbId = response.id;
             remote.user.name = response.name;
           });
           FB.api('/me/picture', function(response) {
@@ -139,6 +140,7 @@ var remote = {
           if (response && !response.error) {
             var posts = response.data.map(function (post) {
               return {
+                id: post.id,
                 from: {
                   picture: post.from.picture.data.url,
                   name: post.from.name
@@ -150,7 +152,7 @@ var remote = {
                   picture: post.picture,
                   link: post.link
                 },
-                likes: post.likes && post.likes.data.length,
+                likes: post.likes && post.likes.data,
                 comments: (!post.comments || !post.comments.data.length) ? [] : post.comments.data.map(function (comment) {
                   return {
                     from: {

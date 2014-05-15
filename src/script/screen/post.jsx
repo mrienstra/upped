@@ -24,6 +24,13 @@ var PostSingle = React.createClass({
   render: function() {
     var that = this;
 
+    var likeCount = this.props.likes ? this.props.likes.length : '';
+
+    var userLoves = this.props.likes && this.props.likes.some(function (like) {
+      return like.id === that.props.user.fbId;
+    });
+    var heartClasses = userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
+
     var commentCount = this.props.comments.length;
 
     var commentsNodes = this.props.comments.map(function (comment, index) {
@@ -37,7 +44,7 @@ var PostSingle = React.createClass({
             <img src={this.props.from.picture} />
             <h4>{this.props.from.name}</h4>
             <div className="time">{moment(this.props.time).fromNow()}</div>
-            <div className="stats"><span className="likes"><span className="count">{this.props.likes}</span><span className="icon ion-ios7-heart-outline"></span></span>
+            <div className="stats"><span className="likes"><span className="count">{likeCount}</span><span className={heartClasses}></span></span>
               <span className="comments"><span className="count">{commentCount ? commentCount : ' '}</span><span className="icon ion-ios7-chatboxes-outline"></span></span></div>
           </div>
           <div className="copy">
@@ -70,7 +77,7 @@ var PostScreen = React.createClass({
         </div>
 
         <div className="content">
-          <PostSingle from={this.props.from} time={this.props.time} post={this.props.post} likes={this.props.likes} comments={this.props.comments}></PostSingle>
+          <PostSingle from={this.props.from} time={this.props.time} post={this.props.post} likes={this.props.likes} comments={this.props.comments} user={this.props.user}></PostSingle>
         </div>
       </div>
     );

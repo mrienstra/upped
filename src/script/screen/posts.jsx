@@ -4,7 +4,12 @@ var React = require('react/addons');
 var moment = require('moment');
 
 var PostsListItem = React.createClass({
-  render: function() {
+  handleLove: function (e) {
+    this.props.handleLove(e, this.props.id, this.props.refresh);
+  },
+  render: function(){
+    var that = this;
+
     var commentCount = this.props.comments.length;
 
     var time = moment(this.props.time);
@@ -14,6 +19,13 @@ var PostsListItem = React.createClass({
       time = this.props.time;
     }
 
+    var likeCount = this.props.likes ? this.props.likes.length : '';
+
+    var userLoves = this.props.likes && this.props.likes.some(function (like) {
+      return like.id === that.props.user.fbId;
+    });
+    var heartClasses = userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
+
     return (
       <li className="table-view-cell">
         <a onTouchEnd={this.props.handlePostChange.bind(null, this.props)}>
@@ -21,8 +33,16 @@ var PostsListItem = React.createClass({
             <img src={this.props.from.picture} />
             <h4>{this.props.from.name}</h4>
             <div className="time">{time}</div>
-            <div className="stats"><span className="likes"><span className="count">{this.props.likes}</span><span className="icon ion-ios7-heart-outline"></span></span>
-              <span className="comments"><span className="count">{commentCount ? commentCount : ' '}</span><span className="icon ion-ios7-chatboxes-outline"></span></span></div>
+            <div className="stats">
+              <span className="likes">
+                <span className="count">{likeCount}</span>
+                <span className={heartClasses} onTouchEnd={this.handleLove}></span>
+              </span>
+              <span className="comments">
+                <span className="count">{commentCount ? commentCount : ''}</span>
+                <span className="icon ion-ios7-chatboxes-outline"></span>
+              </span>
+            </div>
           </div>
           <div className="copy">
             <p className={this.props.post.story ? 'emotes' : ''}>{this.props.post.story ? this.props.post.story : this.props.post.message}</p>
@@ -34,7 +54,7 @@ var PostsListItem = React.createClass({
 });
 
 var PostsList = React.createClass({
-  render: function() {
+  render: function(){
     var that = this;
     var postsNodes;
     if (this.props.status === 'loading') {
@@ -47,7 +67,7 @@ var PostsList = React.createClass({
       );
     } else {
       postsNodes = this.props.posts.map(function (post, index) {
-        return <PostsListItem key={index} handlePostChange={that.props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} comments={post.comments}></PostsListItem>;
+        return <PostsListItem key={index} id={post.id} handlePostChange={that.props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} comments={post.comments} user={that.props.user} handleLove={that.props.handleLove} refresh={that.props.refresh}></PostsListItem>;
       });
     }
     return (
@@ -73,20 +93,20 @@ var PostToolbar = React.createClass({
 
     this.props.handlePostSubmit(msg);
   },
-  componentDidMount: function() {
+  componentDidMount: function(){
     var thisDOMNode, textareaSize, input;
 
     thisDOMNode = this.getDOMNode();
     textareaSize = thisDOMNode.querySelector('.textarea-size');
     input = thisDOMNode.querySelector('textarea');
 
-    this.autoSize = function () {
+    this.autoSize = function(){
       textareaSize.innerHTML = input.value + '\n';
     };
 
     this.autoSize();
   },
-  render: function() {
+  render: function(){
     return (
       <div className="bar bar-standard bar-footer">
         <div className="left">
@@ -105,7 +125,7 @@ var PostToolbar = React.createClass({
 });
 
 var PostsScreen = React.createClass({
-  getInitialState: function() {
+  getInitialState: function(){
     return {
       status: 'loading',
       posts: []
@@ -145,8 +165,6 @@ var PostsScreen = React.createClass({
   handlePostSubmit: function (msg) {
     console.log('PostsScreen handlePostSubmit', this, arguments);
 
-    var refresh = this.refresh.bind(this);
-
     var pendingPost = {
       from: {
         // todo: handle `this.props.user` not being available
@@ -166,7 +184,7 @@ var PostsScreen = React.createClass({
 
     this.props.handleCreatePost(
       msg,
-      refresh
+      this.refresh
     );
   },
   refresh: function(){
@@ -188,7 +206,7 @@ var PostsScreen = React.createClass({
 
     this.handlePromise(postsPromise);
   },
-  render: function() {
+  render: function(){
     console.log('PostsScreen.render()', this, arguments);
     var promotion;
     if (this.props.promotion) {
@@ -230,7 +248,7 @@ var PostsScreen = React.createClass({
 
           {promotion}
 
-          <PostsList posts={posts} status={this.state.status} handlePostChange={this.props.handlePostChange}></PostsList>
+          <PostsList posts={posts} status={this.state.status} user={this.props.user} handlePostChange={this.props.handlePostChange} handleLove={this.props.handleLove} refresh={this.refresh}></PostsList>
         </div>
         <PostToolbar handlePostSubmit={this.handlePostSubmit}></PostToolbar>
       </div>

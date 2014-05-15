@@ -76,7 +76,7 @@ var handleLocationChange = function (props) {
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts}></PostsScreen>
+    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts} handleLove={handleLove}></PostsScreen>
   );
 };
 
@@ -86,7 +86,7 @@ var handlePostChange = function (props) {
   var PostScreen = require('./screen/post.jsx');
 
   app.screens.addScreen(
-    <PostScreen location={props.location} from={props.from} time={props.time} post={props.post} likes={props.likes} comments={props.comments} handleBack={handleBack}></PostScreen>
+    <PostScreen location={props.location} from={props.from} time={props.time} post={props.post} likes={props.likes} comments={props.comments} user={remote.user} handleBack={handleBack}></PostScreen>
   );
 };
 
@@ -107,6 +107,26 @@ var handleCreatePost = function (msg, refresh) {
     function (response) {
       console.error('handleCreatePost response', response);
       alert('Todo: Handle createPost error');
+    }
+  );
+};
+
+var handleLove = function (e, id, refresh) {
+  console.log('handleLove', this, arguments);
+
+  e.stopPropagation();
+
+  FB.api(
+    '/' + id + '/likes',
+    'POST',
+    function (response) {
+      if (response === true) {
+        console.log('handleLove response true!', this, arguments);
+        refresh();
+      } else {
+        console.error('boo');
+        alert('Todo: handle this!');
+      }
     }
   );
 };
