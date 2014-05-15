@@ -25,3 +25,16 @@ To do
 -----
 
 Use browserify "directly" rather than using gulp-browserify. See http://viget.com/extend/gulp-browserify-starter-faq
+
+Assigning Points to Issues
+-----
+
+We track and estimate our work using GitHub issues, according to the following points system:
+
+1 - XS (1-2 hours)
+2 - S (2-4 hours)
+3 - M (4-8 hours)
+5 - L (2-3 days)
+8 - XL (5 days)
+
+Anything larger than XL should be broken down into smaller tasks.
