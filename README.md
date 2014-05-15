@@ -26,7 +26,7 @@ To do
 
 Use browserify "directly" rather than using gulp-browserify. See http://viget.com/extend/gulp-browserify-starter-faq
 
-Assigning Points to Issues
+Issues & Points
 -----
 
 We track and estimate our work using GitHub issues, according to the following points system:
