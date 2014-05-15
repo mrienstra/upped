@@ -89,12 +89,15 @@ var _remote = {
         'expiration_date': myExpDate
       }
 
+      remote.user = {
+        'access_token': authResponse.accessToken,
+      };
+
       Parse.FacebookUtils.logIn(facebookAuthData, {
         success: function(_user) {
           remote.parse.user = _user;
           remote.parse.user.ftu = _user.existed() ? false : true;
 
-          remote.user = {};
           FB.api('/me', function(response) {
             remote.user.fbId = response.id;
             remote.user.name = response.name;
@@ -109,6 +112,19 @@ var _remote = {
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
         }
+      });
+    }
+  },
+  utils: {
+    dataURItoBlob: function (dataURI) {
+      var byteString = atob(dataURI.split(',')[1]);
+      var ab = new ArrayBuffer(byteString.length);
+      var ia = new Uint8Array(ab);
+      for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ab], {
+        type: 'image/png'
       });
     }
   }
@@ -178,20 +194,56 @@ var remote = {
       return deferred.promise;
     },
     createPost: function (post, successCallback, failureCallback) {
-      FB.api(
-        '/' + post.fbId + '/feed',
-        'POST',
-        {
-          'message': post.message
-        },
-        function (response) {
-          if (response && !response.error) {
-            successCallback(response);
-          } else {
-            failureCallback(response);
+      if (post.pictureDataURI) {
+        blob = _remote.utils.dataURItoBlob(post.pictureDataURI);
+
+        var fd = new FormData();
+        fd.append('access_token', remote.user.access_token);
+        fd.append('source', blob);
+        fd.append('message', post.message);
+
+        var reqListener = function(){
+          try {
+            var responseText = JSON.parse(this.responseText);
+          } catch (e) {
+            failureCallback.call(this, arguments, e);
+            return;
           }
+
+          if (responseText.error) {
+            console.error('remote.postImageToFacebook reqListener', this.responseText);
+            failureCallback.call(this, arguments);
+          } else {
+            console.log('remote.postImageToFacebook reqListener', this.responseText);
+            successCallback.call(this, arguments);
+          }
+        };
+
+        var request = new XMLHttpRequest();
+        request.onload = reqListener;
+        request.open('POST', 'https://graph.facebook.com/' + post.fbId + '/photos');
+        
+        try {
+          request.send(fd);
+        } catch (e) {
+          failureCallback.call(this, arguments, e);
         }
-      );
+      } else {
+        FB.api(
+          '/' + post.fbId + '/feed',
+          'POST',
+          {
+            'message': post.message
+          },
+          function (response) {
+            if (response && !response.error) {
+              successCallback(response);
+            } else {
+              failureCallback(response);
+            }
+          }
+        );
+      }
     }
   },
   login: void 0, // Search for "remote.login" to see usage

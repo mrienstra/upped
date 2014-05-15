@@ -139,6 +139,14 @@ header.bar-nav {
   }
   .left {
     left: 0;
+    .picturePreview {
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 53px;
+      height: 53px;
+      float: right;
+    }
   }
   .right {
     right: 0;
@@ -286,6 +294,10 @@ header.bar-nav {
       color: $text-copy-color;
       font-size: 1.5rem;
       white-space: pre-wrap;
+      img {
+        height: 1em;
+        margin-right: .33em;
+      }
     }
   }
 }
