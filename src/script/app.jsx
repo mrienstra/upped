@@ -10,6 +10,7 @@ var stub = {
       {
         name: '515 Kitchen & Cocktails',
         fbId: 240545564672,
+        photoURL: '',
         checkedInCount: 1,
         address1: '515 Cedar St',
         address2: 'Santa Cruz, CA 95060',
@@ -18,6 +19,7 @@ var stub = {
       {
         name: 'Cafe Mare',
         fbId: 269901256358819,
+        photoURL: 'https://scontent-a-sjc.xx.fbcdn.net/hphotos-ash3/t31.0-8/p960x960/1074700_673818769300397_437853795_o.jpg',
         checkedInCount: 1,
         address1: '740 Front St, #100',
         address2: 'Santa Cruz, CA 95060',
@@ -26,6 +28,7 @@ var stub = {
       {
         name: 'MOTIV',
         fbId: 112468103763, // 204393176242846 was merged into page
+        photoURL: 'https://scontent-a-sjc.xx.fbcdn.net/hphotos-ash2/t1.0-9/419945_10150719331073764_1700138881_n.jpg',
         checkedInCount: 4,
         address1: '1209 Pacific Ave.',
         address2: 'Santa Cruz, CA 95060',
@@ -38,6 +41,7 @@ var stub = {
       {
         name: 'The Red Room',
         fbId: 111627012207432,
+        photoURL: 'https://fbcdn-sphotos-a-a.akamaihd.net/hphotos-ak-frc3/t1.0-9/10269644_676768595693268_7156454855741968687_n.jpg',
         checkedInCount: 4,
         address1: '343 Cedar St',
         address2: 'Santa Cruz, CA 95060',
@@ -50,6 +54,7 @@ var stub = {
       {
         name: 'Rosie McCann’s',
         fbId: 1710649235,
+        photoURL: '',
         checkedInCount: 1,
         address1: '1220 Pacific St',
         address2: 'Santa Cruz, CA 95060',
@@ -58,6 +63,7 @@ var stub = {
       {
         name: 'The Rush Inn',
         fbId: 460268814089550, // Alternate: 100000701335606
+        photoURL: '',
         checkedInCount: 3,
         address1: '113 Knight St',
         address2: 'Santa Cruz, CA 95060',

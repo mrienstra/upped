@@ -118,7 +118,7 @@ var _remote = {
 
 var remote = {
   init: function (successCallback, failureCallback) {
-    if (window.cordova && window.facebookConnectPlugin) {
+    if (window.cordova) {
       document.addEventListener('deviceready', _remote.fcp.init, false);
     } else {
       if (window.FB) {
