@@ -118,7 +118,7 @@ var _remote = {
 
 var remote = {
   init: function (successCallback, failureCallback) {
-    if (window.cordova) {
+    if (window.cordova && window.facebookConnectPlugin) {
       document.addEventListener('deviceready', _remote.fcp.init, false);
     } else {
       if (window.FB) {
@@ -156,7 +156,7 @@ var remote = {
                 comments: (!post.comments || !post.comments.data.length) ? [] : post.comments.data.map(function (comment) {
                   return {
                     from: {
-                      picture: post.from.picture.data.url,
+                      picture: comment.from.picture.data.url,
                       name: comment.from.name,
                     },
                     time: comment.created_time,

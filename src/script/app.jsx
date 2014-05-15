@@ -8,6 +8,34 @@ var stub = {
   locations: {
     locations: [
       {
+        name: '515 Kitchen & Cocktails',
+        fbId: 240545564672,
+        checkedInCount: 1,
+        address1: '515 Cedar St',
+        address2: 'Santa Cruz, CA 95060',
+        distance: '.2 mi away'
+      },
+      {
+        name: 'Cafe Mare',
+        fbId: 269901256358819,
+        checkedInCount: 1,
+        address1: '740 Front St, #100',
+        address2: 'Santa Cruz, CA 95060',
+        distance: '.2 mi away'
+      },
+      {
+        name: 'MOTIV',
+        fbId: 112468103763, // 204393176242846 was merged into page
+        checkedInCount: 4,
+        address1: '1209 Pacific Ave.',
+        address2: 'Santa Cruz, CA 95060',
+        distance: '.1 mi away',
+        promotion: {
+          title: 'James Bond',
+          message: 'Every 50th BarChat posted to our wall is rewarded with a swanky drink upgrade!'
+        }
+      },
+      {
         name: 'The Red Room',
         fbId: 111627012207432,
         checkedInCount: 4,
@@ -20,20 +48,20 @@ var stub = {
         }
       },
       {
-        name: 'The Rush Inn',
-        fbId: 460268814089550, // Alternate: 100000701335606
-        checkedInCount: 3,
-        address1: '113 Knight St',
-        address2: 'Santa Cruz, CA 95060',
-        distance: '.2 mi away'
-      },
-      {
         name: 'Rosie McCann’s',
         fbId: 1710649235,
         checkedInCount: 1,
         address1: '1220 Pacific St',
         address2: 'Santa Cruz, CA 95060',
         distance: '.1 mi away'
+      },
+      {
+        name: 'The Rush Inn',
+        fbId: 460268814089550, // Alternate: 100000701335606
+        checkedInCount: 3,
+        address1: '113 Knight St',
+        address2: 'Santa Cruz, CA 95060',
+        distance: '.2 mi away'
       }
     ]
   }
