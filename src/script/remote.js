@@ -117,6 +117,7 @@ var _remote = {
   },
   utils: {
     dataURItoBlob: function (dataURI) {
+      var mime = dataURI.split(';')[0].split(':')[1];
       var byteString = atob(dataURI.split(',')[1]);
       var ab = new ArrayBuffer(byteString.length);
       var ia = new Uint8Array(ab);
@@ -124,7 +125,7 @@ var _remote = {
         ia[i] = byteString.charCodeAt(i);
       }
       return new Blob([ab], {
-        type: 'image/png'
+        type: mime
       });
     }
   }
