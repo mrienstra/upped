@@ -7,7 +7,7 @@ var settings = {
     jsKey: 'mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM'
   },
   fbInitialPermissions: [
-    'basic_info', 'email', 'user_likes', 'publish_actions', 'publish_stream'
+    'basic_info', 'email', 'user_likes' //, 'publish_actions', 'publish_stream'
     // Asking for 'publish_actions' and/or 'publish_stream' using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
   ]
 };
