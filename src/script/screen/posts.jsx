@@ -3,6 +3,8 @@
 var React = require('react/addons');
 var moment = require('moment');
 
+var camera = require('../camera.js');
+
 var PostsListItem = React.createClass({
   handleLove: function (e) {
     this.props.handleLove(e, this.props.id, this.props.refresh);
@@ -26,6 +28,11 @@ var PostsListItem = React.createClass({
     });
     var heartClasses = userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
 
+    var picture;
+    if (this.props.post.picture) {
+      picture = <img src={this.props.post.picture} />;
+    }
+
     return (
       <li className="table-view-cell">
         <a onTouchEnd={this.props.handlePostChange.bind(null, this.props)}>
@@ -45,7 +52,7 @@ var PostsListItem = React.createClass({
             </div>
           </div>
           <div className="copy">
-            <p className={this.props.post.story ? 'emotes' : ''}>{this.props.post.story ? this.props.post.story : this.props.post.message}</p>
+            <p className={this.props.post.story ? 'emotes' : ''}>{picture}{this.props.post.story ? this.props.post.story : this.props.post.message}</p>
           </div>
         </a>
       </li>
@@ -80,6 +87,22 @@ var PostsList = React.createClass({
 });
 
 var PostToolbar = React.createClass({
+  getInitialState: function(){
+    return {
+      pictureDataURI: void 0
+    };
+  },
+  showPicturePreview: function (pictureDataURI) {
+    this.setState({
+      pictureDataURI: pictureDataURI
+    });
+  },
+  handleCamera: function(){
+    camera.getPicture(
+      this.showPicturePreview,
+      function(){ console.error('handleCamera error', this, arguments); }
+    );
+  },
   handlePostSubmit: function(){
     console.log('PostToolbar handlePostSubmit', this, arguments);
 
@@ -89,9 +112,15 @@ var PostToolbar = React.createClass({
 
     if (!msg) return;
 
+    this.props.handlePostSubmit(msg, this.state.pictureDataURI);
+
+    // Reset
+
     input.value = '';
 
-    this.props.handlePostSubmit(msg);
+    this.setState({
+      pictureDataURI: void 0
+    });
   },
   componentDidMount: function(){
     var thisDOMNode, textareaSize, input;
@@ -107,10 +136,17 @@ var PostToolbar = React.createClass({
     this.autoSize();
   },
   render: function(){
+    var toolbarLeft;
+    if (this.state.pictureDataURI) {
+      toolbarLeft = <div className="picturePreview" style={{backgroundImage: 'url(' + this.state.pictureDataURI + ')'}}></div>;
+    } else {
+      toolbarLeft = <a className="icon ion-camera" onTouchEnd={this.handleCamera}></a>
+    }
+
     return (
       <div className="bar bar-standard bar-footer">
         <div className="left">
-          <a className="icon ion-camera" onTouchEnd={function(){alert('Todo');}}></a>
+          {toolbarLeft}
         </div>
         <div className="right">
           <a onTouchEnd={this.handlePostSubmit}>Post</a>
@@ -162,7 +198,7 @@ var PostsScreen = React.createClass({
       }
     );
   },
-  handlePostSubmit: function (msg) {
+  handlePostSubmit: function (msg, pictureDataURI) {
     console.log('PostsScreen handlePostSubmit', this, arguments);
 
     var pendingPost = {
@@ -184,6 +220,7 @@ var PostsScreen = React.createClass({
 
     this.props.handleCreatePost(
       msg,
+      pictureDataURI,
       this.refresh
     );
   },

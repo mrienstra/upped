@@ -126,20 +126,23 @@ var handlePostChange = function (props) {
 
 
 
-var handleCreatePost = function (msg, refresh) {
+var handleCreatePost = function (msg, pictureDataURI, refresh) {
   console.log('handleCreatePost', this, arguments);
 
+  var post = {
+    fbId: this.fbId,
+    message: msg,
+    pictureDataURI: pictureDataURI
+  };
+
   remote.fb.createPost(
-    {
-      fbId: this.fbId,
-      message: msg
-    },
-    function (response) {
-      console.log('handleCreatePost response', response);
+    post,
+    function () {
+      console.log('handleCreatePost success', this, arguments);
       refresh();
     },
     function (response) {
-      console.error('handleCreatePost response', response);
+      console.error('handleCreatePost failure', this, arguments);
       alert('Todo: Handle createPost error');
     }
   );
