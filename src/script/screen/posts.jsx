@@ -24,7 +24,7 @@ var PostsListItem = React.createClass({
     var likeCount = this.props.likes ? this.props.likes.length : '';
 
     var userLoves = this.props.likes && this.props.likes.some(function (like) {
-      return like.id === that.props.user.fbId;
+      return like.id === that.props.user.fb.id;
     });
     var heartClasses = userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
 

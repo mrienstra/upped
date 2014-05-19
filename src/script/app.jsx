@@ -139,11 +139,12 @@ var handleCreatePost = function (msg, pictureDataURI, refresh) {
     post,
     function () {
       console.log('handleCreatePost success', this, arguments);
-      refresh();
+      window.setTimeout(refresh, 2000); // Todo: WTF, I don't think we should need to do this...
     },
     function (response) {
       console.error('handleCreatePost failure', this, arguments);
-      alert('Todo: Handle createPost error');
+      alert('Todo: Handle createPost error: ' + JSON.stringify(response));
+      refresh();
     }
   );
 };
@@ -174,7 +175,7 @@ var continuePastWelcomeScreen = function(){
   window.removeEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
 
   // todo: remove below testing code; make FTU experience more "welcoming"!
-  if (remote.parse.user.ftu) console.log ('new user!');
+  if (remote.user.ftu) console.log ('new user!');
   else console.log ('returning user!')
 
   app.init();
