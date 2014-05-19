@@ -53,8 +53,29 @@ var _remote = {
         console.log('Game over!'); // Todo?
       }
     },
-    requestPublishPermissions: function(){
+    requestPublishPermissions: function (continueCallback, failureCallback) {
       // Todo: implement `fcp` counterpart
+
+      var stopListening = function(){
+        window.removeEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
+        window.removeEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
+      };
+
+      var fbPublishPermissionsGranted = function(){
+        stopListening();
+
+        continueCallback();
+      };
+
+      var fbPublishPermissionsDenied = function(){
+        stopListening();
+
+        failureCallback('Publish permissions denied');
+      };
+
+      window.addEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
+      window.addEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
+
       FB.login(
         _remote.fb.requestPublishPermissionsCallback,
         {
@@ -245,27 +266,9 @@ var remote = {
     },
     createPost: function (post, successCallback, failureCallback) {
       if (!remote.user.fb.publishPermissionsGranted) {
-        var stopListening = function(){
-          window.removeEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
-          window.removeEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
-        };
+        var continueCallback = remote.fb.createPost.bind(null, post, successCallback, failureCallback);
 
-        var fbPublishPermissionsGranted = function(){
-          stopListening();
-
-          remote.fb.createPost(post, successCallback, failureCallback);
-        };
-
-        var fbPublishPermissionsDenied = function(){
-          stopListening();
-
-          failureCallback('Publish permissions denied');
-        };
-
-        window.addEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
-        window.addEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
-
-        _remote.fb.requestPublishPermissions();
+        _remote.fb.requestPublishPermissions(continueCallback, failureCallback);
 
         return;
       }
@@ -320,6 +323,28 @@ var remote = {
           }
         );
       }
+    },
+    like: function (id, successCallback, failureCallback) {
+      if (!remote.user.fb.publishPermissionsGranted) {
+        var continueCallback = remote.fb.like.bind(null, id, successCallback, failureCallback);
+
+        _remote.fb.requestPublishPermissions(continueCallback, failureCallback);
+
+        return;
+      }
+
+
+      FB.api(
+        '/' + id + '/likes',
+        'POST',
+        function (response) {
+          if (response === true) {
+            successCallback();
+          } else {
+            failureCallback(response && response.error && response.error.message);
+          }
+        }
+      );
     }
   },
   login: void 0, // Search for "remote.login" to see usage

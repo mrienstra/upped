@@ -154,17 +154,12 @@ var handleLove = function (e, id, refresh) {
 
   e.stopPropagation();
 
-  FB.api(
-    '/' + id + '/likes',
-    'POST',
-    function (response) {
-      if (response === true) {
-        console.log('handleLove response true!', this, arguments);
-        refresh();
-      } else {
-        console.error('boo');
-        alert('Todo: handle this!');
-      }
+  remote.fb.like(
+    id,
+    refresh,
+    function (msg) {
+      console.error('app handleLove: boo', this, arguments);
+      alert('Todo: handleLove error: ' + JSON.stringify(msg));
     }
   );
 };
