@@ -144,6 +144,7 @@ var PostToolbar = React.createClass({
     // Reset
 
     input.value = '';
+    this.autoSize();
 
     this.setState({
       pictureDataURI: void 0
