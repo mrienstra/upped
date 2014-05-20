@@ -161,19 +161,30 @@ var _remote = {
           remote.user.parse = _user;
           remote.user.ftu = _user.existed() ? false : true;
 
+          var meFields = 'name,picture,cover';
           if (!remote.user.fb.permissions) {
-            FB.api('/me/permissions', function (response) {
-              remote.user.fb.permissions = response.data[0];
-
-              _remote.fb.updatePermissions();
-            });
+            meFields += ',permissions';
           }
-          FB.api('/me', function (response) {
+          FB.api('/me?fields=' + meFields, function (response) {
             remote.user.fb.id = response.id;
             remote.user.name = response.name;
+            remote.user.picture = response.picture.data.url;
+            remote.user.cover = response.cover.source;
+
+            if (response.permissions) {
+              remote.user.fb.permissions = response.permissions.data[0];
+
+              _remote.fb.updatePermissions();
+            }
           });
-          FB.api('/me/picture', function (response) {
-            remote.user.picture = response.data.url;
+          FB.api('/me/likes?fields=name,picture', function (response) {
+            remote.user.fb.likes = response.data.map(function (like) {
+              return {
+                id: like.id,
+                name: like.name,
+                picture: like.picture.data.url
+              };
+            });
           });
 
           var customEvent = new CustomEvent('fbAndParseLoginSuccess');

@@ -97,8 +97,10 @@ var handleLocationsChange = function(){
   var LocationsScreen = require('./screen/locations.jsx');
   var props = stub.locations;
 
+  var thisHandleProfileChange = handleProfileChange.bind(null, {user: remote.user});
+
   app.screens.addScreen(
-    <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange} handleProfileChange={handleProfileChange}></LocationsScreen>
+    <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange} handleProfileChange={thisHandleProfileChange}></LocationsScreen>
   );
 };
 
@@ -120,7 +122,7 @@ var handleProfileChange = function (props) {
   var ProfileScreen = require('./screen/profile.jsx');
 
   app.screens.addScreen(
-    <ProfileScreen handleBack={handleBack}></ProfileScreen>
+    <ProfileScreen user={props.user} handleBack={handleBack}></ProfileScreen>
   );
 };
 

@@ -7,6 +7,21 @@ var ProfileScreen = React.createClass({
     return {};
   },
   render: function(){
+    var i, l, userLikes;
+    l = user.fb.likes && user.fb.likes.length;
+    if (l) {
+      l = l > 5 ? 5 : l; // limit to 5
+      userLikes = [];
+      for (i = 0; i < l; i++) {
+        userLikes.push(
+          <div>
+            <img src={user.fb.likes[i].picture} />
+            <p>{user.fb.likes[i].name}</p>
+          </div>
+        );
+      }
+    }
+
     return (
       <div>
         <header className="bar bar-nav">
@@ -19,12 +34,12 @@ var ProfileScreen = React.createClass({
             <ul className="table-view flush free-form">
               <li className="img-wrap">
                 <span className="icon ion-loading-d"></span>
-                <img src="https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/5574_246045125022_213964_n.jpg" height="260" />
+                <img src={this.props.user.cover} height="260" />
               </li>
               <li className="table-view-cell">
                 <a href="" className="right btn btn-outlined"><span className="icon ion-ios7-chatboxes-outline"></span> activity</a>
-                <h3>Erik Burns</h3>
-                <h4>434 points </h4>
+                <h3>{this.props.user.name}</h3>
+                <h4>434 points</h4>
                 <p>My hotness isn&#8217;t only between my legs. It&#8217;s inside my ear, right behind the eardrum. That&#8217;s where people come to get down!</p>
               </li>
             </ul>
@@ -37,26 +52,7 @@ var ProfileScreen = React.createClass({
             <ul className="table-view flush likes-table">
               <li className="table-view-cell table-view-divider">Likes</li>
               <li className="table-view-cell media">
-                <div>
-                  <img src="https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/5574_246045125022_213964_n.jpg" />
-                  <p>KiWi Time</p>
-                </div>
-                <div>
-                  <img src="https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/5574_246045125022_213964_n.jpg" />
-                  <p>Jaya Lakshmi Lakshmi</p>
-                </div>
-                <div>
-                  <img src="https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/5574_246045125022_213964_n.jpg" />
-                  <p>Patrick Roche</p>
-                </div>
-                <div>
-                  <img src="https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/5574_246045125022_213964_n.jpg" />
-                  <p>Patrick Roche</p>
-                </div>
-                <div>
-                  <img src="https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/5574_246045125022_213964_n.jpg" />
-                  <p>Patrick Roche</p>
-                </div>
+                {userLikes}
               </li>
             </ul>
         </div>
