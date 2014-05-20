@@ -161,13 +161,12 @@ var handleCreatePost = function (msg, pictureDataURI, refresh) {
   );
 };
 
-var handleLove = function (e, id, refresh) {
+var handleLove = function (id, userLoves, refresh) {
   console.log('handleLove', this, arguments);
-
-  e.stopPropagation();
 
   remote.fb.like(
     id,
+    userLoves,
     refresh,
     function (msg) {
       console.error('app handleLove: boo', this, arguments);

@@ -374,23 +374,26 @@ header.bar-nav {
     right: 1.5rem;
     top: 1.5rem;
     color: $text-active-color;
-  }
-  .stats .likes, .stats .comments {
-    padding-left: .8rem;
-  }
-  .stats .count {
-    position: relative;
-    top: -.5rem;
-    font-size: 1.4rem;
-    font-weight: normal;
-  }
-  .stats .icon {
-    color: $text-active-color;
-    padding: 0 .2rem 0 .5rem;
-    @include font-size(20);
-  }
-  .stats .icon:first-child {
-    padding-left: 0;
+    .likes, .comments {
+      padding-left: .8rem;
+    }
+    .count {
+      position: relative;
+      top: -.5rem;
+      font-size: 1.4rem;
+      font-weight: normal;
+    }
+    .icon {
+      color: $text-active-color;
+      padding: 0 .2rem 0 .5rem;
+      @include font-size(20);
+      &.pending {
+        -webkit-animation: pulse 1.5s infinite ease-in-out;
+      }
+    }
+    .icon:first-child {
+      padding-left: 0;
+    }
   }
   .copy {
     margin-left: 6rem;
@@ -661,4 +664,14 @@ header.bar-nav {
   margin-top: -30px;
   margin-bottom: -29px;
   -webkit-transform: scale3d(1, 0, 1);
+}
+
+/* --------- */
+/* Keyframes */
+/* --------- */
+
+@-webkit-keyframes pulse {
+  0% { opacity: 0.25; }
+  50% { opacity: 0.75; }
+  100% { opacity: 0.25; }
 }

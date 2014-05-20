@@ -6,8 +6,26 @@ var moment = require('moment');
 var camera = require('../camera.js');
 
 var PostsListItem = React.createClass({
+  getInitialState: function(){
+    return {
+      pendingLoveChange: false
+    };
+  },
   handleLove: function (e) {
-    this.props.handleLove(e, this.props.id, this.props.refresh);
+    var that = this;
+
+    e.stopPropagation();
+
+    this.setState({
+      pendingLoveChange: true
+    });
+
+    this.props.handleLove(this.props.id, this.props.userLoves, this.props.refresh);
+  },
+  componentWillReceiveProps: function(nextProps) {
+    this.setState({
+      pendingLoveChange: false
+    });
   },
   render: function(){
     var that = this;
@@ -21,12 +39,15 @@ var PostsListItem = React.createClass({
       time = this.props.time;
     }
 
-    var likeCount = this.props.likes ? this.props.likes.length : '';
+    var userLoves = this.props.userLoves;
+    if (this.state.pendingLoveChange) {
+      userLoves = !userLoves;
+    }
 
-    var userLoves = this.props.likes && this.props.likes.some(function (like) {
-      return like.id === that.props.user.fb.id;
-    });
     var heartClasses = userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
+    if (this.state.pendingLoveChange) {
+      heartClasses += ' pending';
+    }
 
     var picture;
     if (this.props.post.picture) {
@@ -42,7 +63,7 @@ var PostsListItem = React.createClass({
             <div className="time">{time}</div>
             <div className="stats">
               <span className="likes">
-                <span className="count">{likeCount}</span>
+                <span className="count">{this.props.likeCount}</span>
                 <span className={heartClasses} onTouchEnd={this.handleLove}></span>
               </span>
               <span className="comments">
@@ -74,7 +95,13 @@ var PostsList = React.createClass({
       );
     } else {
       postsNodes = this.props.posts.map(function (post, index) {
-        return <PostsListItem key={index} id={post.id} handlePostChange={that.props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} comments={post.comments} user={that.props.user} handleLove={that.props.handleLove} refresh={that.props.refresh}></PostsListItem>;
+        var likeCount = post.likes ? post.likes.length : '';
+
+        var userLoves = post.likes && post.likes.some(function (like) {
+          return like.id === that.props.user.fb.id;
+        });
+
+        return <PostsListItem key={index} id={post.id} handlePostChange={that.props.handlePostChange} from={post.from} time={post.time} post={post.post} likeCount={likeCount} userLoves={userLoves} comments={post.comments} handleLove={that.props.handleLove} refresh={that.props.refresh}></PostsListItem>;
       });
     }
     return (

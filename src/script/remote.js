@@ -335,7 +335,7 @@ var remote = {
         );
       }
     },
-    like: function (id, successCallback, failureCallback) {
+    like: function (id, unlike, successCallback, failureCallback) {
       if (!remote.user.fb.publishPermissionsGranted) {
         var continueCallback = remote.fb.like.bind(null, id, successCallback, failureCallback);
 
@@ -344,10 +344,11 @@ var remote = {
         return;
       }
 
+      var method = unlike ? 'DELETE' : 'POST';
 
       FB.api(
         '/' + id + '/likes',
-        'POST',
+        method,
         function (response) {
           if (response === true) {
             successCallback();
