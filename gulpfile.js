@@ -23,10 +23,15 @@ var parseJsFile = 'src/lib/parse-1.2.18/parse-1.2.18.min.js';
 var mainSassFile = 'src/style/main.scss';
 var sassIncludePaths = ['src/style'];
 
+// ToDo: Only output mocks in 'dev' mode, not 'prod' mode
 var path = {
   html: {
     in: 'src/*.html',
     out: 'build'
+  },
+  mocks: {
+    in: 'src/mocks/*.html',
+    out: 'build/mocks'
   },
   script: {
     in: 'src/script/**/*.{js,jsx}',
@@ -98,6 +103,12 @@ gulp.task('lib', function () {
     .pipe(gulp.dest(path.style.out));
 });
 
+gulp.task('mocks', function () {
+  gulp.src(path.mocks.in)
+    .pipe(gulp.dest(path.mocks.out))
+    .pipe(connect.reload());
+});
+
 gulp.task('script', function() {
   gulp.src(mainJsFile, { read: false })
     .pipe(browserify({
@@ -143,6 +154,7 @@ gulp.task('font', function() {
 gulp.task('watchdog', function () {
   watching = true; // used by `onError`
   gulp.watch(path.html.in, ['html']);
+  gulp.watch(path.mocks.in, ['mocks']);
   gulp.watch(path.script.in, ['script']);
   gulp.watch(path.style.in, ['sass']);
   gulp.watch(path.img.in, ['img']);
@@ -151,4 +163,4 @@ gulp.task('watchdog', function () {
 });
 
 gulp.task('watch', ['default', 'connect', 'watchdog']);
-gulp.task('default', ['html', 'lib', 'script', 'sass', 'img', 'font']);
+gulp.task('default', ['html', 'lib', 'mocks', 'script', 'sass', 'img', 'font']);

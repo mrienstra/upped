@@ -98,7 +98,7 @@ var handleLocationsChange = function(){
   var props = stub.locations;
 
   app.screens.addScreen(
-    <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange}></LocationsScreen>
+    <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange} handleProfileChange={handleProfileChange}></LocationsScreen>
   );
 };
 
@@ -111,6 +111,16 @@ var handleLocationChange = function (props) {
 
   app.screens.addScreen(
     <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts} handleLove={handleLove}></PostsScreen>
+  );
+};
+
+var handleProfileChange = function (props) {
+  console.log('handleProfileChange', this, arguments);
+
+  var ProfileScreen = require('./screen/profile.jsx');
+
+  app.screens.addScreen(
+    <ProfileScreen handleBack={handleBack}></ProfileScreen>
   );
 };
 

@@ -91,7 +91,7 @@ var LocationsScreen = React.createClass({
                 </a>
               </li>
               <li className="table-view-cell">
-                <a href="bar-detail.html" data-transition="slide-in">
+                <a onTouchEnd={this.props.handleProfileChange}>
                   <h4><span className="icon ion-person"></span> Profile</h4>
                 </a>
               </li>

@@ -34,6 +34,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
 }
 
+.btn.btn-outlined { border-color: $primary-fade-color; }
+
 /* === HELPERS === */
 .dwyer {
   display: block;
@@ -85,10 +87,10 @@ header.bar-nav {
   position: relative;
   height: 4.4rem;
   background-color: $primary-color;
+  border-bottom: 0;
   @include font-size(16);
   font-weight: bold;
   text-align: center;
-  }
   .icon {
     color: $text-knockout-color;
     font-weight: normal;
@@ -119,6 +121,10 @@ header.bar-nav {
     padding: 2px 5px 3px;
     font-weight: normal;
   }
+  .btn.pull-right {
+    margin-right: 0;
+  }
+}
 
 .bar-header-secondary {
   background-color: $menu-color;
@@ -235,6 +241,107 @@ header.bar-nav {
     padding: 0;
   }
 }
+.table-view-divider .right {
+  position: absolute; right: 1.4rem; font-size: 80%
+}
+.table-view.free-form {
+  .img-wrap {
+    display: block;
+    height: 25rem;
+    background-color: $table-bg-color;
+    border-bottom: 1px solid $table-border-color;
+    overflow: hidden;
+    span {
+      position: absolute;
+      font-size: 240%;
+      margin-left: -1.8rem;
+      margin-top: -1.8rem;
+      color: $icon-light-color;
+      @extend %horizontal-align;
+      @extend %vertical-align;
+    }
+    img {
+      position: absolute;
+      width: 100%;
+      height: auto;
+      @extend %vertical-align;
+    }
+  }
+  h3 {
+    margin: 0;
+  }
+  h4 {
+    margin: .6rem 0 1rem;
+  }
+  p {
+    margin: .4rem 0 1rem;
+    color: $text-copy-color;
+  }
+  .right {
+    display: block;
+    position: absolute;
+    right: 1.4rem;
+    top: 2.8rem
+  }
+  a {
+    font-size: 80%;
+    background-color: $table-bg-color;
+    color: $text-copy-color;
+  }
+  a .icon {
+    position: relative;
+  }
+  a:hover, a:active {
+    background-color: $btn-tap-color;
+  }
+}
+.badge-table {
+  .table-view-cell {
+    padding-right: 3rem
+  }
+  .badge {
+    font-weight: normal;
+  }
+  .table-view-cell a {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+.likes-table {
+  .table-view-divider {
+    width: 100%;
+  }
+  .media {
+    padding-right: 1rem;
+  }
+  .media div {
+    display: inline-block;
+    float: none;
+    width: 9rem;
+    padding: 0;
+    border: 0;
+  }
+  .table-view-cell div img {
+    display: block;
+    float: none;
+    width: 8rem;
+    height: 8rem;
+    background: $table-border-color;
+    border: 1px solid $img-border-color;
+  }
+  .table-view-cell div p {
+    display: block;
+    float: none;
+    width: 8rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
 .content > .table-view:first-child {
   margin-top: 0;
 }
@@ -314,7 +421,9 @@ header.bar-nav {
 }
 
 .menu { }
-.menu_right h4 { color: $text-knockout-color; }
+.menu_right h4 {
+  color: $text-knockout-color;
+}
 
 .side-menu {
   background: $menu-color;
@@ -358,7 +467,8 @@ header.bar-nav {
   height: 100%;
   width: 100%;
   background: $primary-color;
-  h1 { margin-top: 20rem; font-size: 150%; }
+  color: $text-knockout-color;
+  h1 { margin-top: 20rem; font-size: 150%; color: $text-knockout-color; }
   .icon { font-size: 200%; }
 }
 

@@ -37,6 +37,15 @@
   font-size: (0.125 * $sizeValue) + rem;
 }
 
+/* HORIZONTAL ALIGN */
+%horizontal-align {
+  position: relative;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
 /* MEDIA QUERIES */
 @mixin breakpoint($point) {
   @if $point == large {
@@ -78,6 +87,15 @@
   overflow: hidden;
   display: inline-block;
 }    
+
+/* VERTICAL ALIGN */
+%vertical-align {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
 
 /* VISUALLY HIDE W/ ACCESSIBILITY */
 %visuallyhidden {
