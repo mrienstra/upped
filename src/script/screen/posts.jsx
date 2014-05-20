@@ -296,7 +296,7 @@ var PostsScreen = React.createClass({
           <h1 className="title">{this.props.name}</h1>
         </header>
 
-        <div className="bar bar-standard bar-header-secondary">
+        <div className="bar bar-standard bar-header-secondary" style={{backgroundImage: 'url(' + this.props.photoURL + ')'}}>
           <p><span className="icon ion-person-stalker"></span> {this.props.checkedInCount ? this.props.checkedInCount + ' checked in' : 'Tumbleweed & crickets'}</p>
         </div>
 

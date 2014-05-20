@@ -36,7 +36,7 @@ var LocationList = React.createClass({
       return true;
     });
     var locationNodes = locations.map(function (location, index) {
-      return <LocationListItem key={keys[index]} name={location.name} fbId={location.fbId} checkedInCount={location.checkedInCount} address1={location.address1} address2={location.address2} promotion={location.promotion} distance={location.distance} handleLocationChange={that.props.handleLocationChange}></LocationListItem>;
+      return <LocationListItem key={keys[index]} name={location.name} fbId={location.fbId} photoURL={location.photoURL} checkedInCount={location.checkedInCount} address1={location.address1} address2={location.address2} promotion={location.promotion} distance={location.distance} handleLocationChange={that.props.handleLocationChange}></LocationListItem>;
     });
     return (
       <div className="content content-main">

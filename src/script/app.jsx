@@ -10,7 +10,7 @@ var stub = {
       {
         name: '515 Kitchen & Cocktails',
         fbId: 240545564672,
-        photoURL: '',
+        photoURL: 'https://scontent-b-sjc.xx.fbcdn.net/hphotos-prn1/t1.0-9/547619_10151627462164673_2140008861_n.jpg',
         checkedInCount: 1,
         address1: '515 Cedar St',
         address2: 'Santa Cruz, CA 95060',
@@ -54,7 +54,7 @@ var stub = {
       {
         name: 'Rosie McCann’s',
         fbId: 1710649235,
-        photoURL: '',
+        photoURL: 'https://fbcdn-sphotos-c-a.akamaihd.net/hphotos-ak-prn2/t1.0-9/1240413_655834227782885_2042754469_n.jpg',
         checkedInCount: 1,
         address1: '1220 Pacific St',
         address2: 'Santa Cruz, CA 95060',
@@ -63,7 +63,7 @@ var stub = {
       {
         name: 'The Rush Inn',
         fbId: 460268814089550, // Alternate: 100000701335606
-        photoURL: '',
+        photoURL: 'https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/1390471_460278620755236_1620332253_n.jpg',
         checkedInCount: 3,
         address1: '113 Knight St',
         address2: 'Santa Cruz, CA 95060',
@@ -112,7 +112,7 @@ var handleLocationChange = function (props) {
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts} handleLove={handleLove}></PostsScreen>
+    <PostsScreen photoURL={props.photoURL} name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts} handleLove={handleLove}></PostsScreen>
   );
 };
 
