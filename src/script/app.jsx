@@ -149,11 +149,12 @@ var handleCreatePost = function (msg, pictureDataURI, refresh) {
     post,
     function () {
       console.log('handleCreatePost success', this, arguments);
-      refresh();
+      window.setTimeout(refresh, 2000); // Todo: WTF, I don't think we should need to do this...
     },
     function (response) {
       console.error('handleCreatePost failure', this, arguments);
-      alert('Todo: Handle createPost error');
+      alert('Todo: Handle createPost error: ' + JSON.stringify(response));
+      refresh();
     }
   );
 };
@@ -163,17 +164,12 @@ var handleLove = function (e, id, refresh) {
 
   e.stopPropagation();
 
-  FB.api(
-    '/' + id + '/likes',
-    'POST',
-    function (response) {
-      if (response === true) {
-        console.log('handleLove response true!', this, arguments);
-        refresh();
-      } else {
-        console.error('boo');
-        alert('Todo: handle this!');
-      }
+  remote.fb.like(
+    id,
+    refresh,
+    function (msg) {
+      console.error('app handleLove: boo', this, arguments);
+      alert('Todo: handleLove error: ' + JSON.stringify(msg));
     }
   );
 };
@@ -184,7 +180,7 @@ var continuePastWelcomeScreen = function(){
   window.removeEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
 
   // todo: remove below testing code; make FTU experience more "welcoming"!
-  if (remote.parse.user.ftu) console.log ('new user!');
+  if (remote.user.ftu) console.log ('new user!');
   else console.log ('returning user!')
 
   app.init();

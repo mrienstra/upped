@@ -1,51 +1,116 @@
 var when = require('when');
 
 var settings = {
-  fbAppId: '637656759644763',
+  fb: {
+    appId: '637656759644763',
+    initialPermissions: ['basic_info', 'email', 'user_likes'],
+    // Asking for publish_* permissions initially using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
+    publishPermissions: ['publish_actions', 'publish_stream'] // todo: both needed?
+  },
   parse: {
     appId: 'LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1',
     jsKey: 'mdKlkB65pfc2CGipijGnRQMuQycXKHCS6ij5TetM'
-  },
-  fbInitialPermissions: [
-    'basic_info', 'email', 'user_likes' //, 'publish_actions', 'publish_stream'
-    // Asking for 'publish_actions' and/or 'publish_stream' using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
-  ]
+  }
 };
 
 var _remote = {
   fb: {
     init: function(){
       FB.init({
-        appId: settings.fbAppId,
+        appId: settings.fb.appId,
         status: true
       });
 
       FB.getLoginStatus(_remote.fb.getLoginStatusCallback);
     },
     getLoginStatusCallback: function (response) {
-      if (response.status === 'connected') {
+      if (response.authResponse) {
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
         remote.login = _remote.fb.login;
 
-        var event = new CustomEvent('fbLoginNeeded');
-        window.dispatchEvent(event);
+        var customEvent = new CustomEvent('fbLoginNeeded');
+        window.dispatchEvent(customEvent);
       }
     },
     login: function(){
       FB.login(
         _remote.fb.loginCallback,
-        {scope: settings.fbInitialPermissions.join(',')}
+        {
+          scope: settings.fb.initialPermissions.join(','),
+          return_scopes: true
+        }
       );
     },
     loginCallback: function (response) {
       console.log('_remote.fb.loginCallback:', response);
 
-      if (response.status === 'connected') {
+      if (response.authResponse) {
+        _remote.fb.updatePermissions(response.authResponse.grantedScopes);
+
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
         console.log('Game over!'); // Todo?
       }
+    },
+    requestPublishPermissions: function (continueCallback, failureCallback) {
+      // Todo: implement `fcp` counterpart
+
+      var stopListening = function(){
+        window.removeEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
+        window.removeEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
+      };
+
+      var fbPublishPermissionsGranted = function(){
+        stopListening();
+
+        continueCallback();
+      };
+
+      var fbPublishPermissionsDenied = function(){
+        stopListening();
+
+        failureCallback('Publish permissions denied');
+      };
+
+      window.addEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
+      window.addEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
+
+      FB.login(
+        _remote.fb.requestPublishPermissionsCallback,
+        {
+          scope: settings.fb.publishPermissions.join(','),
+          return_scopes: true
+        }
+      );
+    },
+    requestPublishPermissionsCallback: function (response) {
+      console.log('_remote.fb.requestPublishPermissionsCallback:', response);
+
+      _remote.fb.updatePermissions(response.authResponse.grantedScopes);
+
+      var eventName = remote.user.fb.publishPermissionsGranted ? 'fbPublishPermissionsGranted' : 'fbPublishPermissionsDenied';
+      var customEvent = new CustomEvent(eventName);
+      window.dispatchEvent(customEvent);
+    },
+    updatePermissions: function (grantedScopes) {
+      if (grantedScopes) {
+        remote.user.fb.permissions = {};
+
+        grantedScopes.split(',').forEach(function (perm) {
+          remote.user.fb.permissions[perm] = 1;
+        });
+      }
+
+      remote.user.fb.initialPermissionsGranted = settings.fb.initialPermissions.every(function (perm) {
+        return remote.user.fb.permissions[perm];
+      });
+
+      remote.user.fb.publishPermissionsGranted = settings.fb.publishPermissions.every(function (perm) {
+        return remote.user.fb.permissions[perm];
+      });
+
+      console.log('_remote.fb.updatePermissions', remote.user.fb);
     }
   },
   fcp: {
@@ -53,18 +118,18 @@ var _remote = {
       facebookConnectPlugin.getLoginStatus(_remote.fcp.getLoginStatusCallback);
     },
     getLoginStatusCallback: function (response) {
-      if (response.status === 'connected') {
+      if (response.authResponse) {
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
         remote.login = _remote.fcp.login;
 
-        var event = new CustomEvent('fbLoginNeeded');
-        window.dispatchEvent(event);
+        var customEvent = new CustomEvent('fbLoginNeeded');
+        window.dispatchEvent(customEvent);
       }
     },
     login: function(){
       facebookConnectPlugin.login(
-        settings.fbInitialPermissions,
+        settings.fb.initialPermissions,
         _remote.fb.loginCallback, // Done with `fcp`-specific code, switching to `fb`
         _remote.fcp.loginFailureCallback
         // Todo: neither callback is invoked when "saying no" to FB login in iOS Simulator.
@@ -89,25 +154,30 @@ var _remote = {
         'expiration_date': myExpDate
       }
 
-      remote.user = {
-        'access_token': authResponse.accessToken,
-      };
+      remote.user.fb.accessToken = authResponse.accessToken;
 
       Parse.FacebookUtils.logIn(facebookAuthData, {
         success: function(_user) {
-          remote.parse.user = _user;
-          remote.parse.user.ftu = _user.existed() ? false : true;
+          remote.user.parse = _user;
+          remote.user.ftu = _user.existed() ? false : true;
 
-          FB.api('/me', function(response) {
-            remote.user.fbId = response.id;
+          if (!remote.user.fb.permissions) {
+            FB.api('/me/permissions', function (response) {
+              remote.user.fb.permissions = response.data[0];
+
+              _remote.fb.updatePermissions();
+            });
+          }
+          FB.api('/me', function (response) {
+            remote.user.fb.id = response.id;
             remote.user.name = response.name;
           });
-          FB.api('/me/picture', function(response) {
+          FB.api('/me/picture', function (response) {
             remote.user.picture = response.data.url;
           });
 
-          var event = new CustomEvent('fbAndParseLoginSuccess');
-          window.dispatchEvent(event);
+          var customEvent = new CustomEvent('fbAndParseLoginSuccess');
+          window.dispatchEvent(customEvent);
         },
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
@@ -195,11 +265,19 @@ var remote = {
       return deferred.promise;
     },
     createPost: function (post, successCallback, failureCallback) {
+      if (!remote.user.fb.publishPermissionsGranted) {
+        var continueCallback = remote.fb.createPost.bind(null, post, successCallback, failureCallback);
+
+        _remote.fb.requestPublishPermissions(continueCallback, failureCallback);
+
+        return;
+      }
+
       if (post.pictureDataURI) {
         blob = _remote.utils.dataURItoBlob(post.pictureDataURI);
 
         var fd = new FormData();
-        fd.append('access_token', remote.user.access_token);
+        fd.append('access_token', remote.user.fb.accessToken);
         fd.append('source', blob);
         fd.append('message', post.message);
 
@@ -212,10 +290,10 @@ var remote = {
           }
 
           if (responseText.error) {
-            console.error('remote.postImageToFacebook reqListener', this.responseText);
+            console.error('remote.fb.createPost reqListener', this.responseText);
             failureCallback.call(this, arguments);
           } else {
-            console.log('remote.postImageToFacebook reqListener', this.responseText);
+            console.log('remote.fb.createPost reqListener', this.responseText);
             successCallback.call(this, arguments);
           }
         };
@@ -245,6 +323,28 @@ var remote = {
           }
         );
       }
+    },
+    like: function (id, successCallback, failureCallback) {
+      if (!remote.user.fb.publishPermissionsGranted) {
+        var continueCallback = remote.fb.like.bind(null, id, successCallback, failureCallback);
+
+        _remote.fb.requestPublishPermissions(continueCallback, failureCallback);
+
+        return;
+      }
+
+
+      FB.api(
+        '/' + id + '/likes',
+        'POST',
+        function (response) {
+          if (response === true) {
+            successCallback();
+          } else {
+            failureCallback(response && response.error && response.error.message);
+          }
+        }
+      );
     }
   },
   login: void 0, // Search for "remote.login" to see usage
@@ -252,13 +352,14 @@ var remote = {
     getUser: function(){
       return Parse.User.current();
     },
-    user: void 0, // Search for "remote.parse.user" to see usage
     userExists: function(){
       if (typeof(parse.getUser()) != 'null') return true;
       else return false;
     }
   },
-  user: void 0 // Search for "remote.user" to see usage
+  user: {
+    fb: {}
+  }
 };
 
 module.exports = remote;
