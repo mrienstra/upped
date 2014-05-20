@@ -3,20 +3,17 @@
 var React = require('react/addons');
 
 var ProfileScreen = React.createClass({
-  getInitialState: function() {
-    return {};
-  },
   render: function(){
     var i, l, userLikes;
-    l = user.fb.likes && user.fb.likes.length;
+    l = this.props.user.fb.likes && this.props.user.fb.likes.length;
     if (l) {
       l = l > 5 ? 5 : l; // limit to 5
       userLikes = [];
       for (i = 0; i < l; i++) {
         userLikes.push(
           <div>
-            <img src={user.fb.likes[i].picture} />
-            <p>{user.fb.likes[i].name}</p>
+            <img src={this.props.user.fb.likes[i].picture} />
+            <p>{this.props.user.fb.likes[i].name}</p>
           </div>
         );
       }
