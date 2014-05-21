@@ -129,10 +129,21 @@ var handleProfileChange = function (props) {
 var handlePostChange = function (props) {
   console.log('handlePostChange', this, arguments);
 
+  var getPost = remote.fb.getPost.bind(remote.fb, props.id);
+
+  var post = {
+    comments: props.comments,
+    from: props.from,
+    id: props.id,
+    likes: props.likes,
+    post: props.post,
+    time: props.time
+  };
+
   var PostScreen = require('./screen/post.jsx');
 
   app.screens.addScreen(
-    <PostScreen location={props.location} from={props.from} time={props.time} post={props.post} likes={props.likes} comments={props.comments} user={remote.user} handleBack={handleBack}></PostScreen>
+    <PostScreen location={props.location} post={post} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleLove={handleLove}></PostScreen>
   );
 };
 

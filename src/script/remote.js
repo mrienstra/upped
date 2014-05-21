@@ -3,9 +3,12 @@ var when = require('when');
 var settings = {
   fb: {
     appId: '637656759644763',
-    initialPermissions: ['basic_info', 'email', 'user_likes'],
-    // Asking for publish_* permissions initially using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
-    publishPermissions: ['publish_actions', 'publish_stream'] // todo: both needed?
+    permissions: {
+      initial: ['basic_info', 'email', 'user_likes'],
+      // Asking for publish_* permissions initially using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
+      publish: ['publish_actions', 'publish_stream'] // todo: both needed?
+    },
+    postFields: 'from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,message,like_count,user_likes)'
   },
   parse: {
     appId: 'LoWKxsvTNtpAOKqOiPE6PjfdYomvLqBRskF299s1',
@@ -23,6 +26,35 @@ var _remote = {
 
       FB.getLoginStatus(_remote.fb.getLoginStatusCallback);
     },
+    formatPost: function (post) {
+      return {
+        id: post.id,
+        from: {
+          picture: post.from.picture.data.url,
+          name: post.from.name
+        },
+        time: post.created_time,
+        post: {
+          message: post.message,
+          story: post.story,
+          picture: post.picture,
+          link: post.link
+        },
+        likes: post.likes && post.likes.data,
+        comments: (!post.comments || !post.comments.data.length) ? [] : post.comments.data.map(function (comment) {
+          return {
+            from: {
+              picture: comment.from.picture.data.url,
+              name: comment.from.name,
+            },
+            time: comment.created_time,
+            message: comment.message,
+            likes: comment.like_count,
+            liked: comment.user_likes
+          }
+        })
+      };
+    },
     getLoginStatusCallback: function (response) {
       if (response.authResponse) {
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
@@ -33,11 +65,46 @@ var _remote = {
         window.dispatchEvent(customEvent);
       }
     },
+    getPostOrPosts: function(fbId, justOne) {
+      var deferred = when.defer();
+
+      var fbURL;
+      if (justOne) {
+        fbURL = fbId + '?fields=' + settings.fb.postFields
+      } else {
+        fbURL = fbId + '/tagged?fields=' + settings.fb.postFields
+      }
+
+      FB.api(
+        fbURL,
+        'GET',
+        function(response){
+          console.log('_remote.fb.getPostOrPosts response', response);
+          if (response && !response.error) {
+            var output;
+
+            if (justOne) {
+              output = _remote.fb.formatPost(response);
+            } else {
+              output = response.data.map(function (post) {
+                return _remote.fb.formatPost(post);
+              });
+            }
+
+            deferred.resolve(output);
+          } else {
+            deferred.reject(response);
+          }
+        }
+      );
+
+      return deferred.promise;
+    },
     login: function(){
       FB.login(
         _remote.fb.loginCallback,
         {
-          scope: settings.fb.initialPermissions.join(','),
+          scope: settings.fb.permissions.initial.join(','),
           return_scopes: true
         }
       );
@@ -79,7 +146,7 @@ var _remote = {
       FB.login(
         _remote.fb.requestPublishPermissionsCallback,
         {
-          scope: settings.fb.publishPermissions.join(','),
+          scope: settings.fb.permissions.publish.join(','),
           return_scopes: true
         }
       );
@@ -102,11 +169,11 @@ var _remote = {
         });
       }
 
-      remote.user.fb.initialPermissionsGranted = settings.fb.initialPermissions.every(function (perm) {
+      remote.user.fb.initialPermissionsGranted = settings.fb.permissions.initial.every(function (perm) {
         return remote.user.fb.permissions[perm];
       });
 
-      remote.user.fb.publishPermissionsGranted = settings.fb.publishPermissions.every(function (perm) {
+      remote.user.fb.publishPermissionsGranted = settings.fb.permissions.publish.every(function (perm) {
         return remote.user.fb.permissions[perm];
       });
 
@@ -129,7 +196,7 @@ var _remote = {
     },
     login: function(){
       facebookConnectPlugin.login(
-        settings.fb.initialPermissions,
+        settings.fb.permissions.initial,
         _remote.fb.loginCallback, // Done with `fcp`-specific code, switching to `fb`
         _remote.fcp.loginFailureCallback
         // Todo: neither callback is invoked when "saying no" to FB login in iOS Simulator.
@@ -227,53 +294,13 @@ var remote = {
     }
   },
   fb: {
+    getPost: function(fbId) {
+      console.log('remote.fb.getPost', this, arguments);
+      return _remote.fb.getPostOrPosts(fbId, true);
+    },
     getPosts: function(fbId) {
-      console.log('remote.getPosts', this, arguments);
-      var deferred = when.defer();
-      FB.api(
-        fbId + '/tagged?fields=from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,message,like_count,user_likes)',
-        'GET',
-        function(response){
-          console.log('remote.getPosts response', response);
-          if (response && !response.error) {
-            var posts = response.data.map(function (post) {
-              return {
-                id: post.id,
-                from: {
-                  picture: post.from.picture.data.url,
-                  name: post.from.name
-                },
-                time: post.created_time,
-                post: {
-                  message: post.message,
-                  story: post.story,
-                  picture: post.picture,
-                  link: post.link
-                },
-                likes: post.likes && post.likes.data,
-                comments: (!post.comments || !post.comments.data.length) ? [] : post.comments.data.map(function (comment) {
-                  return {
-                    from: {
-                      picture: comment.from.picture.data.url,
-                      name: comment.from.name,
-                    },
-                    time: comment.created_time,
-                    message: comment.message,
-                    likes: comment.like_count,
-                    liked: comment.user_likes
-                  }
-                })
-              };
-            });
-
-            deferred.resolve(posts);
-          } else {
-            deferred.reject(response);
-          }
-        }
-      );
-
-      return deferred.promise;
+      console.log('remote.fb.getPosts', this, arguments);
+      return _remote.fb.getPostOrPosts(fbId, false);
     },
     createPost: function (post, successCallback, failureCallback) {
       if (!remote.user.fb.publishPermissionsGranted) {

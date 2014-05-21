@@ -1,50 +1,20 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
-var moment = require('moment');
 
+var utils = require('../utils');
 var camera = require('../camera.js');
 
+var loveMixin = require('../mixin/love.jsx');
+
 var PostsListItem = React.createClass({
-  getInitialState: function(){
-    return {
-      pendingLoveChange: false
-    };
-  },
-  handleLove: function (e) {
-    var that = this;
-
-    e.stopPropagation();
-
-    this.setState({
-      pendingLoveChange: true
-    });
-
-    this.props.handleLove(this.props.id, this.props.userLoves, this.props.refresh);
-  },
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      pendingLoveChange: false
-    });
-  },
+  mixins: [loveMixin],
   render: function(){
-    var that = this;
-
     var commentCount = this.props.comments.length;
 
-    var time = moment(this.props.time);
-    if (time.isValid()) {
-      time = time.fromNow();
-    } else {
-      time = this.props.time;
-    }
+    var likeCount = this.props.likes ? this.props.likes.length : '';
 
-    var userLoves = this.props.userLoves;
-    if (this.state.pendingLoveChange) {
-      userLoves = !userLoves;
-    }
-
-    var heartClasses = userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
+    var heartClasses = this.state.userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
     if (this.state.pendingLoveChange) {
       heartClasses += ' pending';
     }
@@ -60,10 +30,10 @@ var PostsListItem = React.createClass({
           <div className="details">
             <img src={this.props.from.picture} />
             <h4>{this.props.from.name}</h4>
-            <div className="time">{time}</div>
+            <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
             <div className="stats">
               <span className="likes">
-                <span className="count">{this.props.likeCount}</span>
+                <span className="count">{likeCount}</span>
                 <span className={heartClasses} onTouchEnd={this.handleLove}></span>
               </span>
               <span className="comments">
@@ -83,7 +53,7 @@ var PostsListItem = React.createClass({
 
 var PostsList = React.createClass({
   render: function(){
-    var that = this;
+    var props = this.props;
     var postsNodes;
     if (this.props.status === 'loading') {
       postsNodes = (
@@ -95,20 +65,18 @@ var PostsList = React.createClass({
       );
     } else {
       postsNodes = this.props.posts.map(function (post, index) {
-        var likeCount = post.likes ? post.likes.length : '';
-
-        var userLoves = post.likes && post.likes.some(function (like) {
-          return like.id === that.props.user.fb.id;
+        var userLoves = !!post.likes && post.likes.some(function (like) {
+          return like.id === props.userFbId;
         });
 
-        return <PostsListItem key={index} id={post.id} handlePostChange={that.props.handlePostChange} from={post.from} time={post.time} post={post.post} likeCount={likeCount} userLoves={userLoves} comments={post.comments} handleLove={that.props.handleLove} refresh={that.props.refresh}></PostsListItem>;
+        return <PostsListItem key={index} id={post.id} handlePostChange={props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} userLoves={userLoves} comments={post.comments} handleLove={props.handleLove} refresh={props.refresh}></PostsListItem>;
       });
     }
     return (
-        <ul className="table-view posts-list">
-          <li className="table-view-cell table-view-divider">Recent Activity</li>
-          {postsNodes}
-        </ul>
+      <ul className="table-view posts-list">
+        <li className="table-view-cell table-view-divider">Recent Activity</li>
+        {postsNodes}
+      </ul>
     );
   }
 });
@@ -313,7 +281,7 @@ var PostsScreen = React.createClass({
 
           {promotion}
 
-          <PostsList posts={posts} status={this.state.status} user={this.props.user} handlePostChange={this.props.handlePostChange} handleLove={this.props.handleLove} refresh={this.refresh}></PostsList>
+          <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handlePostChange={this.props.handlePostChange} handleLove={this.props.handleLove} refresh={this.refresh}></PostsList>
         </div>
         <PostToolbar handlePostSubmit={this.handlePostSubmit}></PostToolbar>
       </div>
