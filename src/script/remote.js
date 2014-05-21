@@ -228,13 +228,14 @@ var _remote = {
           remote.user.parse = _user;
           remote.user.ftu = _user.existed() ? false : true;
 
-          var meFields = 'name,picture,cover';
+          var meFields = 'name,first_name,picture,cover';
           if (!remote.user.fb.permissions) {
             meFields += ',permissions';
           }
           FB.api('/me?fields=' + meFields, function (response) {
             remote.user.fb.id = response.id;
             remote.user.name = response.name;
+            remote.user.firstName = response.first_name;
             remote.user.picture = response.picture.data.url;
             remote.user.cover = response.cover.source;
 

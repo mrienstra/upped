@@ -5,13 +5,18 @@ var React = require('react/addons');
 var ProfileScreen = React.createClass({
   render: function(){
     var i, l, userLikes;
+
+    var viewingSelf = this.props.user.fb.id === this.props.viewingUser.fb.id;
+
+    var title = viewingSelf ? 'My Profile' : this.props.user.firstName + '’s Profile';
+
     l = this.props.user.fb.likes && this.props.user.fb.likes.length;
     if (l) {
       l = l > 5 ? 5 : l; // limit to 5
       userLikes = [];
       for (i = 0; i < l; i++) {
         userLikes.push(
-          <div>
+          <div key={i}>
             <img src={this.props.user.fb.likes[i].picture} />
             <p>{this.props.user.fb.likes[i].name}</p>
           </div>
@@ -24,7 +29,7 @@ var ProfileScreen = React.createClass({
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>
           <a className="btn btn-link btn-nav pull-right" onTouchEnd={function(){alert('Todo');}}>Edit</a>
-          <h1 className="title">My Profile</h1>
+          <h1 className="title">{title}</h1>
         </header>
 
           <div className="content">

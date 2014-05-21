@@ -122,7 +122,7 @@ var handleProfileChange = function (props) {
   var ProfileScreen = require('./screen/profile.jsx');
 
   app.screens.addScreen(
-    <ProfileScreen user={props.user} handleBack={handleBack}></ProfileScreen>
+    <ProfileScreen user={props.user} viewingUser={remote.user} handleBack={handleBack}></ProfileScreen>
   );
 };
 
