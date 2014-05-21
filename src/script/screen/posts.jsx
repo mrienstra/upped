@@ -14,10 +14,7 @@ var PostsListItem = React.createClass({
 
     var likeCount = this.adjustLikeCount(this.props.likes ? this.props.likes.length : 0);
 
-    var heartClasses = this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
-    if (this.state.pendingLikeChange) {
-      heartClasses += ' pending';
-    }
+    var likeClasses  = this.calculateLikeClasses();
 
     var picture;
     if (this.props.post.picture) {
@@ -33,8 +30,8 @@ var PostsListItem = React.createClass({
             <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
             <div className="stats">
               <span className="likes">
-                <span className="count">{likeCount}</span>
-                <span className={heartClasses} onTouchEnd={this.handleLike}></span>
+                <span className={likeClasses.count}>{likeCount}</span>
+                <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
               </span>
               <span className="comments">
                 <span className="count">{commentCount ? commentCount : ''}</span>

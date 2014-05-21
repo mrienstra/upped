@@ -387,12 +387,12 @@ header.bar-nav {
       color: $text-active-color;
       padding: 0 .2rem 0 .5rem;
       @include font-size(20);
-      &.pending {
-        -webkit-animation: pulse 1.5s infinite ease-in-out;
-      }
     }
     .icon:first-child {
       padding-left: 0;
+    }
+    .count.pending, .icon.pending {
+      -webkit-animation: pulse 1.5s infinite ease-in-out;
     }
   }
   .copy {

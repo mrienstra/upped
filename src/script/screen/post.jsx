@@ -11,10 +11,7 @@ var CommentListItem = React.createClass({
   render: function() {
     var likeCount = this.adjustLikeCount(this.props.likeCount);
 
-    var heartClasses = this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
-    if (this.state.pendingLikeChange) {
-      heartClasses += ' pending';
-    }
+    var likeClasses  = this.calculateLikeClasses();
 
     return (
       <li className="table-view-cell posts-list">
@@ -24,8 +21,8 @@ var CommentListItem = React.createClass({
           <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
           <div className="stats">
             <span className="likes">
-              <span className="count">{likeCount}</span>
-              <span className={heartClasses} onTouchEnd={this.handleLike}></span>
+              <span className={likeClasses.count}>{likeCount}</span>
+              <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
             </span>
           </div>
         </div>
@@ -45,10 +42,7 @@ var PostSingle = React.createClass({
 
     var likeCount = this.adjustLikeCount(post.likes ? post.likes.length : 0);
 
-    var heartClasses = this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
-    if (this.state.pendingLikeChange) {
-      heartClasses += ' pending';
-    }
+    var likeClasses  = this.calculateLikeClasses();
 
     var commentCount = post.comments.length;
 
@@ -65,8 +59,8 @@ var PostSingle = React.createClass({
             <div className="time">{utils.momentFromNowIfTime(post.time)}</div>
             <div className="stats">
               <span className="likes">
-                <span className="count">{likeCount}</span>
-                <span className={heartClasses} onTouchEnd={this.handleLike}></span>
+                <span className={likeClasses.count}>{likeCount}</span>
+                <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
               </span>
               <span className="comments">
                 <span className="count">{commentCount ? commentCount : ''}</span>
@@ -107,6 +101,7 @@ var PostScreen = React.createClass({
           post: post
         });
 
+        // Todo: this does not need to be called when liking/unliking a comment, as comment likes are not displayed on `PostsScreen`.
         that.props.refreshPosts();
       },
       function(response){
