@@ -112,7 +112,7 @@ var handleLocationChange = function (props) {
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen photoURL={props.photoURL} name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts} handleLove={handleLove}></PostsScreen>
+    <PostsScreen photoURL={props.photoURL} name={props.name} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike}></PostsScreen>
   );
 };
 
@@ -143,7 +143,7 @@ var handlePostChange = function (props) {
   var PostScreen = require('./screen/post.jsx');
 
   app.screens.addScreen(
-    <PostScreen location={props.location} post={post} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleLove={handleLove}></PostScreen>
+    <PostScreen location={props.location} post={post} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleLike={handleLike}></PostScreen>
   );
 };
 
@@ -172,16 +172,16 @@ var handleCreatePost = function (msg, pictureDataURI, refresh) {
   );
 };
 
-var handleLove = function (id, userLoves, refresh) {
-  console.log('handleLove', this, arguments);
+var handleLike = function (id, userLikes, refresh) {
+  console.log('handleLike', this, arguments);
 
   remote.fb.like(
     id,
-    userLoves,
+    userLikes,
     refresh,
     function (msg) {
-      console.error('app handleLove: boo', this, arguments);
-      alert('Todo: handleLove error: ' + JSON.stringify(msg));
+      console.error('app handleLike: boo', this, arguments);
+      alert('Todo: handleLike error: ' + JSON.stringify(msg));
     }
   );
 };

@@ -43,14 +43,15 @@ var _remote = {
         likes: post.likes && post.likes.data,
         comments: (!post.comments || !post.comments.data.length) ? [] : post.comments.data.map(function (comment) {
           return {
+            id: comment.id,
             from: {
               picture: comment.from.picture.data.url,
               name: comment.from.name,
             },
             time: comment.created_time,
             message: comment.message,
-            likes: comment.like_count,
-            liked: comment.user_likes
+            likeCount: comment.like_count,
+            userLikes: comment.user_likes
           }
         })
       };

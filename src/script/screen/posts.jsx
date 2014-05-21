@@ -5,17 +5,17 @@ var React = require('react/addons');
 var utils = require('../utils');
 var camera = require('../camera.js');
 
-var loveMixin = require('../mixin/love.jsx');
+var likeMixin = require('../mixin/like.jsx');
 
 var PostsListItem = React.createClass({
-  mixins: [loveMixin],
+  mixins: [likeMixin],
   render: function(){
     var commentCount = this.props.comments.length;
 
-    var likeCount = this.props.likes ? this.props.likes.length : '';
+    var likeCount = this.adjustLikeCount(this.props.likes ? this.props.likes.length : 0);
 
-    var heartClasses = this.state.userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
-    if (this.state.pendingLoveChange) {
+    var heartClasses = this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
+    if (this.state.pendingLikeChange) {
       heartClasses += ' pending';
     }
 
@@ -34,7 +34,7 @@ var PostsListItem = React.createClass({
             <div className="stats">
               <span className="likes">
                 <span className="count">{likeCount}</span>
-                <span className={heartClasses} onTouchEnd={this.handleLove}></span>
+                <span className={heartClasses} onTouchEnd={this.handleLike}></span>
               </span>
               <span className="comments">
                 <span className="count">{commentCount ? commentCount : ''}</span>
@@ -65,11 +65,11 @@ var PostsList = React.createClass({
       );
     } else {
       postsNodes = this.props.posts.map(function (post, index) {
-        var userLoves = !!post.likes && post.likes.some(function (like) {
+        var userLikes = !!post.likes && post.likes.some(function (like) {
           return like.id === props.userFbId;
         });
 
-        return <PostsListItem key={index} id={post.id} handlePostChange={props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} userLoves={userLoves} comments={post.comments} handleLove={props.handleLove} refresh={props.refresh}></PostsListItem>;
+        return <PostsListItem key={index} id={post.id} handlePostChange={props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} userLikes={userLikes} comments={post.comments} handleLike={props.handleLike} refresh={props.refresh}></PostsListItem>;
       });
     }
     return (
@@ -281,7 +281,7 @@ var PostsScreen = React.createClass({
 
           {promotion}
 
-          <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handlePostChange={this.props.handlePostChange} handleLove={this.props.handleLove} refresh={this.refresh}></PostsList>
+          <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handlePostChange={this.props.handlePostChange} handleLike={this.props.handleLike} refresh={this.refresh}></PostsList>
         </div>
         <PostToolbar handlePostSubmit={this.handlePostSubmit}></PostToolbar>
       </div>

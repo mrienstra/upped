@@ -4,16 +4,30 @@ var React = require('react/addons');
 
 var utils = require('../utils');
 
-var loveMixin = require('../mixin/love.jsx');
+var likeMixin = require('../mixin/like.jsx');
 
 var CommentListItem = React.createClass({
+  mixins: [likeMixin],
   render: function() {
+    var likeCount = this.adjustLikeCount(this.props.likeCount);
+
+    var heartClasses = this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
+    if (this.state.pendingLikeChange) {
+      heartClasses += ' pending';
+    }
+
     return (
       <li className="table-view-cell posts-list">
         <div className="details">
           <img src={this.props.from.picture} />
           <h4>{this.props.from.name}</h4>
           <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
+          <div className="stats">
+            <span className="likes">
+              <span className="count">{likeCount}</span>
+              <span className={heartClasses} onTouchEnd={this.handleLike}></span>
+            </span>
+          </div>
         </div>
         <div className="copy">
           <p>{this.props.message}</p>
@@ -24,21 +38,22 @@ var CommentListItem = React.createClass({
 });
 
 var PostSingle = React.createClass({
-  mixins: [loveMixin],
-  render: function() {
+  mixins: [likeMixin],
+  render: function(){
+    var that = this;
     var post = this.props.post;
 
-    var likeCount = post.likes ? post.likes.length : '';
+    var likeCount = this.adjustLikeCount(post.likes ? post.likes.length : 0);
 
-    var heartClasses = this.state.userLoves ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
-    if (this.state.pendingLoveChange) {
+    var heartClasses = this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline';
+    if (this.state.pendingLikeChange) {
       heartClasses += ' pending';
     }
 
     var commentCount = post.comments.length;
 
     var commentsNodes = post.comments.map(function (comment, index) {
-      return <CommentListItem key={index} from={comment.from} time={comment.time} message={comment.message} likes={comment.likes} liked={comment.liked}></CommentListItem>;
+      return <CommentListItem key={index} id={comment.id} from={comment.from} time={comment.time} message={comment.message} likeCount={comment.likeCount} userLikes={comment.userLikes} refresh={that.props.refresh} handleLike={that.props.handleLike}></CommentListItem>;
     });
     return (
       <ul className="table-view posts-list">
@@ -48,8 +63,16 @@ var PostSingle = React.createClass({
             <img src={post.from.picture} />
             <h4>{post.from.name}</h4>
             <div className="time">{utils.momentFromNowIfTime(post.time)}</div>
-            <div className="stats"><span className="likes"><span className="count">{likeCount}</span><span className={heartClasses}></span></span>
-              <span className="comments"><span className="count">{commentCount ? commentCount : ' '}</span><span className="icon ion-ios7-chatboxes-outline"></span></span></div>
+            <div className="stats">
+              <span className="likes">
+                <span className="count">{likeCount}</span>
+                <span className={heartClasses} onTouchEnd={this.handleLike}></span>
+              </span>
+              <span className="comments">
+                <span className="count">{commentCount ? commentCount : ''}</span>
+                <span className="icon ion-ios7-chatboxes-outline"></span>
+              </span>
+            </div>
           </div>
           <div className="copy">
             <p className={post.post.story ? 'emotes' : ''}>{post.post.story ? post.post.story : post.post.message}</p>
@@ -57,7 +80,7 @@ var PostSingle = React.createClass({
         </li>
         <li className="table-view-cell table-view-divider">
           <div className="copy">
-            <div className="buttons"><a className="btn" onTouchEnd={this.handleLove}><span className="icon ion-heart"></span> Like</a> <a className="btn"><span className="icon ion-chatbubble"></span> Comment</a> <a className="btn"><span className="icon ion-beer"></span> Gift</a></div>
+            <div className="buttons"><a className="btn" onTouchEnd={this.handleLike}><span className="icon ion-heart"></span> Like</a> <a className="btn"><span className="icon ion-chatbubble"></span> Comment</a> <a className="btn"><span className="icon ion-beer"></span> Gift</a></div>
           </div>
         </li>
         {commentsNodes}
@@ -109,7 +132,7 @@ var PostScreen = React.createClass({
 
     var post = this.state.post ? this.state.post : this.props.post;
 
-    var userLoves = !!post.likes && post.likes.some(function (like) {
+    var userLikes = !!post.likes && post.likes.some(function (like) {
       return like.id === userFbId;
     });
 
@@ -126,7 +149,7 @@ var PostScreen = React.createClass({
         </div>
 
         <div className="content">
-          <PostSingle id={post.id} post={post} userLoves={userLoves} refresh={this.refresh} handleLove={this.props.handleLove}></PostSingle>
+          <PostSingle id={post.id} post={post} userLikes={userLikes} refresh={this.refresh} handleLike={this.props.handleLike}></PostSingle>
         </div>
       </div>
     );
