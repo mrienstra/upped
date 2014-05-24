@@ -12,8 +12,6 @@ var PostsListItem = React.createClass({
   render: function(){
     var commentCount = this.props.comments.length;
 
-    var likeCount = this.adjustLikeCount(this.props.likes ? this.props.likes.length : 0);
-
     var likeClasses  = this.calculateLikeClasses();
 
     var picture;
@@ -30,7 +28,7 @@ var PostsListItem = React.createClass({
             <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
             <div className="stats">
               <span className="likes">
-                <span className={likeClasses.count}>{likeCount}</span>
+                <span className={likeClasses.count}>{this.state.likeCount || ''}</span>
                 <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
               </span>
               <span className="comments">
@@ -62,11 +60,13 @@ var PostsList = React.createClass({
       );
     } else {
       postsNodes = this.props.posts.map(function (post, index) {
+        var likeCount = post.likes ? post.likes.length : 0;
+
         var userLikes = !!post.likes && post.likes.some(function (like) {
           return like.id === props.userFbId;
         });
 
-        return <PostsListItem key={index} id={post.id} handlePostChange={props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} userLikes={userLikes} comments={post.comments} handleLike={props.handleLike} refresh={props.refresh}></PostsListItem>;
+        return <PostsListItem key={index} id={post.id} handlePostChange={props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} likeCount={likeCount} userLikes={userLikes} comments={post.comments} handleLike={props.handleLike} refresh={props.refresh}></PostsListItem>;
       });
     }
     return (

@@ -9,8 +9,6 @@ var likeMixin = require('../mixin/like.jsx');
 var CommentListItem = React.createClass({
   mixins: [likeMixin],
   render: function() {
-    var likeCount = this.adjustLikeCount(this.props.likeCount);
-
     var likeClasses  = this.calculateLikeClasses();
 
     return (
@@ -21,7 +19,7 @@ var CommentListItem = React.createClass({
           <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
           <div className="stats">
             <span className="likes">
-              <span className={likeClasses.count}>{likeCount}</span>
+              <span className={likeClasses.count}>{this.state.likeCount || ''}</span>
               <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
             </span>
           </div>
@@ -40,8 +38,6 @@ var PostSingle = React.createClass({
     var that = this;
     var post = this.props.post;
 
-    var likeCount = this.adjustLikeCount(post.likes ? post.likes.length : 0);
-
     var likeClasses  = this.calculateLikeClasses();
 
     var commentCount = post.comments.length;
@@ -59,7 +55,7 @@ var PostSingle = React.createClass({
             <div className="time">{utils.momentFromNowIfTime(post.time)}</div>
             <div className="stats">
               <span className="likes">
-                <span className={likeClasses.count}>{likeCount}</span>
+                <span className={likeClasses.count}>{this.state.likeCount || ''}</span>
                 <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
               </span>
               <span className="comments">
@@ -127,6 +123,8 @@ var PostScreen = React.createClass({
 
     var post = this.state.post ? this.state.post : this.props.post;
 
+    var likeCount = post.likes ? post.likes.length : 0;
+
     var userLikes = !!post.likes && post.likes.some(function (like) {
       return like.id === userFbId;
     });
@@ -144,7 +142,7 @@ var PostScreen = React.createClass({
         </div>
 
         <div className="content">
-          <PostSingle id={post.id} post={post} userLikes={userLikes} refresh={this.refresh} handleLike={this.props.handleLike}></PostSingle>
+          <PostSingle id={post.id} post={post} likeCount={likeCount} userLikes={userLikes} refresh={this.refresh} handleLike={this.props.handleLike}></PostSingle>
         </div>
       </div>
     );

@@ -265,6 +265,7 @@ var _remote = {
       });
     }
   },
+  pending: {},
   utils: {
     dataURItoBlob: function (dataURI) {
       var mime = dataURI.split(';')[0].split(':')[1];
@@ -284,7 +285,7 @@ var _remote = {
 
 
 var remote = {
-  init: function (successCallback, failureCallback) {
+  init: function () {
     if (window.cordova) {
       document.addEventListener('deviceready', _remote.fcp.init, false);
     } else {
@@ -364,26 +365,50 @@ var remote = {
         );
       }
     },
-    like: function (id, unlike, successCallback, failureCallback) {
+    like: function (id, isLike, successCallback, failureCallback) {
       if (!remote.user.fb.publishPermissionsGranted) {
-        var continueCallback = remote.fb.like.bind(null, id, successCallback, failureCallback);
+        var continueCallback = remote.fb.like.bind(null, id, isLike, successCallback, failureCallback);
 
         _remote.fb.requestPublishPermissions(continueCallback, failureCallback);
 
         return;
       }
 
-      var method = unlike ? 'DELETE' : 'POST';
+      var p = _remote.pending;
+      if (p.fbCreatePost) {
+        if (p.fbCreatePost.toggleBackCallback) {
+          // 2 pending "toggle backs" make a "Do nothing"
+          p.fbCreatePost = void 0;
+          return;
+        } else if (p.fbCreatePost.pending === true) {
+          // There's something pending, we want to "toggle back" when it's done
+          p.fbCreatePost.toggleBackCallback = remote.fb.like.bind(null, id, isLike, successCallback, failureCallback);
+          return;
+        }
+      }
+
+      p.fbCreatePost = { pending: true };
+
+      var method = isLike ? 'POST' : 'DELETE';
 
       FB.api(
         '/' + id + '/likes',
         method,
         function (response) {
           if (response === true) {
-            successCallback();
+            if (p.fbCreatePost && p.fbCreatePost.toggleBackCallback) {
+              // There's a toggleBackCallback, call it
+              var continueCallback = p.fbCreatePost.toggleBackCallback;
+              p.fbCreatePost = void 0;
+              continueCallback();
+            } else {
+              // All done!
+              successCallback();
+            }
           } else {
             failureCallback(response && response.error && response.error.message);
           }
+          p.fbCreatePost = void 0;
         }
       );
     }

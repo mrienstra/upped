@@ -3,6 +3,7 @@
 var likeMixin = {
   getInitialState: function(){
     return {
+      likeCount: this.props.likeCount,
       pendingLikeChange: false,
       userLikes: this.props.userLikes
     };
@@ -10,17 +11,9 @@ var likeMixin = {
   propTypes: {
     handleLike: React.PropTypes.func.isRequired,
     id: React.PropTypes.string.isRequired,
+    likeCount: React.PropTypes.number.isRequired,
     refresh: React.PropTypes.func.isRequired,
     userLikes: React.PropTypes.bool.isRequired
-  },
-  adjustLikeCount: function (likeCount) {
-    if (this.state.pendingLikeChange) {
-      likeCount += this.state.userLikes ? 1 : -1;
-    }
-
-    if (likeCount === 0) likeCount = '';
-
-    return likeCount;
   },
   calculateLikeClasses: function(){
     var likeClasses = {
@@ -36,19 +29,21 @@ var likeMixin = {
     return likeClasses;
   },
   handleLike: function (e) {
-    var that = this;
-
     e.stopPropagation();
 
+    var newUserLikes = !this.state.userLikes;
+
     this.setState({
+      likeCount: this.state.likeCount += newUserLikes ? 1 : -1,
       pendingLikeChange: true,
-      userLikes: !this.state.userLikes
+      userLikes: newUserLikes
     });
 
-    this.props.handleLike(this.props.id, this.props.userLikes, this.props.refresh);
+    this.props.handleLike(this.props.id, newUserLikes, this.props.refresh);
   },
   componentWillReceiveProps: function(nextProps) {
     this.setState({
+      likeCount: nextProps.likeCount,
       pendingLikeChange: false,
       userLikes: nextProps.userLikes
     });
