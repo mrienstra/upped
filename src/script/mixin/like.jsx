@@ -31,15 +31,35 @@ var likeMixin = {
   handleLike: function (e) {
     e.stopPropagation();
 
+    var that = this;
+
     var newUserLikes = !this.state.userLikes;
 
     this.setState({
-      likeCount: this.state.likeCount += newUserLikes ? 1 : -1,
+      likeCount: this.state.likeCount + (newUserLikes ? 1 : -1),
       pendingLikeChange: true,
       userLikes: newUserLikes
     });
 
-    this.props.handleLike(this.props.id, newUserLikes, this.props.refresh);
+    var onSuccess = function(){
+      that.setState({
+        pendingLikeChange: false
+      });
+    };
+
+    var onFailure = function (msg) {
+      alert('Todo: likeMixin handleLike onFailure: ' + JSON.stringify(msg));
+
+      var newUserLikes = !that.state.userLikes;
+
+      that.setState({
+        likeCount: that.state.likeCount + (newUserLikes ? 1 : -1),
+        pendingLikeChange: false,
+        userLikes: newUserLikes
+      });
+    };
+
+    this.props.handleLike(this.props.id, newUserLikes, onSuccess, onFailure);
   },
   componentWillReceiveProps: function(nextProps) {
     this.setState({

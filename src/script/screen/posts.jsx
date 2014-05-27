@@ -194,7 +194,10 @@ var PostsScreen = React.createClass({
   handlePostSubmit: function (msg, pictureDataURI) {
     console.log('PostsScreen handlePostSubmit', this, arguments);
 
+    var that = this;
+
     var pendingPost = {
+      id: '',
       from: {
         // todo: handle `this.props.user` not being available
         picture: this.props.user.picture,
@@ -207,14 +210,43 @@ var PostsScreen = React.createClass({
       comments:[]
     };
 
-    var posts = this.state.posts;
-    var newPosts = [pendingPost].concat(posts);
+    var newPosts = [pendingPost].concat(this.state.posts);
     this.setState({posts: newPosts});
+
+    var onSuccess = function (response) {
+      console.log('PostsScreen handlePostSubmit onSuccess', this, arguments, response.id);
+
+      var newPosts = that.state.posts.concat();
+      if (newPosts.some(function (post, i) {
+        if (post.post.message === msg && post.time === 'pending') {
+          newPosts[i].time = 'a few seconds ago'; // Same as `moment().fromNow()`
+          newPosts[i].id = response.id;
+          return true;
+        }
+      })) {
+        that.setState({posts: newPosts});
+      }
+    };
+
+    var onFailure = function (response) {
+      alert('Todo: PostsScreen handlePostSubmit error: ' + JSON.stringify(response));
+
+      var newPosts = that.state.posts.concat();
+      if (newPosts.some(function (post, i) {
+        if (post.post.message === msg && post.time === 'pending') {
+          newPosts.splice(i, 1);
+          return true;
+        }
+      })) {
+        that.setState({posts: newPosts});
+      }
+    };
 
     this.props.handleCreatePost(
       msg,
       pictureDataURI,
-      this.refresh
+      onSuccess,
+      onFailure
     );
   },
   refresh: function(){

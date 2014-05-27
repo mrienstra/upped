@@ -1,5 +1,7 @@
 var when = require('when');
 
+var asyncToggle = require('./asyncToggle');
+
 var settings = {
   fb: {
     appId: '637656759644763',
@@ -366,49 +368,28 @@ var remote = {
       }
     },
     like: function (id, isLike, successCallback, failureCallback) {
+      var continueCallback = remote.fb.like.bind(null, id, isLike, successCallback, failureCallback);
+
       if (!remote.user.fb.publishPermissionsGranted) {
-        var continueCallback = remote.fb.like.bind(null, id, isLike, successCallback, failureCallback);
-
         _remote.fb.requestPublishPermissions(continueCallback, failureCallback);
-
         return;
       }
 
-      var p = _remote.pending;
-      if (p.fbCreatePost) {
-        if (p.fbCreatePost.toggleBackCallback) {
-          // 2 pending "toggle backs" make a "Do nothing"
-          p.fbCreatePost = void 0;
-          return;
-        } else if (p.fbCreatePost.pending === true) {
-          // There's something pending, we want to "toggle back" when it's done
-          p.fbCreatePost.toggleBackCallback = remote.fb.like.bind(null, id, isLike, successCallback, failureCallback);
-          return;
-        }
+      var statusAndCallbacks = asyncToggle.getStatusAndCallbacks('fbCreatePost' + id, continueCallback, successCallback, failureCallback);
+
+      if (!statusAndCallbacks.continue) {
+        return;
       }
-
-      p.fbCreatePost = { pending: true };
-
-      var method = isLike ? 'POST' : 'DELETE';
 
       FB.api(
         '/' + id + '/likes',
-        method,
+        isLike ? 'POST' : 'DELETE',
         function (response) {
           if (response === true) {
-            if (p.fbCreatePost && p.fbCreatePost.toggleBackCallback) {
-              // There's a toggleBackCallback, call it
-              var continueCallback = p.fbCreatePost.toggleBackCallback;
-              p.fbCreatePost = void 0;
-              continueCallback();
-            } else {
-              // All done!
-              successCallback();
-            }
+            statusAndCallbacks.successCallback();
           } else {
-            failureCallback(response && response.error && response.error.message);
+            statusAndCallbacks.failureCallback(response);
           }
-          p.fbCreatePost = void 0;
         }
       );
     }

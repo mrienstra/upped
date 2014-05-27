@@ -149,7 +149,7 @@ var handlePostChange = function (props) {
 
 
 
-var handleCreatePost = function (msg, pictureDataURI, refresh) {
+var handleCreatePost = function (msg, pictureDataURI, successCallback, failureCallback) {
   console.log('handleCreatePost', this, arguments);
 
   var post = {
@@ -160,29 +160,19 @@ var handleCreatePost = function (msg, pictureDataURI, refresh) {
 
   remote.fb.createPost(
     post,
-    function () {
-      console.log('handleCreatePost success', this, arguments);
-      window.setTimeout(refresh, 2000); // Todo: WTF, I don't think we should need to do this...
-    },
-    function (response) {
-      console.error('handleCreatePost failure', this, arguments);
-      alert('Todo: Handle createPost error: ' + JSON.stringify(response));
-      refresh();
-    }
+    successCallback,
+    failureCallback
   );
 };
 
-var handleLike = function (id, userLikes, refresh) {
+var handleLike = function (id, userLikes, successCallback, failureCallback) {
   console.log('handleLike', this, arguments);
 
   remote.fb.like(
     id,
     userLikes,
-    refresh,
-    function (msg) {
-      console.error('app handleLike: boo', this, arguments);
-      alert('Todo: handleLike error: ' + JSON.stringify(msg));
-    }
+    successCallback,
+    failureCallback
   );
 };
 
