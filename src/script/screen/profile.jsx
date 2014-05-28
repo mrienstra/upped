@@ -33,18 +33,17 @@ var ProfileScreen = React.createClass({
         </header>
 
           <div className="content">
-            <ul className="table-view">
-              <li className="img-wrap">
+            <div className="overview">
+              <div className="cover-image">
                 <span className="icon ion-loading-d"></span>
-                <img src={this.props.user.cover} height="260" />
-              </li>
-              <li className="table-view-cell">
-                <a href="" className="right btn btn-outlined"><span className="icon ion-ios7-chatboxes-outline"></span> activity</a>
+                <img src="/img/pixel_trans_1x1.png" height="1" width="1" style={{backgroundImage: 'url(' + this.props.user.cover + ')'}} />
+              </div>
+              <div className="content-padded">
                 <h3>{this.props.user.name}</h3>
                 <h4>434 points</h4>
-                <p>My hotness isn&#8217;t only between my legs. It&#8217;s inside my ear, right behind the eardrum. That&#8217;s where people come to get down!</p>
-              </li>
-            </ul>
+                <p>My hotness isn't only between my legs. It's inside my ear, right behind the eardrum. That's where people come to get down!</p>
+              </div>
+            </div>
             <ul className="table-view">
               <li className="table-view-divider">Bars<span className="right">Checkins</span></li>
               <li className="table-view-cell media"><a href="">The Red Room</a><span className="badge">4</span></li>
