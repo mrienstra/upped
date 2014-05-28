@@ -12,7 +12,7 @@ var ProfileScreen = React.createClass({
 
     l = this.props.user.fb.likes && this.props.user.fb.likes.length;
     if (l) {
-      l = l > 5 ? 5 : l; // limit to 5
+      l = l > 6 ? 6 : l; // limit to 6
       userLikes = [];
       for (i = 0; i < l; i++) {
         userLikes.push(
@@ -33,7 +33,7 @@ var ProfileScreen = React.createClass({
         </header>
 
           <div className="content">
-            <ul className="table-view flush free-form">
+            <ul className="table-view">
               <li className="img-wrap">
                 <span className="icon ion-loading-d"></span>
                 <img src={this.props.user.cover} height="260" />
@@ -45,14 +45,14 @@ var ProfileScreen = React.createClass({
                 <p>My hotness isn&#8217;t only between my legs. It&#8217;s inside my ear, right behind the eardrum. That&#8217;s where people come to get down!</p>
               </li>
             </ul>
-            <ul className="table-view flush badge-table">
-              <li className="table-view-cell table-view-divider">Bars<span className="right">Checkins</span></li>
+            <ul className="table-view">
+              <li className="table-view-divider">Bars<span className="right">Checkins</span></li>
               <li className="table-view-cell media"><a href="">The Red Room</a><span className="badge">4</span></li>
               <li className="table-view-cell media"><a href="">515 Kitchen and Cocktails</a><span className="badge">2</span></li>
               <li className="table-view-cell media"><a href="">One Double Oh Seven</a><span className="badge">1</span></li>
             </ul>
-            <ul className="table-view flush likes-table">
-              <li className="table-view-cell table-view-divider">Likes</li>
+            <ul className="table-view likes-table">
+              <li className="table-view-divider">Likes</li>
               <li className="table-view-cell media">
                 {userLikes}
               </li>

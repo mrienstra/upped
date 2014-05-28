@@ -17,8 +17,8 @@ var likeMixin = {
   },
   calculateLikeClasses: function(){
     var likeClasses = {
-      count: 'count',
-      heart: this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart-outline'
+      likes: this.state.userLikes ? 'likes liked' : 'likes',
+      heart: this.state.userLikes ? 'icon ion-ios7-heart' : 'icon ion-ios7-heart'
     };
 
     if (this.state.pendingLikeChange) {

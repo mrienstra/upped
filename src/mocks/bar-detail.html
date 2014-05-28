@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Barchat</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/libs.css">
+    <link rel="stylesheet" href="/css/main.css">
+  <script>
+    var checked_in = false;
+  </script>
+  <style>
+  .content .overview .cover-image img { background-image: url('/img/bg_pattern_4.jpg'); }
+  .content .overview .cover-image img { background-image: url('https://scontent-b-sjc.xx.fbcdn.net/hphotos-frc3/t31.0-8/209601_615446883190_2111600019_o.jpg'); }
+  </style>
+   </head>
+  <body>
+    <div id="container">
+      <div class="container">
+        <header class="bar bar-nav">
+          <a href="locations.html" class="btn btn-link btn-nav pull-left" data-transition="slide-out">
+            <span class="icon icon-left-nav"></span> Bars</a>
+          <a class="btn btn-link btn-nav pull-right">Check In</a>
+          <h1 class="title">Bar Wall</h1>
+        </header>
+        <div class="content">
+          <div class="overview">
+            <div class="cover-image">
+              <span class="icon ion-loading-d"></span>
+              <img src="/img/pixel_trans_1x1.png" height="1" width="1" />
+            </div>
+            <div class="content-overlay">
+              <h3>515 Kitchen &amp; Cocktails</h3>
+              <h4><span class="icon ion-person-stalker"></span> <span class="count">4</span> checked in / 400 ft
+                <div class="buttons">
+                  <a href=""><span class="badge">Address</span></a>
+                </div>
+              </h4>
+            </div>
+          </div>
+          <div class="post-form-wrapper">
+            <div class="promo hide">
+              <p><span class="icon ion-radio-waves"></span>Are you here? Check in to chat!</p>
+            </div>
+            <div class="post-form hide">
+              <div class="left">
+                <a href="" class="icon ion-camera" onTouchEnd=""></a>
+              </div>
+              <div class="right">
+                <a href="" onTouchEnd="" class="inactive" id="post_button">Post</a>
+              </div>
+              <div class="center textarea-container">
+                <textarea placeholder="What are you up to?"></textarea>
+                <div class="textarea-size"></div>
+              </div>
+            </div>
+          </div>
+          <ul class="table-view posts-list">
+            <li class="table-view-cell">
+              <a href="">
+                <div class="details">
+                  <img src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/t1.0-1/c0.0.50.50/p50x50/1925189_10152328078981518_997026015_t.jpg" />
+                  <h4>Michael</h4>
+                  <div class="time">3 days ago</div>
+                  <div class="stats">
+                    <span class="likes">
+                      <span class="badge">like<span class="icon ion-ios7-heart"></span></span>
+                    </span>
+                    <span class="comments">
+                      <span class="badge">reply<span class="icon ion-ios7-chatbubble"></span></span>
+                    </span>
+                  </div>
+                </div>
+                <div class="copy">
+                  <p class="">Sometimes, I like to have conversations with myself. And occasionally, they are very witty.</p>
+                </div>
+              </a>
+            </li>
+            <li class="table-view-cell">
+              <a href="">
+                <div class="details">
+                  <img src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/t1.0-1/c0.0.50.50/p50x50/1925189_10152328078981518_997026015_t.jpg" />
+                  <h4>Michael</h4>
+                  <div class="time">3 days ago</div>
+                  <div class="stats">
+                    <span class="likes">
+                      <span class="badge">1<span class="icon ion-ios7-heart"></span></span>
+                    </span>
+                    <span class="comments liked">
+                      <span class="badge">1<span class="icon ion-ios7-chatbubble"></span></span>
+                    </span>
+                  </div>
+                </div>
+                <div class="copy">
+                  <p class="">I'm funniest when I'm sober. But don't allow that to stop me from slobbering over you with a pun while we share a drink.</p>
+                </div>
+              </a>
+            </li>
+            <li class="table-view-cell">
+              <a href="">
+                <div class="details">
+                  <img src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/t1.0-1/c0.0.50.50/p50x50/1925189_10152328078981518_997026015_t.jpg" />
+                  <h4>Michael</h4>
+                  <div class="time">3 days ago</div>
+                  <div class="stats">
+                    <span class="likes liked">
+                      <span class="badge">3<span class="icon ion-ios7-heart"></span></span>
+                    </span>
+                    <span class="comments">
+                      <span class="badge">2<span class="icon ion-ios7-chatbubble"></span></span>
+                    </span>
+                  </div>
+                </div>
+                <div class="copy">
+                  <p class="">My balls hurt. Anyone do massage? Training optional.</p>
+                  <img src="http://8tracks.imgix.net/i/001/264/278/38134.original-6539.jpg?q=65&sharp=15&vib=10&fm=jpg&fit=crop&w=521&h=521" />
+                </div>
+              </a>
+            </li>
+            <li class="table-view-cell">
+              <a href="">
+                <div class="details">
+                  <img src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/t1.0-1/c0.0.50.50/p50x50/1925189_10152328078981518_997026015_t.jpg" />
+                  <h4>Michael</h4>
+                  <div class="time">3 days ago</div>
+                  <div class="stats">
+                    <span class="likes">
+                      <span class="badge">like<span class="icon ion-ios7-heart"></span></span>
+                    </span>
+                    <span class="comments">
+                      <span class="badge">1<span class="icon ion-ios7-chatbubble"></span></span>
+                    </span>
+                  </div>
+                </div>
+                <div class="copy">
+                  <p class="emotes">Michael just joined BarChat!<br>Send him a welcome message.</p>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+      var checking_in = false;
+      var $check_in_link = $('header .pull-right');
+      var $post_promo = $('.post-form-wrapper .promo');
+      var $post_form = $('.post-form-wrapper .post-form');
+      var check_in = function(){
+        if (checked_in) {
+          if (checking_in) alert("Checking you in...");
+          $check_in_link.html('Check Out');
+          $('.title').html("Bar Wall");
+          $('.content .overview .cover-image img').css('background-image', 'url(\'https://scontent-a-lax.xx.fbcdn.net/hphotos-prn1/t1.0-9/61444_10151204862382562_1387856324_n.jpg\')');
+          $('.content-overlay .count').html('5');
+          $post_promo.hide();
+          $post_form.show();
+          checking_in = false;
+        }
+        else {
+          if (checking_in) alert("Checking you out...");
+          $check_in_link.html('Check In');
+          $('.title').html("Bar Wall");
+          $('.content .overview .cover-image img').css('background-image', 'url(\'https://scontent-b-sjc.xx.fbcdn.net/hphotos-frc3/t31.0-8/209601_615446883190_2111600019_o.jpg\')');
+          $('.content-overlay .count').html('4');
+          $post_form.hide();
+          $post_promo.show();
+          checking_in = false;
+        }
+      }
+      check_in();
+      $check_in_link.click(function(){
+        checking_in = true;
+        checked_in = checked_in ? false : true;
+        check_in();
+      })
+      var textContainer, textareaSize, input;
+      var updatePostButton = function(value){
+        var $post_button = $('#post_button');
+        if (value == '') $post_button.addClass('inactive');
+        else $post_button.removeClass('inactive');
+      };
+      var autoSize = function () {
+        textareaSize.innerHTML = input.value + '\n';
+        updatePostButton(input.value);
+      };
+
+      document.addEventListener('DOMContentLoaded', function() {
+        textContainer = document.querySelector('.textarea-container');
+        textareaSize = textContainer.querySelector('.textarea-size');
+        input = textContainer.querySelector('textarea');
+
+        autoSize();
+        input.addEventListener('input', autoSize);
+      });
+    </script>
+  </body>
+</html>

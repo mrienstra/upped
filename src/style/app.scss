@@ -66,6 +66,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* === COMPONENTS === */
+.bar {
+  border-bottom: 0;
+}
+.table-view {
+  margin-bottom: 0;
+  border-bottom: 0;
+}
 .action-sheet {
   height: 100%;
   img {
@@ -99,8 +106,11 @@ header.bar-nav {
     font-size: 100%;
     bottom: .1rem;
   }
-  h1, h1.title, a.btn-link, a.btn-link span {
-    color: $text-knockout-color;
+  h1, h1.title, a, a span {
+    color: $text-knockout-color !important;
+  }
+  a, a span {
+    font-weight: normal;
   }
   h1.logo {
     position: relative;
@@ -126,10 +136,121 @@ header.bar-nav {
   }
 }
 
+.bar-standard ~ .content {
+  padding-top: 44px;
+}
+
+.bar-header-secondary ~ .content {
+  padding-top: 88px;
+}
+
 .bar-header-secondary {
-  background-color: $menu-color;
+  background-color: $primary-color;
   p {
     color: $text-knockout-color;
+  }
+}
+.bar-standard, .bar-tab {
+  background-color: $primary-color;
+  a.tab-item {
+    color: $text-knockout-color !important;
+  }
+}
+
+.container .post-form-wrapper {
+  min-height: 4.4rem;
+  padding: .6rem 0;
+  background-color: $primary-color;
+  color: $text-knockout-color;
+  a {
+    color: $text-knockout-color;
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .promo {
+    overflow: hidden;
+    p {
+      position: relative;
+      bottom: .4rem;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: $text-knockout-color;
+    }
+    .icon {
+      position: relative;
+      top: .6rem;
+      margin-right: .2rem;
+      font-size: 200%;
+    }
+  }
+  .post-form {
+    .left, .right { 
+      position: absolute;
+      bottom: 1.3rem;
+      width: 5rem;
+    }
+    .left {
+      left: 0;
+      .picturePreview {
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 5.3rem;
+        height: 5.3rem;
+        float: right;
+      }
+    }
+    .right {
+      right: 0;
+      font-size: 90%;
+    }
+    .right .inactive {
+      opacity: .5;
+    }
+    .left a {
+      float: right;
+      margin-right: .2rem;
+      font-size: 200%;
+      line-height: 2rem;
+    }
+    .right a {
+      float: left;
+      line-height: 1.5rem;
+      text-transform: uppercase;
+    }
+    .center {
+      margin: .2rem 5.5rem;
+    }
+    .center.textarea-container {
+      position: relative;
+      textarea, .textarea-size {
+        height: 100%;
+        min-height: 2.9rem;
+        padding: .4rem;
+        padding-top: .5rem;
+        overflow: hidden;
+        border-radius: 0;
+        color: $text-copy-color;
+        @include border-radius(0);
+        font-size: 1.4rem;
+        line-height: 1.8rem;
+      }
+      textarea {
+        position: absolute;
+        left: 0;
+        resize: none;
+        white-space: normal;
+      }
+      .textarea-size {
+        visibility: hidden;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+    }
   }
 }
 
@@ -138,73 +259,26 @@ header.bar-nav {
   height: auto;
   background-color: $primary-color;
   color: $text-knockout-color;
-  .left, .right { 
-    position: absolute;
-    bottom: 0;
-    width: 6rem;
-  }
-  .left {
-    left: 0;
-    .picturePreview {
-      background-position: 50% 50%;
-      background-repeat: no-repeat;
-      background-size: cover;
-      width: 53px;
-      height: 53px;
-      float: right;
-    }
-  }
-  .right {
-    right: 0;
-  }
-  .left a, .right a {
+  a {
     color: $text-knockout-color;
-    margin-right: 0;
-    margin-left: 0;
   }
-  .left a {
-    float: right;
-    font-size: 200%;
-    line-height: 2rem;
+  input, textarea {
+    color: $text-copy-color;
   }
-  .right a {
-    float: left;
-    line-height: 4rem;
-    text-transform: uppercase;
-  }
-  .center {
-    margin: 0 6rem;
-  }
-  .center.textarea-container {
-    position: relative;
-    margin-top: .5rem;
-    margin-bottom: .4rem;
-    textarea, .textarea-size {
-      height: 100%;
-      min-height: 3rem;
-      padding: .4rem;
-      overflow: hidden;
-      border-radius: 0;
-      color: $text-copy-color;
-      @include border-radius(0);
-    }
-    textarea {
-      position: absolute;
-      left: 0;
-      resize: none;
-      white-space: normal;
-    }
-    .textarea-size {
-      visibility: hidden;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-  }
+}
+
+.badge {
+//  background-color: $stats-bg-color;
 }
 
 .content {
   background-color: $page-bg-color;
+  > div, > ul {
+    background-color: $table-bg-color;
+  }
+  > div:last-child, > ul:last-child {
+    border-bottom: 1px solid $table-border-color;
+  }
   .subhead {
     background-color: $page-bg-color;
     display: none;
@@ -215,11 +289,99 @@ header.bar-nav {
     color: $text-knockout-color;
     @include font-size(18);
   }
+  .overview {
+    .cover-image {
+      text-align: center;
+      height: 25rem;
+      border-bottom: 1px solid $table-border-color;
+      overflow: hidden;
+      img {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 25rem;
+        width: 100%;
+        background: url('') no-repeat 50% 50%;
+        background-size: cover;
+      }
+      .icon {
+        position: relative;
+        left: .8rem;
+        top: 10rem;
+        font-size: 200%;
+      }
+    }
+    .cover-full {
+      height: auto;
+      line-height: 0;
+      border-bottom: 0;
+      img {
+        position: static;
+        height: auto;
+        margin-bottom: 0;
+      }
+      .icon { position: absolute; }
+    }
+    .content-overlay {
+      position: absolute;
+      top: 2.5rem;
+      left: 0;
+      width: 100%;
+      h3 {
+        width: auto;
+      }
+      h3, h4, p {
+        max-width: 50%;
+        padding: 1rem;
+        background-color: rgba(51,51,51,.7);
+        color: $text-knockout-color;
+      }
+      h4 {
+        float: left;
+        font-size: 1.4rem;
+        padding-right: 1.2rem;
+      }
+      a {
+        color: $text-knockout-color;
+      }
+      .buttons {
+        padding-top: .8rem;
+        padding-bottom: .2rem;
+      }
+      .badge {
+        padding: .5rem 1rem;
+        background-color: $page-bg-color;
+      }
+    }
+    h3 {
+      margin: 0;
+    }
+    h4 {
+      margin: .6rem 0 1rem;
+      font-weight: normal;
+    }
+    p {
+      margin: .4rem 0 1rem;
+      font-size: 1.4rem;
+      color: $text-copy-color;
+      line-height: 1.75rem;
+    }
+  }
+  .content-padded {
+    margin: 0;
+    padding: 1.2rem 1.4rem
+  }
+}
+
+.content .content-form {
+  background-color: $table-divider-color;
 }
 
 .table-view {
   margin-top: 0;
   text-align: left;
+  border-top: 0;
+  border-bottom: 1px solid $table-border-color;
   h4 {
     padding: 0;
     margin: 0;
@@ -240,75 +402,25 @@ header.bar-nav {
     margin: 0;
     padding: 0;
   }
+  .table-view-cell {
+    border-top: 1px solid $table-border-color;
+    border-bottom: 0;
+  }
+  .table-view-divider+.table-view-cell {
+    border-top: 0;
+  }
+}
+.table-view .table-view-divider {
+  border-bottom: 1px solid $table-border-color;
 }
 .table-view-divider .right {
   position: absolute; right: 1.4rem; font-size: 80%
 }
-.table-view.free-form {
-  .img-wrap {
-    display: block;
-    height: 25rem;
-    background-color: $table-bg-color;
-    border-bottom: 1px solid $table-border-color;
-    overflow: hidden;
-    span {
-      position: absolute;
-      font-size: 240%;
-      margin-left: -1.8rem;
-      margin-top: -1.8rem;
-      color: $icon-light-color;
-      @extend %horizontal-align;
-      @extend %vertical-align;
-    }
-    img {
-      position: absolute;
-      width: 100%;
-      height: auto;
-      @extend %vertical-align;
-    }
-  }
-  h3 {
-    margin: 0;
-  }
-  h4 {
-    margin: .6rem 0 1rem;
-  }
-  p {
-    margin: .4rem 0 1rem;
-    color: $text-copy-color;
-  }
-  .right {
-    display: block;
-    position: absolute;
-    right: 1.4rem;
-    top: 2.8rem
-  }
-  a {
-    font-size: 80%;
-    background-color: $table-bg-color;
-    color: $text-copy-color;
-  }
-  a .icon {
-    position: relative;
-  }
-  a:hover, a:active {
-    background-color: $btn-tap-color;
-  }
-}
-.badge-table {
-  .table-view-cell {
-    padding-right: 3rem
-  }
-  .badge {
-    font-weight: normal;
-  }
-  .table-view-cell a {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
+.table-view-clip a {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .likes-table {
   .table-view-divider {
@@ -347,13 +459,15 @@ header.bar-nav {
 }
 
 .posts-list {
+  .table-view-cell a {
+    padding-top: 1.4rem;
+  }
   .details img {
-    width: 50px;
-    height: 50px;
+    width: 5rem;
+    height: 5rem;
     border: 1px solid $text-detail-color;
   }
   li {
-    background-color: $table-bg-color;
     border-color: $table-border-color;
   }
   h4, .time {
@@ -361,7 +475,7 @@ header.bar-nav {
   }
   h4 {
     @include font-size(12);
-    padding: .8rem 0 0;
+    padding: .0;
     line-height: 1.4rem;
     color: $primary-text-color;
   }
@@ -372,21 +486,34 @@ header.bar-nav {
   .stats {
     position: absolute;
     right: 1.5rem;
-    top: 1.5rem;
+    top: 1rem;
     color: $text-active-color;
-    .likes, .comments {
-      padding-left: .8rem;
+    .badge {
+      padding-bottom: .5rem;
+      font-size: 1.1rem;
+      color: $text-title-color;
+      cursor: pointer;
     }
-    .count {
-      position: relative;
-      top: -.5rem;
-      font-size: 1.4rem;
-      font-weight: normal;
+    .comments {
+      margin-left: .5rem;
+    }
+    .liked {
+      .badge {
+        background-color: $primary-text-color;
+        color: $text-knockout-color;
+      }
+      .icon { color: $text-knockout-color; }
     }
     .icon {
-      color: $text-active-color;
-      padding: 0 .2rem 0 .5rem;
-      @include font-size(20);
+      position: relative;
+      top: .2rem;
+      margin: 0 0 0 .5rem;
+      padding: 0;
+      color: $text-title-color;
+      @include font-size(11);
+//      &.pending {
+//        -webkit-animation: pulse 1.5s infinite ease-in-out;
+//      }
     }
     .icon:first-child {
       padding-left: 0;
@@ -399,15 +526,15 @@ header.bar-nav {
     margin-left: 6rem;
     margin-right: -4rem;
     p {
-      margin-top: .8rem;
+      padding: 0;
+      margin-top: .2rem;
       margin-bottom: .8rem;
       color: $text-copy-color;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       white-space: pre-wrap;
-      img {
-        height: 1em;
-        margin-right: .33em;
-      }
+    }
+    img {
+      width: 100%;
     }
   }
 }
@@ -431,9 +558,10 @@ header.bar-nav {
 .side-menu {
   background: $menu-color;
   color: $text-knockout-color;
-  .content, .table-view {
+  .content, .content .table-view {
     background: $menu-color;
     color: $text-knockout-color;
+    border: 0;
   }
   .content {
     padding-top: 3rem;
@@ -459,9 +587,6 @@ header.bar-nav {
     border-color: $primary-color;
   }
 } 
-
-/* Table view */
-.table-view.flush { margin-bottom: -1px; }
 
 /* === PAGES === */
 .splash {

@@ -13,7 +13,7 @@ var PostsListItem = React.createClass({
     var commentCount = this.props.comments.length;
 
     var likeClasses  = this.calculateLikeClasses();
-
+    
     var picture;
     if (this.props.post.picture) {
       picture = <img src={this.props.post.picture} />;
@@ -27,13 +27,11 @@ var PostsListItem = React.createClass({
             <h4>{this.props.from.name}</h4>
             <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
             <div className="stats">
-              <span className="likes">
-                <span className={likeClasses.count}>{this.state.likeCount || ''}</span>
-                <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
+              <span className={likeClasses.likes}>
+                <span className="badge" onTouchEnd={this.handleLike}>{this.props.likeCount ? this.props.likeCount : 'like' }<span className={likeClasses.heart}></span></span>
               </span>
               <span className="comments">
-                <span className="count">{commentCount ? commentCount : ''}</span>
-                <span className="icon ion-ios7-chatboxes-outline"></span>
+                <span className="badge">{commentCount ? commentCount : 'reply'}<span className="icon ion-ios7-chatbubble"></span></span>
               </span>
             </div>
           </div>
@@ -71,7 +69,6 @@ var PostsList = React.createClass({
     }
     return (
       <ul className="table-view posts-list">
-        <li className="table-view-cell table-view-divider">Recent Activity</li>
         {postsNodes}
       </ul>
     );
@@ -137,16 +134,21 @@ var PostToolbar = React.createClass({
     }
 
     return (
-      <div className="bar bar-standard bar-footer">
-        <div className="left">
-          {toolbarLeft}
+      <div className="post-form-wrapper">
+        <div className="promo hide">
+          <p><span className="icon ion-radio-waves"></span>Are you here? Check in to chat!</p>
         </div>
-        <div className="right">
-          <a onTouchEnd={this.handlePostSubmit}>Post</a>
-        </div>
-        <div className="center textarea-container">
-          <textarea onInput={this.autoSize} placeholder="What are you up to?"></textarea>
-          <div className="textarea-size"></div>
+        <div className="post-form">
+          <div className="left">
+            {toolbarLeft}
+          </div>
+          <div className="right">
+            <a href="" onTouchEnd={this.handlePostSubmit} className="inactive" id="post_button">Post</a>
+          </div>
+          <div className="center textarea-container">
+            <textarea onInput={this.autoSize} placeholder="What are you up to?"></textarea>
+            <div className="textarea-size"></div>
+          </div>
         </div>
       </div>
     );
@@ -273,8 +275,8 @@ var PostsScreen = React.createClass({
     var promotion;
     if (this.props.promotion) {
       promotion = (
-        <ul className="table-view flush">
-          <li className="table-view-cell table-view-divider">{this.props.promotion.title}</li>
+        <ul className="table-view">
+          <li className="table-view-divider">{this.props.promotion.title}</li>
           <li className="table-view-cell media">
             <a href="" data-transition="slide-in">
             <p className="navigate-right"><span className="icon ion-beer"></span> {this.props.promotion.message}</p>
@@ -290,29 +292,31 @@ var PostsScreen = React.createClass({
       <div>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
-          <a className="icon ion-search pull-right" onTouchEnd={function(){alert('Todo');}}></a>
-          <h1 className="title">{this.props.name}</h1>
+          <a className="btn btn-link btn-nav pull-right" onTouchEnd={function(){alert('Todo');}}>Check In</a>
+          <h1 className="title">Bar Wall</h1>
         </header>
 
-        <div className="bar bar-standard bar-header-secondary" style={{backgroundImage: 'url(' + this.props.photoURL + ')'}}>
-          <p><span className="icon ion-person-stalker"></span> {this.props.checkedInCount ? this.props.checkedInCount + ' checked in' : 'Tumbleweed & crickets'}</p>
-        </div>
-
         <div className="content">
-          <ul className="table-view flush">
-            <li className="table-view-cell">
-              <h4>Address</h4>
-              <p>{this.props.address1}</p>
-              <p>{this.props.address2}</p>
-              <a className="btn btn-outlined btn-positive" href="#todo">Map Location</a>
-            </li>
-          </ul>
+          <div className="overview">
+            <div className="cover-image">
+              <span className="icon ion-loading-d"></span>
+              <img src="/img/pixel_trans_1x1.png" height="1" width="1" style={{backgroundImage: 'url(' + this.props.photoURL + ')'}}/>
+            </div>
+            <div className="content-overlay">
+              <h3>{this.props.name}</h3>
+              <h4><span className="icon ion-person-stalker"></span> <span className="count">{this.props.checkedInCount ? this.props.checkedInCount : '0'}</span> checked in / {this.props.distance ? this.props.distance : '0 ft'}
+                <div className="buttons">
+                  <a href=""><span className="badge">Address</span></a>
+                </div>
+              </h4>
+            </div>
+          </div>
+          <PostToolbar handlePostSubmit={this.handlePostSubmit}></PostToolbar>
 
           {promotion}
 
           <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handlePostChange={this.props.handlePostChange} handleLike={this.props.handleLike} refresh={this.refresh}></PostsList>
         </div>
-        <PostToolbar handlePostSubmit={this.handlePostSubmit}></PostToolbar>
       </div>
     );
   }

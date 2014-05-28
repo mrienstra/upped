@@ -60,6 +60,13 @@ a:active,
 a:hover {
   outline: 0;
 }
+/* CUSTOM MOD Fix fox button outlines */
+button,
+button:focus,
+button.btn,
+button.btn:focus {
+  outline: 0;
+}
 
 abbr[title] {
   border-bottom: 1px dotted;

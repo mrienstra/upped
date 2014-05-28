@@ -18,9 +18,8 @@ var CommentListItem = React.createClass({
           <h4>{this.props.from.name}</h4>
           <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
           <div className="stats">
-            <span className="likes">
-              <span className={likeClasses.count}>{this.state.likeCount || ''}</span>
-              <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
+            <span className={likeClasses.likes}>
+              <span className="badge" onTouchEnd={this.handleLike}>{this.props.likeCount ? this.props.likeCount : 'like' }<span className={likeClasses.heart}></span></span>
             </span>
           </div>
         </div>
@@ -46,35 +45,35 @@ var PostSingle = React.createClass({
       return <CommentListItem key={index} id={comment.id} from={comment.from} time={comment.time} message={comment.message} likeCount={comment.likeCount} userLikes={comment.userLikes} refresh={that.props.refresh} handleLike={that.props.handleLike}></CommentListItem>;
     });
     return (
-      <ul className="table-view posts-list">
-        <li className="table-view-cell">
-          <img className="fullWidth" src={post.post.picture} />
-          <div className="details">
-            <img src={post.from.picture} />
-            <h4>{post.from.name}</h4>
-            <div className="time">{utils.momentFromNowIfTime(post.time)}</div>
-            <div className="stats">
-              <span className="likes">
-                <span className={likeClasses.count}>{this.state.likeCount || ''}</span>
-                <span className={likeClasses.heart} onTouchEnd={this.handleLike}></span>
-              </span>
-              <span className="comments">
-                <span className="count">{commentCount ? commentCount : ''}</span>
-                <span className="icon ion-ios7-chatboxes-outline"></span>
-              </span>
+      <div>
+        <div className="overview">
+          <div className="cover-image cover-full">
+            <span className="icon ion-loading-d"></span>
+            <img src={post.post.picture} />
+          </div>
+        </div>
+        <ul className="table-view posts-list">
+          <li className="table-view-cell">
+            <div className="details">
+              <img src={post.from.picture} />
+              <h4>{post.from.name}</h4>
+              <div className="time">{utils.momentFromNowIfTime(post.time)}</div>
+              <div className="stats">
+                <span className={likeClasses.likes}>
+                  <span className="badge" onTouchEnd={this.handleLike}>{this.props.likeCount ? this.props.likeCount : 'like' }<span className={likeClasses.heart}></span></span>
+                </span>
+                <span className="comments">
+                  <span className="badge">{commentCount ? commentCount : 'reply'}<span className="icon ion-ios7-chatbubble"></span></span>
+                </span>
+              </div>
             </div>
-          </div>
-          <div className="copy">
-            <p className={post.post.story ? 'emotes' : ''}>{post.post.story ? post.post.story : post.post.message}</p>
-          </div>
-        </li>
-        <li className="table-view-cell table-view-divider">
-          <div className="copy">
-            <div className="buttons"><a className="btn" onTouchEnd={this.handleLike}><span className="icon ion-heart"></span> Like</a> <a className="btn"><span className="icon ion-chatbubble"></span> Comment</a> <a className="btn"><span className="icon ion-beer"></span> Gift</a></div>
-          </div>
-        </li>
-        {commentsNodes}
-      </ul>
+            <div className="copy">
+              <p className={post.post.story ? 'emotes' : ''}>{post.post.story ? post.post.story : post.post.message}</p>
+            </div>
+          </li>
+          {commentsNodes}
+        </ul>
+      </div>
     );
   }
 });
@@ -136,11 +135,6 @@ var PostScreen = React.createClass({
           <a className="icon icon-compose pull-right" href="#composeModal"></a>
           <h1 className="title">Wall Post</h1>
         </header>
-
-        <div className="bar bar-standard bar-header-secondary">
-          <p>{this.props.location}</p>
-        </div>
-
         <div className="content">
           <PostSingle id={post.id} post={post} likeCount={likeCount} userLikes={userLikes} refresh={this.refresh} handleLike={this.props.handleLike}></PostSingle>
         </div>
