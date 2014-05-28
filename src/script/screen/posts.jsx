@@ -28,7 +28,7 @@ var PostsListItem = React.createClass({
             <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
             <div className="stats">
               <span className={likeClasses.likes}>
-                <span className="badge" onTouchEnd={this.handleLike}>{this.props.likeCount ? this.props.likeCount : 'like' }<span className={likeClasses.heart}></span></span>
+                <span className="badge" onTouchEnd={this.handleLike}>{this.state.likeCount || 'like' }<span className={likeClasses.heart}></span></span>
               </span>
               <span className="comments">
                 <span className="badge">{commentCount ? commentCount : 'reply'}<span className="icon ion-ios7-chatbubble"></span></span>
@@ -143,7 +143,7 @@ var PostToolbar = React.createClass({
             {toolbarLeft}
           </div>
           <div className="right">
-            <a href="" onTouchEnd={this.handlePostSubmit} className="inactive" id="post_button">Post</a>
+            <a onTouchEnd={this.handlePostSubmit} className="inactive" id="post_button">Post</a>
           </div>
           <div className="center textarea-container">
             <textarea onInput={this.autoSize} placeholder="What are you up to?"></textarea>

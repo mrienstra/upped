@@ -19,7 +19,7 @@ var CommentListItem = React.createClass({
           <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
           <div className="stats">
             <span className={likeClasses.likes}>
-              <span className="badge" onTouchEnd={this.handleLike}>{this.props.likeCount ? this.props.likeCount : 'like' }<span className={likeClasses.heart}></span></span>
+              <span className="badge" onTouchEnd={this.handleLike}>{this.state.likeCount || 'like' }<span className={likeClasses.heart}></span></span>
             </span>
           </div>
         </div>
@@ -60,7 +60,7 @@ var PostSingle = React.createClass({
               <div className="time">{utils.momentFromNowIfTime(post.time)}</div>
               <div className="stats">
                 <span className={likeClasses.likes}>
-                  <span className="badge" onTouchEnd={this.handleLike}>{this.props.likeCount ? this.props.likeCount : 'like' }<span className={likeClasses.heart}></span></span>
+                  <span className="badge" onTouchEnd={this.handleLike}>{this.state.likeCount || 'like' }<span className={likeClasses.heart}></span></span>
                 </span>
                 <span className="comments">
                   <span className="badge">{commentCount ? commentCount : 'reply'}<span className="icon ion-ios7-chatbubble"></span></span>
