@@ -100,7 +100,7 @@ var handleLocationsChange = function(){
   var thisHandleProfileChange = handleProfileChange.bind(null, {user: remote.user});
 
   app.screens.addScreen(
-    <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange} handleProfileChange={thisHandleProfileChange}></LocationsScreen>
+    <LocationsScreen locations={props.locations} handleLocationChange={handleLocationChange} handleProfileChange={thisHandleProfileChange} handleLogOut={handleLogOut}></LocationsScreen>
   );
 };
 
@@ -178,7 +178,20 @@ var handleLike = function (id, userLikes, successCallback, failureCallback) {
 
 
 
+var handleLogOut = function(){
+  console.log('handleLogOut');
+
+  remote.logOut();
+  delete app.screens; // Todo: does this leak memory?
+  showWelcomeScreen(void 0, true);
+};
+
+
+
 var continuePastWelcomeScreen = function(){
+  console.log('continuePastWelcomeScreen');
+
+  window.removeEventListener('fbLoginNeeded', showWelcomeScreen);
   window.removeEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
 
   // todo: remove below testing code; make FTU experience more "welcoming"!
@@ -190,13 +203,14 @@ var continuePastWelcomeScreen = function(){
 
 var showFirstScreen = function(){
   window.addEventListener('fbLoginNeeded', showWelcomeScreen);
-
   window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
 
   remote.init();
 }
 
-var showWelcomeScreen = function(){
+var showWelcomeScreen = function (e, afterLogOut) {
+  console.log('showWelcomeScreen', this, arguments);
+
   window.removeEventListener('fbLoginNeeded', showWelcomeScreen);
 
   var WelcomeScreen = require('./screen/welcome.jsx');
@@ -204,7 +218,20 @@ var showWelcomeScreen = function(){
   var handleLoginButton = function(){
     // Todo: visual indicator that things are happening
 
-    remote.login();
+    if (afterLogOut) {
+      var doFbLogin = function(){
+        console.log('showWelcomeScreen (afterLogOut) doFbLogin');
+
+        window.removeEventListener('fbLoginNeeded', doFbLogin);
+        remote.login();
+      };
+      window.addEventListener('fbLoginNeeded', doFbLogin);
+      window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+
+      remote.init();
+    } else {
+      remote.login();
+    }
   };
 
   React.renderComponent(

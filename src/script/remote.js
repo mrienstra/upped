@@ -21,13 +21,20 @@ var settings = {
 var _remote = {
   fb: {
     init: function(){
-      FB.init({
-        appId: settings.fb.appId,
-        status: true
-      });
+      if (!_remote.fb.initialized) {
+        _remote.fb.initialized = true;
 
-      FB.getLoginStatus(_remote.fb.getLoginStatusCallback);
+        FB.init({
+          appId: settings.fb.appId,
+          status: true
+        });
+
+        FB.getLoginStatus(_remote.fb.getLoginStatusCallback);
+      } else {
+        FB.getLoginStatus(_remote.fb.getLoginStatusCallback, true);
+      }
     },
+    initialized: false,
     formatPost: function (post) {
       return {
         id: post.id,
@@ -59,7 +66,7 @@ var _remote = {
       };
     },
     getLoginStatusCallback: function (response) {
-      if (response.authResponse) {
+      if (response.status === 'connected') {
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
         remote.login = _remote.fb.login;
@@ -115,7 +122,7 @@ var _remote = {
     loginCallback: function (response) {
       console.log('_remote.fb.loginCallback:', response);
 
-      if (response.authResponse) {
+      if (response.status === 'connected') {
         _remote.fb.updatePermissions(response.authResponse.grantedScopes);
 
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
@@ -188,7 +195,7 @@ var _remote = {
       facebookConnectPlugin.getLoginStatus(_remote.fcp.getLoginStatusCallback);
     },
     getLoginStatusCallback: function (response) {
-      if (response.authResponse) {
+      if (response.status === 'connected') {
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
         remote.login = _remote.fcp.login;
@@ -395,6 +402,12 @@ var remote = {
     }
   },
   login: void 0, // Search for "remote.login" to see usage
+  logOut: function(){
+    console.log('remote.logOut');
+
+    Parse.User.logOut();
+    remote.user = {fb: {}};
+  },
   parse: {
     getUser: function(){
       return Parse.User.current();

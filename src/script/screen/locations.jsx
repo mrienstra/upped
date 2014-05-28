@@ -106,6 +106,11 @@ var LocationsScreen = React.createClass({
                   <h4><span className="icon ion-gear-a"></span> Settings</h4>
                 </a>
               </li>
+              <li className="table-view-cell">
+                <a onTouchEnd={this.props.handleLogOut}>
+                  <h4><span className="icon ion-gear-a"></span> Log Out</h4>
+                </a>
+              </li>
             </ul>
           </div>
         </div>
