@@ -2,14 +2,25 @@
 
 var React = require('react/addons');
 
+// Modules
 var utils = require('../utils');
 
-var likeMixin = require('../mixin/like.jsx');
+// Mixins
+var likeMixin = require('../mixin/like.js');
+var postOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
+
+// Components
+var PostOrCommentToolbar = require('../component/postOrCommentToolbar.jsx');
 
 var CommentListItem = React.createClass({
   mixins: [likeMixin],
   render: function() {
     var likeClasses  = this.calculateLikeClasses();
+
+    var picture;
+    if (this.props.picture) {
+      picture = <img src={this.props.picture} />;
+    }
 
     return (
       <li className="table-view-cell posts-list">
@@ -24,7 +35,7 @@ var CommentListItem = React.createClass({
           </div>
         </div>
         <div className="copy">
-          <p>{this.props.message}</p>
+          <p>{picture}{this.props.message}</p>
         </div>
       </li>
     );
@@ -39,16 +50,15 @@ var PostSingle = React.createClass({
 
     var likeClasses  = this.calculateLikeClasses();
 
-    var commentCount = post.comments.length;
+    var commentCount = this.props.comments ? this.props.comments.length : 0;
 
-    var commentsNodes = post.comments.map(function (comment, index) {
-      return <CommentListItem key={index} id={comment.id} from={comment.from} time={comment.time} message={comment.message} likeCount={comment.likeCount} userLikes={comment.userLikes} refresh={that.props.refresh} handleLike={that.props.handleLike}></CommentListItem>;
-    });
+    var commentsNodes = this.props.comments ? this.props.comments.map(function (comment, index) {
+      return <CommentListItem key={index} id={comment.id} from={comment.from} time={comment.time} picture={comment.picture} message={comment.message} likeCount={comment.likeCount} userLikes={comment.userLikes} refresh={that.props.refresh} handleLike={that.props.handleLike}></CommentListItem>;
+    }) : [];
     return (
       <div>
         <div className="overview">
           <div className="cover-image cover-full">
-            <span className="icon ion-loading-d"></span>
             <img src={post.post.picture} />
           </div>
         </div>
@@ -79,10 +89,12 @@ var PostSingle = React.createClass({
 });
 
 var PostScreen = React.createClass({
-  // Todo: move methods `getInitialState`, `handlePromise` & `refresh` into a mixin (since they are virtually identically to methods in `PostsScreen`)
+  // Todo: move methods `getInitialState`, `handlePromise` & `refresh` into a mixin (since they are virtually identical to methods in `PostsScreen`)
+  mixins: [postOrCommentSubmitMixin],
   getInitialState: function(){
     return {
-      post: void 0
+      post: void 0,
+      comments: []
     };
   },
   handlePromise: function (postPromise) {
@@ -92,8 +104,12 @@ var PostScreen = React.createClass({
       function(post){
         console.log('PostScreen postPromise', post);
 
+        var comments = post.comments;
+        delete post.comments;
+
         that.setState({
-          post: post
+          post: post,
+          comments: comments
         });
 
         // Todo: this does not need to be called when liking/unliking a comment, as comment likes are not displayed on `PostsScreen`.
@@ -114,13 +130,16 @@ var PostScreen = React.createClass({
     console.log('PostScreen.componentWillReceiveProps()', this, arguments);
 
     this.setState({
-      post: void 0
+      post: void 0,
+      comments: []
     });
   },
   render: function() {
     var userFbId = this.props.user.fb.id;
 
     var post = this.state.post ? this.state.post : this.props.post;
+
+    var comments = this.state.comments.length ? this.state.comments : this.props.comments;
 
     var likeCount = post.likes ? post.likes.length : 0;
 
@@ -136,7 +155,8 @@ var PostScreen = React.createClass({
           <h1 className="title">Wall Post</h1>
         </header>
         <div className="content">
-          <PostSingle id={post.id} post={post} likeCount={likeCount} userLikes={userLikes} refresh={this.refresh} handleLike={this.props.handleLike}></PostSingle>
+          <PostSingle id={post.id} post={post} comments={comments} likeCount={likeCount} userLikes={userLikes} refresh={this.refresh} handleLike={this.props.handleLike}></PostSingle>
+          <PostOrCommentToolbar placeholderText="And then you were all like...?" isPostsOrComments="comments" handlePostOrCommentSubmit={this.handlePostOrCommentSubmit}></PostOrCommentToolbar>
         </div>
       </div>
     );

@@ -2,10 +2,15 @@
 
 var React = require('react/addons');
 
+// Modules
 var utils = require('../utils');
-var camera = require('../camera.js');
 
-var likeMixin = require('../mixin/like.jsx');
+// Mixins
+var likeMixin = require('../mixin/like.js');
+var postOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
+
+// Components
+var PostOrCommentToolbar = require('../component/postOrCommentToolbar.jsx');
 
 var PostsListItem = React.createClass({
   mixins: [likeMixin],
@@ -75,87 +80,8 @@ var PostsList = React.createClass({
   }
 });
 
-var PostToolbar = React.createClass({
-  getInitialState: function(){
-    return {
-      pictureDataURI: void 0
-    };
-  },
-  showPicturePreview: function (pictureDataURI) {
-    this.setState({
-      pictureDataURI: pictureDataURI
-    });
-  },
-  handleCamera: function(){
-    camera.getPicture(
-      this.showPicturePreview,
-      function(){ console.error('handleCamera error', this, arguments); }
-    );
-  },
-  handlePostSubmit: function(){
-    console.log('PostToolbar handlePostSubmit', this, arguments);
-
-    var input = this.getDOMNode().querySelector('textarea');
-
-    var msg = input.value.trim();
-
-    if (!msg) return;
-
-    this.props.handlePostSubmit(msg, this.state.pictureDataURI);
-
-    // Reset
-
-    input.value = '';
-    this.autoSize();
-
-    this.setState({
-      pictureDataURI: void 0
-    });
-  },
-  componentDidMount: function(){
-    var thisDOMNode, textareaSize, input;
-
-    thisDOMNode = this.getDOMNode();
-    textareaSize = thisDOMNode.querySelector('.textarea-size');
-    input = thisDOMNode.querySelector('textarea');
-
-    this.autoSize = function(){
-      textareaSize.innerHTML = input.value + '\n';
-    };
-
-    this.autoSize();
-  },
-  render: function(){
-    var toolbarLeft;
-    if (this.state.pictureDataURI) {
-      toolbarLeft = <div className="picturePreview" style={{backgroundImage: 'url(' + this.state.pictureDataURI + ')'}}></div>;
-    } else {
-      toolbarLeft = <a className="icon ion-camera" onTouchEnd={this.handleCamera}></a>
-    }
-
-    return (
-      <div className="post-form-wrapper">
-        <div className="promo hide">
-          <p><span className="icon ion-radio-waves"></span>Are you here? Check in to chat!</p>
-        </div>
-        <div className="post-form">
-          <div className="left">
-            {toolbarLeft}
-          </div>
-          <div className="right">
-            <a onTouchEnd={this.handlePostSubmit} className="inactive" id="post_button">Post</a>
-          </div>
-          <div className="center textarea-container">
-            <textarea onInput={this.autoSize} placeholder="What are you up to?"></textarea>
-            <div className="textarea-size"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-});
-
 var PostsScreen = React.createClass({
+  mixins: [postOrCommentSubmitMixin],
   getInitialState: function(){
     return {
       status: 'loading',
@@ -191,64 +117,6 @@ var PostsScreen = React.createClass({
           posts: []
         });
       }
-    );
-  },
-  handlePostSubmit: function (msg, pictureDataURI) {
-    console.log('PostsScreen handlePostSubmit', this, arguments);
-
-    var that = this;
-
-    var pendingPost = {
-      id: '',
-      from: {
-        // todo: handle `this.props.user` not being available
-        picture: this.props.user.picture,
-        name: this.props.user.name
-      },
-      time: 'pending',
-      post: {
-        message: msg
-      },
-      comments:[]
-    };
-
-    var newPosts = [pendingPost].concat(this.state.posts);
-    this.setState({posts: newPosts});
-
-    var onSuccess = function (response) {
-      console.log('PostsScreen handlePostSubmit onSuccess', this, arguments, response.id);
-
-      var newPosts = that.state.posts.concat();
-      if (newPosts.some(function (post, i) {
-        if (post.post.message === msg && post.time === 'pending') {
-          newPosts[i].time = 'a few seconds ago'; // Same as `moment().fromNow()`
-          newPosts[i].id = response.id;
-          return true;
-        }
-      })) {
-        that.setState({posts: newPosts});
-      }
-    };
-
-    var onFailure = function (response) {
-      alert('Todo: PostsScreen handlePostSubmit error: ' + JSON.stringify(response));
-
-      var newPosts = that.state.posts.concat();
-      if (newPosts.some(function (post, i) {
-        if (post.post.message === msg && post.time === 'pending') {
-          newPosts.splice(i, 1);
-          return true;
-        }
-      })) {
-        that.setState({posts: newPosts});
-      }
-    };
-
-    this.props.handleCreatePost(
-      msg,
-      pictureDataURI,
-      onSuccess,
-      onFailure
     );
   },
   refresh: function(){
@@ -311,7 +179,7 @@ var PostsScreen = React.createClass({
               </h4>
             </div>
           </div>
-          <PostToolbar handlePostSubmit={this.handlePostSubmit}></PostToolbar>
+          <PostOrCommentToolbar placeholderText="What are you up to?" isPostsOrComments="posts" handlePostOrCommentSubmit={this.handlePostOrCommentSubmit}></PostOrCommentToolbar>
 
           {promotion}
 

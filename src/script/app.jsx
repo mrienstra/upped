@@ -128,7 +128,7 @@ var handleLocationChange = function (props) {
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen photoURL={props.photoURL} name={props.name} distance={props.distance} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePost={handleCreatePost} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike}></PostsScreen>
+    <PostsScreen photoURL={props.photoURL} name={props.name} distance={props.distance} checkedInCount={props.checkedInCount} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCreatePostOrComment={handleCreatePostOrComment} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike}></PostsScreen>
   );
 };
 
@@ -148,7 +148,6 @@ var handlePostChange = function (props) {
   var getPost = remote.fb.getPost.bind(remote.fb, props.id);
 
   var post = {
-    comments: props.comments,
     from: props.from,
     id: props.id,
     likes: props.likes,
@@ -159,23 +158,24 @@ var handlePostChange = function (props) {
   var PostScreen = require('./screen/post.jsx');
 
   app.screens.addScreen(
-    <PostScreen location={props.location} post={post} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleLike={handleLike}></PostScreen>
+    <PostScreen location={props.location} post={post} comments={props.comments} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleLike={handleLike} handleCreatePostOrComment={handleCreatePostOrComment}></PostScreen>
   );
 };
 
 
 
-var handleCreatePost = function (msg, pictureDataURI, successCallback, failureCallback) {
-  console.log('handleCreatePost', this, arguments);
+var handleCreatePostOrComment = function (isPostsOrComments, msg, pictureDataURI, successCallback, failureCallback) {
+  console.log('handleCreatePostOrComment', this, arguments);
 
-  var post = {
-    fbId: this.fbId,
+  var postOrComment = {
+    fbId: this.fbId || this.post.id,
     message: msg,
     pictureDataURI: pictureDataURI
   };
 
-  remote.fb.createPost(
-    post,
+  remote.fb.createPostOrComment(
+    isPostsOrComments,
+    postOrComment,
     successCallback,
     failureCallback
   );

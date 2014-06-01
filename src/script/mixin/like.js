@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var likeMixin = {
   getInitialState: function(){
     return {
