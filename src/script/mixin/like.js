@@ -31,6 +31,8 @@ var likeMixin = {
 
     var that = this;
 
+    if (!this.props.id) return; // Todo: Handle clicks while pending? Show button as disabled?
+
     var newUserLikes = !this.state.userLikes;
 
     this.setState({

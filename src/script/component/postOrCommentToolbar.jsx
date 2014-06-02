@@ -22,7 +22,7 @@ var PostOrCommentToolbar = React.createClass({
     });
   },
   handleCamera: function(){
-    this.showPicturePreview(testImageDataURI); return;
+    // Desktop testing instructions: https://github.com/mrienstra/barchat/issues/6#issuecomment-43275084
     camera.getPicture(
       this.showPicturePreview,
       function(){ console.error('handleCamera error', this, arguments); }

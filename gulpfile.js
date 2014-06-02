@@ -14,7 +14,7 @@ var uglify = require('gulp-uglify');
 
 var port = 8000;
 
-var libs = ['react/addons', '../lib/ratchet-mod/ratchet-mod.js', 'moment', 'lodash', 'when', '../lib/react-screens/react-screens.jsx'];
+var libs = ['react/addons', '../lib/ratchet-mod/ratchet-mod.js', 'moment', 'lodash', 'when', '../lib/react-screens/react-screens.jsx', '../lib/openfb-32c04deef7-mod.js'];
 
 var cssLibs = 'src/lib/{react-screens/react-screens,ratchet-mod/ratchet-mod,ionicons-1.4.1/ionicons}.css';
 

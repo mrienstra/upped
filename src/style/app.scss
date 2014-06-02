@@ -19,6 +19,7 @@ html {
 body {
   padding: 0;
   margin: 0;
+  position: static; /* Fixes a weird bug in which a huge gap appears above the BODY (after trying to click the "POST" button?) */
   background: $page-bg-color;
   font-family: $helvetica;
   color: $text-copy-color;

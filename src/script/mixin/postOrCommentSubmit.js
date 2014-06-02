@@ -64,8 +64,12 @@ var postOrCommentSubmitMixin = {
     };
 
     var onFailure = function (response) {
-      console.error('postOrCommentSubmitMixin handlePostOrCommentSubmit error', this, arguments);
-      alert('Todo: postOrCommentSubmitMixin handlePostOrCommentSubmit error: ' + JSON.stringify(response));
+      if (response === 'Publish permissions denied') {
+        // Todo: how to respond? Maybe direct them to a webpage describing how we use publish permissions? Or say something cheeky?
+      } else {
+        console.error('postOrCommentSubmitMixin handlePostOrCommentSubmit error', this, arguments);
+        alert('Todo: postOrCommentSubmitMixin handlePostOrCommentSubmit error: ' + JSON.stringify(response));
+      }
 
       var newCollection = getExistingCollection().concat();
       if (newCollection.some(function (model, i) {

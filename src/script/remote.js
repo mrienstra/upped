@@ -1,5 +1,7 @@
 var when = require('when');
 
+var openFB = require('../lib/openfb-32c04deef7-mod.js');
+
 var asyncToggle = require('./asyncToggle');
 
 var settings = {
@@ -76,24 +78,23 @@ var _remote = {
       } else {
         remote.login = _remote.fb.login;
 
-        var customEvent = new CustomEvent('fbLoginNeeded');
-        window.dispatchEvent(customEvent);
+        _remote.utils.dispatchCustomEvent('fbLoginNeeded');
       }
     },
     getPostOrPosts: function(fbId, justOne) {
       var deferred = when.defer();
 
-      var fbURL;
-      if (justOne) {
-        fbURL = fbId + '?fields=' + settings.fb.postFields
-      } else {
-        fbURL = fbId + '/tagged?fields=' + settings.fb.postFields
+      var fbURL = '/' + fbId;
+      if (!justOne) {
+        fbURL += '/tagged';
       }
 
-      FB.api(
-        fbURL,
-        'GET',
-        function(response){
+      var fbParams = {fields: settings.fb.postFields};
+
+      openFB.api({
+        path: fbURL,
+        params: fbParams,
+        success: function(response){
           console.log('_remote.fb.getPostOrPosts response', response);
           if (response && !response.error) {
             var output;
@@ -110,8 +111,11 @@ var _remote = {
           } else {
             deferred.reject(response);
           }
+        },
+        error: function (response) {
+          deferred.reject(response);
         }
-      );
+      });
 
       return deferred.promise;
     },
@@ -128,7 +132,9 @@ var _remote = {
       console.log('_remote.fb.loginCallback:', response);
 
       if (response.status === 'connected') {
-        _remote.fb.updatePermissions(response.authResponse.grantedScopes);
+        if (response.authResponse.grantedScopes) {
+          _remote.fb.updatePermissions({grantedScopes: response.authResponse.grantedScopes});
+        }
 
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
@@ -136,8 +142,6 @@ var _remote = {
       }
     },
     requestPublishPermissions: function (continueCallback, failureCallback) {
-      // Todo: implement `fcp` counterpart
-
       var stopListening = function(){
         window.removeEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
         window.removeEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
@@ -158,30 +162,67 @@ var _remote = {
       window.addEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
       window.addEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
 
-      FB.login(
-        _remote.fb.requestPublishPermissionsCallback,
-        {
-          scope: settings.fb.permissions.publish.join(','),
-          return_scopes: true
-        }
-      );
+      if (window.facebookConnectPlugin) {
+        facebookConnectPlugin.login(
+          settings.fb.permissions.publish,
+          _remote.fb.requestPublishPermissionsCallback,
+          function(){ console.error('requestPublishPermissions', this, arguments); }
+        );
+      } else {
+        FB.login(
+          _remote.fb.requestPublishPermissionsCallback,
+          {
+            scope: settings.fb.permissions.publish.join(','),
+            return_scopes: true
+          }
+        );
+      }
     },
     requestPublishPermissionsCallback: function (response) {
       console.log('_remote.fb.requestPublishPermissionsCallback:', response);
 
-      _remote.fb.updatePermissions(response.authResponse.grantedScopes);
+      var then = function(){
+        var eventName = remote.user.fb.publishPermissionsGranted ? 'fbPublishPermissionsGranted' : 'fbPublishPermissionsDenied';
+        _remote.utils.dispatchCustomEvent(eventName);
+      };
 
-      var eventName = remote.user.fb.publishPermissionsGranted ? 'fbPublishPermissionsGranted' : 'fbPublishPermissionsDenied';
-      var customEvent = new CustomEvent(eventName);
-      window.dispatchEvent(customEvent);
+      if (response.authResponse.grantedScopes) {
+        _remote.fb.updatePermissions({grantedScopes: response.authResponse.grantedScopes});
+      } else {
+        _remote.fb.updatePermissions({refresh: true, callback: then});
+        return;
+      }
+
+      then();
     },
-    updatePermissions: function (grantedScopes) {
-      if (grantedScopes) {
+    updatePermissions: function (options) {
+      options = options || {};
+
+      if (options.grantedScopes) {
         remote.user.fb.permissions = {};
 
-        grantedScopes.split(',').forEach(function (perm) {
+        options.grantedScopes.split(',').forEach(function (perm) {
           remote.user.fb.permissions[perm] = 1;
         });
+      } else if (options.refresh) {
+        openFB.api({
+          path: '/me',
+          params: {fields: 'permissions'},
+          success: function (response) {
+            console.log('_remote.fb.updatePermissions openFB.api "/me"', this, arguments);
+
+            remote.user.fb.permissions = response.permissions.data[0];
+
+            _remote.fb.updatePermissions();
+
+            options.callback && options.callback();
+          },
+          failure: function(){
+            console.error('_remote.fb.updatePermissions openFB.api "/me"', this, arguments);
+          }
+        });
+
+        return;
       }
 
       remote.user.fb.initialPermissionsGranted = settings.fb.permissions.initial.every(function (perm) {
@@ -198,6 +239,8 @@ var _remote = {
   fcp: {
     init: function(){
       facebookConnectPlugin.getLoginStatus(_remote.fcp.getLoginStatusCallback);
+
+      StatusBar.overlaysWebView(false); // Todo: put this somewhere else, doesn't really belong here. org.apache.cordova.statusbar
     },
     getLoginStatusCallback: function (response) {
       if (response.status === 'connected') {
@@ -205,8 +248,8 @@ var _remote = {
       } else {
         remote.login = _remote.fcp.login;
 
-        var customEvent = new CustomEvent('fbLoginNeeded');
-        window.dispatchEvent(customEvent);
+        _remote.utils.dispatchCustomEvent('fbLoginNeeded');
+      
       }
     },
     login: function(){
@@ -218,7 +261,7 @@ var _remote = {
       );
     },
     loginFailureCallback: function (err) {
-      console.log('_remote.fcp.loginFailureCallback', this, arguments);
+      console.error('_remote.fcp.loginFailureCallback', this, arguments);
       alert('Todo: _remote.fcp.loginFailureCallback: ' + err);
     }
   },
@@ -238,6 +281,8 @@ var _remote = {
 
       remote.user.fb.accessToken = authResponse.accessToken;
 
+      openFB.setFbToken(authResponse.accessToken);
+
       Parse.FacebookUtils.logIn(facebookAuthData, {
         success: function(_user) {
           remote.user.parse = _user;
@@ -247,31 +292,48 @@ var _remote = {
           if (!remote.user.fb.permissions) {
             meFields += ',permissions';
           }
-          FB.api('/me?fields=' + meFields, function (response) {
-            remote.user.fb.id = response.id;
-            remote.user.name = response.name;
-            remote.user.firstName = response.first_name;
-            remote.user.picture = response.picture.data.url;
-            remote.user.cover = response.cover.source;
+          openFB.api({
+            path: '/me',
+            params: {fields: meFields},
+            success: function (response) {
+              console.log('_remote.parse.loginWithFBAuthResponse openFB.api "/me"', this, arguments);
 
-            if (response.permissions) {
-              remote.user.fb.permissions = response.permissions.data[0];
+              remote.user.fb.id = response.id;
+              remote.user.name = response.name;
+              remote.user.firstName = response.first_name;
+              remote.user.picture = response.picture.data.url;
+              remote.user.cover = response.cover.source;
 
-              _remote.fb.updatePermissions();
+              if (response.permissions) {
+                remote.user.fb.permissions = response.permissions.data[0];
+
+                _remote.fb.updatePermissions();
+              }
+            },
+            failure: function(){
+              console.error('_remote.parse.loginWithFBAuthResponse openFB.api "/me"', this, arguments);
             }
           });
-          FB.api('/me/likes?fields=name,picture', function (response) {
-            remote.user.fb.likes = response.data.map(function (like) {
-              return {
-                id: like.id,
-                name: like.name,
-                picture: like.picture.data.url
-              };
-            });
+          openFB.api({
+            path: '/me/likes',
+            params: {fields: 'name,picture'},
+            success: function (response) {
+              console.log('_remote.parse.loginWithFBAuthResponse openFB.api "/me/likes"', this, arguments);
+
+              remote.user.fb.likes = response.data.map(function (like) {
+                return {
+                  id: like.id,
+                  name: like.name,
+                  picture: like.picture.data.url
+                };
+              });
+            },
+            failure: function(){
+              console.error('_remote.parse.loginWithFBAuthResponse openFB.api "/me/likes"', this, arguments);
+            }
           });
 
-          var customEvent = new CustomEvent('fbAndParseLoginSuccess');
-          window.dispatchEvent(customEvent);
+          _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
         },
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
@@ -292,6 +354,10 @@ var _remote = {
       return new Blob([ab], {
         type: mime
       });
+    },
+    dispatchCustomEvent: function (eventName) {
+      var customEvent = new CustomEvent(eventName);
+      window.dispatchEvent(customEvent);
     }
   }
 };
@@ -357,43 +423,41 @@ var remote = {
             console.log('remote.fb.createPostOrComment reqListener', this, arguments);
 
             var deferred = when.defer();
-            FB.api(
-              '/' + responseText.id,
-              'GET',
-              function (response) {
-                console.log('remote.fb.createPostOrComment reqListener [get photo]', response);
-                if (response && !response.error) {
-                  var pictureUrl = response.images.length > 1 ? response.images[1].source : response.images[0].source;
-                  deferred.resolve(pictureUrl);
-                } else {
-                  deferred.reject(response.error.message);
-                }
+            openFB.api({
+              path: '/' + responseText.id,
+              success: function (response) {
+                console.log('remote.fb.createPostOrComment reqListener [get photo]', this, arguments);
+                var pictureUrl = response.images.length > 1 ? response.images[1].source : response.images[0].source;
+                deferred.resolve(pictureUrl);
+              },
+              error: function (response) {
+                console.error('remote.fb.createPostOrComment reqListener [get photo]', this, arguments);
+                deferred.reject(response.error.message);
               }
-            );
+            });
 
             if (isPostsOrComments === 'posts') {
               successCallback(responseText.post_id, deferred.promise);
             } else {
-              FB.api(
-                '/' + postOrComment.fbId + '/comments',
-                'POST',
-                {
+              openFB.api({
+                method: 'POST',
+                path: '/' + postOrComment.fbId + '/comments',
+                params: {
                   'attachment_id': responseText.id,
                   'message': postOrComment.message
                 },
-                function (response) {
-                  if (response && !response.error) {
-                    successCallback(response.id, deferred.promise);
-                  } else {
-                    // Sometimes we get "An unexpected error has occurred. Please retry your request later." (code: 2,type: OAuthException)
-                    // But (upon reloading) we see that the comment (with image) was submitted successfully.
-                    // Todo: Does this happen on phone, or is it only a desktop issue?
-                    // Todo: Will it be fixed when we switch to openFB (coming soon)?
-                    // Todo: figure out how to prevent this, or figure out how to detect that it was actually successful.
-                    failureCallback.apply(this, arguments);
-                  }
+                success: function (response) {
+                  successCallback(response.id, deferred.promise);
+                },
+                error: function(){
+                  // Sometimes we get "An unexpected error has occurred. Please retry your request later." (code: 2,type: OAuthException)
+                  // But (upon reloading) we see that the comment (with image) was submitted successfully.
+                  // Todo: Does this happen on phone, or is it only a desktop issue?
+                  // Todo: Will it be fixed when we switch to openFB (coming soon)?
+                  // Todo: figure out how to prevent this, or figure out how to detect that it was actually successful.
+                  failureCallback.apply(this, arguments);
                 }
-              );
+              });
             }
           }
         };
@@ -412,20 +476,19 @@ var remote = {
       } else {
         var endpoint = isPostsOrComments === 'posts' ? 'feed' : 'comments';
 
-        FB.api(
-          '/' + postOrComment.fbId + '/' + endpoint,
-          'POST',
-          {
+        openFB.api({
+          method: 'POST',
+          path: '/' + postOrComment.fbId + '/' + endpoint,
+          params: {
             'message': postOrComment.message
           },
-          function (response) {
-            if (response && !response.error) {
-              successCallback(response.id);
-            } else {
-              failureCallback.apply(this, arguments);
-            }
+          success: function (response) {
+            successCallback(response.id);
+          },
+          failure: function(){
+            failureCallback.apply(this, arguments);
           }
-        );
+        });
       }
     },
     like: function (id, isLike, successCallback, failureCallback) {
@@ -442,17 +505,16 @@ var remote = {
         return;
       }
 
-      FB.api(
-        '/' + id + '/likes',
-        isLike ? 'POST' : 'DELETE',
-        function (response) {
-          if (response === true) {
-            statusAndCallbacks.successCallback();
-          } else {
-            statusAndCallbacks.failureCallback(response);
-          }
+      openFB.api({
+        method: isLike ? 'POST' : 'DELETE',
+        path: '/' + id + '/likes',
+        success: function (response) {
+          statusAndCallbacks.successCallback();
+        },
+        failure: function(){
+          statusAndCallbacks.failureCallback(response);
         }
-      );
+      });
     }
   },
   login: void 0, // Search for "remote.login" to see usage
