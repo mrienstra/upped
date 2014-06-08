@@ -16,6 +16,10 @@
       </div>
     </div>
 
+    <!-- {Track:js} -->
+    <script>var _trackJs = {customer: '9093eb705879451f88862d342e761708'};</script>
+    <script src="js/trackjs-1.2.5.js"></script>
+
     <!-- Facebook SDK -->
     <div id="fb-root"></div>
     <script>
@@ -33,5 +37,12 @@
     <script type="text/javascript" src="js/parse-1.2.18.min.js"></script>
     <script type="text/javascript" src="js/libs.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script>
+      window.setTimeout(function(){
+        if (document.querySelector('.splash')) {
+          throw 'Still on splash screen after 15 seconds';
+        }
+      }, 15 * 1000); // 15 seconds
+    </script>
   </body>
 </html>

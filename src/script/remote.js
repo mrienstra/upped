@@ -25,6 +25,8 @@ var CheckinParseClass = Parse.Object.extend('Checkin');
 var _remote = {
   fb: {
     init: function(){
+      console.log('_remote.fb.init');
+
       if (!_remote.fb.initialized) {
         _remote.fb.initialized = true;
 
@@ -75,6 +77,8 @@ var _remote = {
       };
     },
     getLoginStatusCallback: function (response) {
+      console.log('_remote.fb.getLoginStatusCallback', response);
+
       if (response.status === 'connected') {
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
@@ -240,11 +244,15 @@ var _remote = {
   },
   fcp: {
     init: function(){
+      console.log('_remote.fcp.init');
+
       facebookConnectPlugin.getLoginStatus(_remote.fcp.getLoginStatusCallback);
 
       StatusBar.overlaysWebView(false); // Todo: put this somewhere else, doesn't really belong here. org.apache.cordova.statusbar
     },
     getLoginStatusCallback: function (response) {
+      console.log('_remote.fcp.getLoginStatusCallback', response);
+
       if (response.status === 'connected') {
         _remote.parse.loginWithFBAuthResponse(response.authResponse);
       } else {
@@ -269,6 +277,8 @@ var _remote = {
   },
   parse: {
     loginWithFBAuthResponse: function (authResponse) {
+      console.log('_remote.parse.loginWithFBAuthResponse');
+
       Parse.initialize(settings.parse.appId, settings.parse.jsKey);
 
       var myExpDate = new Date();
@@ -313,8 +323,8 @@ var _remote = {
               remote.user.fb.id = response.id;
               remote.user.name = response.name;
               remote.user.firstName = response.first_name;
-              remote.user.picture = response.picture.data.url;
-              remote.user.cover = response.cover.source;
+              remote.user.picture = response.picture && response.picture.data.url;
+              remote.user.cover = response.cover && response.cover.source;
 
               if (response.permissions) {
                 remote.user.fb.permissions = response.permissions.data[0];
@@ -381,11 +391,14 @@ var remote = {
     remote.resetUser();
 
     if (window.cordova) {
+      console.log('remote.init: waiting for "deviceready"');
       document.addEventListener('deviceready', _remote.fcp.init, false);
     } else {
       if (window.FB) {
+        console.log('remote.init: calling _remote.fb.init');
         _remote.fb.init();
       } else {
+        console.log('remote.init: waiting for FB');
         window.fbAsyncInit = _remote.fb.init;
       }
     }

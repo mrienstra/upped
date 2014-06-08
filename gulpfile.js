@@ -95,6 +95,9 @@ gulp.task('lib', function () {
     })))
     .pipe(gulp.dest(path.script.out));
 
+  gulp.src('src/lib/trackjs-1.2.5.js')
+    .pipe(gulp.dest(path.script.out));
+
   gulp.src(parseJsFile)
     .pipe(gulp.dest(path.script.out));
 
