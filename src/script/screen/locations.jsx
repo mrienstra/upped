@@ -1,8 +1,10 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
-
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
+// Modules
+var pubSub = require('../pubSub.js');
 
 var LocationListItem = React.createClass({
   render: function() {
@@ -11,7 +13,7 @@ var LocationListItem = React.createClass({
         <a className="navigate-right" onTouchEnd={this.props.handleLocationChange.bind(null, this.props)} data-transition="slide-in">
           <div className="media-body">
             <h4>{this.props.name}</h4>
-            <p>{this.props.checkedInCount ? this.props.checkedInCount + ' checked in, ' : ''}{this.props.distance}</p>
+            <p>{this.props.checkin.count ? this.props.checkin.count : 0} checked in, {this.props.distance}</p>
           </div>
         </a>
       </li>
@@ -36,7 +38,19 @@ var LocationList = React.createClass({
       return true;
     });
     var locationNodes = locations.map(function (location, index) {
-      return <LocationListItem key={keys[index]} name={location.name} fbId={location.fbId} photoURL={location.photoURL} checkedInCount={location.checkedInCount} address1={location.address1} address2={location.address2} promotion={location.promotion} distance={location.distance} handleLocationChange={that.props.handleLocationChange}></LocationListItem>;
+      var checkin = {
+        count: 0
+      };
+      if (that.props.checkins || that.props.checkins.length) {
+        that.props.checkins.some(function (aCheckin) {
+          if (aCheckin.fbId === location.fbId) {
+            checkin.count = aCheckin.count;
+            checkin.parseId = aCheckin.parseId;
+            return true;
+          }
+        });
+      }
+      return <LocationListItem key={keys[index]} name={location.name} fbId={location.fbId} photoURL={location.photoURL} checkin={checkin} address1={location.address1} address2={location.address2} promotion={location.promotion} distance={location.distance} handleLocationChange={that.props.handleLocationChange}></LocationListItem>;
     });
     return (
       <div className="content content-main">
@@ -55,12 +69,67 @@ var LocationList = React.createClass({
 });
 
 var LocationsScreen = React.createClass({
-  getInitialState: function() {
-    return {filters: []};
+  getInitialState: function(){
+    return {
+      checkins: [],
+      filters: []
+    };
   },
   handleFilterChange: function (event) {
     console.log('handleFilterChange', event);
     this.setState({filters: event.target.value.toLowerCase().split(' ')});
+  },
+  handlePromise: function (checkinsPromise) {
+    var that = this;
+
+    checkinsPromise.then(
+      function (checkins) {
+        console.log('LocationsScreen checkinsPromise', checkins);
+
+        that.setState({
+          checkins: checkins
+        });
+      },
+      function (response) {
+        alert('LocationsScreen checkinsPromise failed!');
+        console.warn('bad', response);
+      }
+    );
+  },
+  componentWillMount: function(){
+    console.log('LocationsScreen.componentWillMount', this, arguments);
+
+    var that = this;
+
+    var checkinsPromise = this.props.getCheckins();
+
+    this.handlePromise(checkinsPromise);
+
+    pubSub.subscribe('location', function (topic, data) {
+      console.log('LocationsScreen.componentWillMount pubSub.subscribe "location"', this, arguments);
+
+      var outstandingChanges = data.previousFbId ? 2 : 1;
+
+      console.log('outstandingChanges', outstandingChanges)
+
+      var newCheckins = that.state.checkins.concat();
+      if (newCheckins.some(function (checkin, i) {
+        if (checkin.fbId === data.fbId) {
+          newCheckins[i].count += data.checkedIn ? 1 : -1;
+
+          if (!--outstandingChanges) return true;
+        } else if (data.previousFbId && checkin.fbId === data.previousFbId) {
+          newCheckins[i].count -= 1;
+
+          if (!--outstandingChanges) return true;
+        }
+      })) {
+        console.log('newCheckins', newCheckins)
+        that.setState({checkins: newCheckins});
+      } else {
+        console.error('todo: update when new?');
+      }
+    });
   },
   render: function(){
     return (
@@ -79,7 +148,7 @@ var LocationsScreen = React.createClass({
             </form>
           </div>
 
-          <LocationList locations={this.props.locations} filters={this.state.filters} handleLocationChange={this.props.handleLocationChange}></LocationList>
+          <LocationList locations={this.props.locations} checkins={this.state.checkins} filters={this.state.filters} handleLocationChange={this.props.handleLocationChange}></LocationList>
         </div>
 
         <div id="sideMenu" className="side-menu">

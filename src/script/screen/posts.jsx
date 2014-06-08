@@ -3,7 +3,8 @@
 var React = require('react/addons');
 
 // Modules
-var utils = require('../utils');
+var utils = require('../utils.js');
+var pubSub = require('../pubSub.js');
 
 // Mixins
 var likeMixin = require('../mixin/like.js');
@@ -84,9 +85,32 @@ var PostsScreen = React.createClass({
   mixins: [postOrCommentSubmitMixin],
   getInitialState: function(){
     return {
+      checkinCount: this.props.checkin.count,
+      checkedIn: this.props.user.location.fbId === this.props.fbId ? true : false,
       status: 'loading',
       posts: []
     };
+  },
+  handleCheckInOut: function(){
+    var newCheckedIn = this.props.user.location.fbId !== this.props.fbId;
+
+    var newCount = this.state.checkinCount + (newCheckedIn ? 1 : -1);
+
+    var data = {
+      checkedIn: newCheckedIn,
+      count: newCount,
+      fbId: this.props.fbId
+    };
+
+    if (newCheckedIn) {
+      data.previousFbId = this.props.user.location.fbId;
+    }
+
+    console.log('PostsScreen.handleCheckInOut', this, arguments, data);
+
+    pubSub.publish('location.' + this.props.fbId, data);
+
+    this.props.handleCheckInOut(this.props.checkin.parseId, this.props.fbId, newCheckedIn);
   },
   handlePromise: function (postsPromise, options) {
     var that = this;
@@ -124,12 +148,30 @@ var PostsScreen = React.createClass({
 
     this.handlePromise(postsPromise, {quietStart: true});
   },
+  subscribeToChanges: function (fbId) {
+    if (this.pubSubToken) pubSub.unsubscribe(this.pubSubToken);
+
+    var that = this;
+
+    var topic = 'location.' + fbId;
+
+    this.pubSubToken = pubSub.subscribe(topic, function (topic, data) {
+      console.log('PostsScreen.subscribeToChanges pubSub.subscribe', topic, this, arguments);
+
+      that.setState({
+        checkedIn: data.checkedIn,
+        checkinCount: data.count
+      });
+    });
+  },
   componentWillMount: function(){
     console.log('PostsScreen.componentWillMount()', this, arguments);
 
     var postsPromise = this.props.getPosts();
 
     this.handlePromise(postsPromise);
+
+    this.subscribeToChanges(this.props.fbId);
   },
   componentWillReceiveProps: function (nextProps) {
     console.log('PostsScreen.componentWillReceiveProps()', this, arguments);
@@ -137,9 +179,28 @@ var PostsScreen = React.createClass({
     var postsPromise = nextProps.getPosts();
 
     this.handlePromise(postsPromise);
+
+    this.setState({
+      checkinCount: nextProps.checkin.count,
+      checkedIn: nextProps.user.location.fbId === nextProps.fbId ? true : false
+    });
+
+    this.subscribeToChanges(nextProps.fbId);
   },
   render: function(){
     console.log('PostsScreen.render()', this, arguments);
+
+    var toolbar;
+    if (this.state.checkedIn) {
+      toolbar = <PostOrCommentToolbar placeholderText="What are you up to?" isPostsOrComments="posts" handlePostOrCommentSubmit={this.handlePostOrCommentSubmit}></PostOrCommentToolbar>;
+    } else {
+      toolbar = <div className="post-form-wrapper">
+        <div className="promo">
+          <p><span className="icon ion-radio-waves"></span>Are you here? Check in to chat!</p>
+        </div>
+      </div>;
+    }
+
     var promotion;
     if (this.props.promotion) {
       promotion = (
@@ -160,7 +221,7 @@ var PostsScreen = React.createClass({
       <div>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
-          <a className="btn btn-link btn-nav pull-right" onTouchEnd={function(){alert('Todo');}}>Check In</a>
+          <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleCheckInOut}>Check {this.state.checkedIn ? 'Out' : 'In'}</a>
           <h1 className="title">Bar Wall</h1>
         </header>
 
@@ -172,14 +233,15 @@ var PostsScreen = React.createClass({
             </div>
             <div className="content-overlay">
               <h3>{this.props.name}</h3>
-              <h4><span className="icon ion-person-stalker"></span> <span className="count">{this.props.checkedInCount ? this.props.checkedInCount : '0'}</span> checked in / {this.props.distance ? this.props.distance : '0 ft'}
+              <h4><span className="icon ion-person-stalker"></span> <span className="count">{this.state.checkinCount ? this.state.checkinCount : '0'}</span> checked in / {this.props.distance ? this.props.distance : '0 ft'}
                 <div className="buttons">
                   <a href=""><span className="badge">Address</span></a>
                 </div>
               </h4>
             </div>
           </div>
-          <PostOrCommentToolbar placeholderText="What are you up to?" isPostsOrComments="posts" handlePostOrCommentSubmit={this.handlePostOrCommentSubmit}></PostOrCommentToolbar>
+
+          {toolbar}
 
           {promotion}
 
