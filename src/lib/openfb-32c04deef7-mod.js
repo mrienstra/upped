@@ -7,6 +7,10 @@
  * @author Christophe Coenraets @ccoenraets
  * @version 0.3
  */
+
+/* Modified: see https://github.com/ccoenraets/OpenFB/pull/16 */
+/* Modified: last line added for Browserify compatibility */
+
 var openFB = (function () {
 
     var FB_LOGIN_URL = 'https://www.facebook.com/dialog/oauth',
@@ -36,13 +40,18 @@ var openFB = (function () {
      * Initialize the OpenFB module. You must use this function and initialize the module with an appId before you can
      * use any other function.
      * @param appId - The id of the Facebook app
-     * @param redirectURL - The OAuth redirect URL. Optional. If not provided, we use sensible defaults.
-     * @param store - The store used to save the Facebook token. Optional. If not provided, we use sessionStorage.
+     * @param options - Options object. Can include:
+     *  redirectURL: The OAuth redirect URL. Optional. If not provided, we use sensible defaults.
+     *  store: The store used to save the Facebook token. Optional. If not provided, we use sessionStorage.
+     *  accessToken: The Facebook token. Optional.
      */
-    function init(appId, redirectURL, store) {
+    function init(appId, options) {
         fbAppId = appId;
-        if (redirectURL) oauthRedirectURL = redirectURL;
-        if (store) tokenStore = store;
+
+        options = options || {};
+        if (options.redirectURL) oauthRedirectURL = options.redirectURL;
+        if (options.store) tokenStore = options.store;
+        if (options.accessToken) tokenStore['fbtoken'] = options.accessToken;
     }
 
     /**
@@ -215,10 +224,6 @@ var openFB = (function () {
         return obj;
     }
 
-    function setFbToken(fbToken) { // mod
-        tokenStore['fbtoken'] = fbToken;
-    }
-
     function toQueryString(obj) {
         var parts = [];
         for (var i in obj) {
@@ -234,7 +239,6 @@ var openFB = (function () {
         init: init,
         login: login,
         logout: logout,
-        setFbToken: setFbToken, // mod
         revokePermissions: revokePermissions,
         api: api,
         oauthCallback: oauthCallback

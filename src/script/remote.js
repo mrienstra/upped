@@ -15,10 +15,12 @@ var settings = {
     postFields: 'from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,attachment,message,like_count,user_likes)'
   },
   parse: {
-   appId: '5UaFlVS828jdsC9cCTYeXQpP9PXs3XUaeo7cye4q',
-   jsKey: 'm7ebrHb7gg3DBlZlUewO9NFrCzNj8EjuXEla9T9p'
+   appId: 'fGL4H9M5JTIZPsJrLKflSPpl0XV6NbJQYaHpgPzN',
+   jsKey: 'a5sGHg7mZkdkksgJBkv6BlUxM26HpoQEaEt2FHlt'
  }
 };
+
+var CheckinParseClass = Parse.Object.extend('Checkin');
 
 var _remote = {
   fb: {
@@ -281,12 +283,22 @@ var _remote = {
 
       remote.user.fb.accessToken = authResponse.accessToken;
 
-      openFB.setFbToken(authResponse.accessToken);
+      openFB.init(settings.fb.appId, {accessToken: authResponse.accessToken});
 
       Parse.FacebookUtils.logIn(facebookAuthData, {
         success: function(_user) {
           remote.user.parse = _user;
           remote.user.ftu = _user.existed() ? false : true;
+
+          var locationParseId = _user.get('locationParseId');
+          if (locationParseId) {
+            var locationFbId = _user.get('locationFbId');
+            remote.user.location = {
+              checkedIn: true,
+              fbId: locationFbId,
+              parseId: locationParseId
+            }
+          }
 
           var meFields = 'name,first_name,picture,cover';
           if (!remote.user.fb.permissions) {
@@ -366,6 +378,8 @@ var _remote = {
 
 var remote = {
   init: function () {
+    remote.resetUser();
+
     if (window.cordova) {
       document.addEventListener('deviceready', _remote.fcp.init, false);
     } else {
@@ -521,10 +535,95 @@ var remote = {
   logOut: function(){
     console.log('remote.logOut');
 
+    if (remote.user.location.checkedIn) {
+      remote.parse.checkin.checkInOut(remote.user.location.parseId, remote.user.location.fbId, false);
+    }
+
     Parse.User.logOut();
-    remote.user = {fb: {}};
+    remote.resetUser();
   },
   parse: {
+    checkin: {
+      checkInOut: function (parseId, fbId, isIn) {
+        console.log('remote.parse.checkin.checkInOut', this, arguments, JSON.stringify(remote.user.location));
+
+        var checkedIn = new CheckinParseClass();
+
+        if (isIn && remote.user.location.checkedIn) {
+          // Check out of previous location
+          var checkedIn2 = new CheckinParseClass();
+          checkedIn2.save({
+            checkedIn: {'__op': 'Increment', 'amount': -1},
+            'id': remote.user.location.parseId
+          });
+        }
+
+        checkedIn.set('checkedIn', {'__op': 'Increment', 'amount': isIn ? 1 : -1});
+
+        if (isIn) {
+          remote.user.location = {
+            checkedIn: true,
+            fbId: fbId,
+            parseId: parseId
+          };
+
+          remote.user.parse.save({
+            locationFbId: fbId,
+            locationParseId: parseId
+          });
+        } else {
+          remote.user.location = {
+            checkedIn: false
+          };
+
+          remote.user.parse.save({
+            locationFbId: null,
+            locationParseId: null
+          });
+        }
+
+        if (parseId) {
+          // Existing
+          checkedIn.set('id', parseId);
+        } else {
+          // New
+          // Todo: this is not fully supported
+          checkedIn.set({
+            fbId: fbId,
+            region: '0'
+          });
+        }
+
+        checkedIn.save();
+      },
+      getByRegion: function (region) {
+        console.log('remote.parse.checkin.getByRegion', this, arguments);
+
+        var deferred = when.defer();
+
+        var query = new Parse.Query(CheckinParseClass);
+        query.equalTo('region', region);
+        query.find({
+          success: function (response) {
+            console.log('remote.parse.checkin.getByRegion success', this, arguments);
+
+            var checkins = [];
+            response.forEach(function (aCheckin) {
+              checkins.push({
+                count: aCheckin.get('checkedIn'),
+                parseId: aCheckin.id,
+                fbId: aCheckin.get('fbId')
+              });
+            });
+
+            deferred.resolve(checkins);
+          },
+          error: deferred.reject
+        });
+
+        return deferred.promise;
+      }
+    },
     getUser: function(){
       return Parse.User.current();
     },
@@ -533,8 +632,11 @@ var remote = {
       else return false;
     }
   },
-  user: {
-    fb: {}
+  resetUser: function(){
+    remote.user = {
+      location: {},
+      fb: {}
+    };
   }
 };
 
