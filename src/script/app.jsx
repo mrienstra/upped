@@ -219,6 +219,8 @@ var continuePastWelcomeScreen = function(){
 };
 
 var showFirstScreen = function(){
+  console.log('showFirstScreen');
+
   window.addEventListener('fbLoginNeeded', showWelcomeScreen);
   window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
 
