@@ -262,6 +262,6 @@ var showWelcomeScreen = function (e, afterLogOut) {
 
 // Init
 
-//if (window.location.protocol === 'file:') alert('Calling showFirstScreen'); // Helpful when testing on phone (pauses init so you can open console viewer)
+// if (window.location.protocol === 'file:') alert('Calling showFirstScreen'); // Helpful when testing on phone (pauses init so you can open console viewer)
 
 showFirstScreen();
