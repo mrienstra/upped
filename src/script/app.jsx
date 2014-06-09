@@ -108,7 +108,7 @@ var handleLocationsChange = function(){
 
   var getCheckins = remote.parse.checkin.getByRegion.bind(remote.parse.checkin, '0');
 
-  var thisHandleProfileChange = handleProfileChange.bind(null, {user: remote.user});
+  var thisHandleProfileChange = handleProfileChange.bind(null, remote.user, true);
 
   app.screens.addScreen(
     <LocationsScreen locations={props.locations} getCheckins={getCheckins} handleLocationChange={handleLocationChange} handleProfileChange={thisHandleProfileChange} handleLogOut={handleLogOut}></LocationsScreen>
@@ -123,17 +123,34 @@ var handleLocationChange = function (props) {
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike}></PostsScreen>
+    <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handleProfileChange={handleProfileChange} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike}></PostsScreen>
   );
 };
 
-var handleProfileChange = function (props) {
-  console.log('handleProfileChange', this, arguments);
+var handleProfileChange = function (user, fromMenu) {
+  console.log('handleProfileChange', arguments, remote.user);
+
+  var viewingSelf;
+
+  if ((user.id || user.fb.id) === remote.user.fb.id) {
+    // Todo: this seems a little fragile
+    user = {
+      cover: remote.user.cover,
+      id: remote.user.fb.id,
+      firstName: remote.user.firstName,
+      likes: remote.user.fb.likes,
+      name: remote.user.name
+    };
+
+    viewingSelf = true;
+  }
+
+  var getProfile = remote.fb.getProfile;
 
   var ProfileScreen = require('./screen/profile.jsx');
 
   app.screens.addScreen(
-    <ProfileScreen user={props.user} viewingUser={remote.user} handleBack={handleBack}></ProfileScreen>
+    <ProfileScreen user={user} viewingSelf={viewingSelf} fromMenu={fromMenu} getProfile={getProfile} handleBack={handleBack}></ProfileScreen>
   );
 };
 
@@ -153,7 +170,7 @@ var handlePostChange = function (props) {
   var PostScreen = require('./screen/post.jsx');
 
   app.screens.addScreen(
-    <PostScreen location={props.location} post={post} comments={props.comments} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleLike={handleLike} handleCreatePostOrComment={handleCreatePostOrComment}></PostScreen>
+    <PostScreen location={props.location} post={post} comments={props.comments} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleProfileChange={handleProfileChange} handleLike={handleLike} handleCreatePostOrComment={handleCreatePostOrComment}></PostScreen>
   );
 };
 
