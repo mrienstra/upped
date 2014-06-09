@@ -10,7 +10,7 @@ var settings = {
     permissions: {
       initial: ['public_profile', 'email', 'user_likes'],
       // Asking for publish_* permissions initially using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
-      publish: ['publish_actions', 'publish_stream'] // todo: both needed?
+      publish: ['publish_actions']
     },
     postFields: 'from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,attachment,message,like_count,user_likes)'
   },
