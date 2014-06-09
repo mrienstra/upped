@@ -67,6 +67,13 @@ var ProfileScreen = React.createClass({
       leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>;
     }
 
+    var rightNavButton;
+    if (this.props.fromMenu) {
+      rightNavButton = <a className="btn btn-link btn-nav pull-right" onTouchEnd={function(){alert('Coming Soon');}}>Edit</a>;
+    } else {
+      rightNavButton = <a className="btn btn-link btn-nav pull-right" onTouchEnd={function(){alert('Coming Soon');}}>Activity</a>;
+    }
+
     var title;
     if (this.props.viewingSelf) {
       title = 'My Profile';
@@ -124,7 +131,7 @@ var ProfileScreen = React.createClass({
       <div>
         <header className="bar bar-nav">
           {leftNavButton}
-          <a className="btn btn-link btn-nav pull-right" onTouchEnd={function(){alert('Todo');}}>Edit</a>
+          {rightNavButton}
           <h1 className="title">{title}</h1>
         </header>
 
@@ -135,6 +142,10 @@ var ProfileScreen = React.createClass({
                 <h3>{this.props.user.name}</h3>
               </div>
             </div>
+            <ul className="table-view">
+              <li className="table-view-divider">Bars<span className="right">Checkins</span></li>
+              <li className="table-view-cell media">Cafe Mare<span className="badge">1</span></li>
+            </ul>
             {userLikesSection}
         </div>
 

@@ -239,7 +239,7 @@ var PostsScreen = React.createClass({
             <div className="content-overlay">
               <h3>{this.props.name}</h3>
               <h4><span className="icon ion-person-stalker"></span> <span className="count">{this.state.checkinCount ? this.state.checkinCount : '0'}</span> checked in / {this.props.distance ? this.props.distance : '0 ft'}
-                <div className="buttons">
+                <div className="buttons hide">
                   <a href=""><span className="badge">Address</span></a>
                 </div>
               </h4>
