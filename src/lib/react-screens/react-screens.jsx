@@ -112,16 +112,12 @@ var ReactScreens = function (container) {
   };
 
   var reactScreens = {
-    addScreen: function (screen, position) {
+    addScreen: function (screen) {
       if (noisy) console.log('ReactScreens addScreen', this, arguments);
 
       var screenIndex = state.positions.center + 1;
 
-      screens.splice(screenIndex, 1, {
-        screen: screen,
-        position: position,
-        parentIndex: screens.length - 1
-      });
+      screens.splice(screenIndex, 1, screen);
 
       if (screens.length === 1) {
         state = {
