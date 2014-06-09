@@ -278,11 +278,15 @@ var _remote = {
     }
   },
   parse: {
-    loginWithFBAuthResponse: function (authResponse) {
-      console.log('_remote.parse.loginWithFBAuthResponse');
+    loginWithFBAuthResponse: function (authResponse, attemptCount) {
+      attemptCount = attemptCount || 0;
+      console.log('_remote.parse.loginWithFBAuthResponse', attemptCount);
 
-      Parse.initialize(settings.parse.appId, settings.parse.jsKey);
+      if (!Parse.applicationId) {
+        Parse.initialize(settings.parse.appId, settings.parse.jsKey);
+      }
 
+      // Hack, see http://blog.reddeadserver.com/phonegap-facebook-and-parse-android/
       var myExpDate = new Date();
       myExpDate.setMonth(myExpDate.getMonth() + 2);
       myExpDate = myExpDate.toISOString();
@@ -351,6 +355,16 @@ var _remote = {
         },
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
+
+          if (attemptCount < 2) {
+            attemptCount++;
+            _remote.parse.loginWithFBAuthResponse(authResponse, attemptCount);
+          } else {
+            window.setTimeout(function(){
+              alert('Unable to log you in at this time');
+            }, 0);
+            throw '_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn failed 3 times';
+          }
         }
       });
     }
