@@ -25,7 +25,7 @@ var CommentListItem = React.createClass({
     return (
       <li className="table-view-cell posts-list">
         <div className="details">
-          <img src={this.props.from.picture} />
+          <img onTouchEnd={this.props.handleProfileChange.bind(null, this.props.from, false)} src={this.props.from.picture} />
           <h4>{this.props.from.name}</h4>
           <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
           <div className="stats">
@@ -53,7 +53,7 @@ var PostSingle = React.createClass({
     var commentCount = this.props.comments ? this.props.comments.length : 0;
 
     var commentsNodes = this.props.comments ? this.props.comments.map(function (comment, index) {
-      return <CommentListItem key={index} id={comment.id} from={comment.from} time={comment.time} picture={comment.picture} message={comment.message} likeCount={comment.likeCount} userLikes={comment.userLikes} refresh={that.props.refresh} handleLike={that.props.handleLike}></CommentListItem>;
+      return <CommentListItem key={index} id={comment.id} from={comment.from} time={comment.time} picture={comment.picture} message={comment.message} likeCount={comment.likeCount} userLikes={comment.userLikes} refresh={that.props.refresh} handleProfileChange={that.props.handleProfileChange} handleLike={that.props.handleLike}></CommentListItem>;
     }) : [];
     return (
       <div>
@@ -65,7 +65,7 @@ var PostSingle = React.createClass({
         <ul className="table-view posts-list">
           <li className="table-view-cell">
             <div className="details">
-              <img src={post.from.picture} />
+              <img onTouchEnd={this.props.handleProfileChange.bind(null, post.from, false)} src={post.from.picture} />
               <h4>{post.from.name}</h4>
               <div className="time">{utils.momentFromNowIfTime(post.time)}</div>
               <div className="stats">
@@ -155,7 +155,7 @@ var PostScreen = React.createClass({
           <h1 className="title">Wall Post</h1>
         </header>
         <div className="content">
-          <PostSingle id={post.id} post={post} comments={comments} likeCount={likeCount} userLikes={userLikes} refresh={this.refresh} handleLike={this.props.handleLike}></PostSingle>
+          <PostSingle id={post.id} post={post} comments={comments} likeCount={likeCount} userLikes={userLikes} refresh={this.refresh} handleProfileChange={this.props.handleProfileChange} handleLike={this.props.handleLike}></PostSingle>
           <PostOrCommentToolbar placeholderText="And then you were all like...?" isPostsOrComments="comments" handlePostOrCommentSubmit={this.handlePostOrCommentSubmit}></PostOrCommentToolbar>
         </div>
       </div>

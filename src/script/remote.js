@@ -8,7 +8,7 @@ var settings = {
   fb: {
     appId: '637656759644763',
     permissions: {
-      initial: ['basic_info', 'email', 'user_likes'],
+      initial: ['public_profile', 'email', 'user_likes'],
       // Asking for publish_* permissions initially using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
       publish: ['publish_actions', 'publish_stream'] // todo: both needed?
     },
@@ -45,8 +45,9 @@ var _remote = {
       return {
         id: post.id,
         from: {
-          picture: post.from.picture.data.url,
-          name: post.from.name
+          id: post.from.id,
+          name: post.from.name,
+          picture: post.from.picture && post.from.picture.data.url
         },
         time: post.created_time,
         post: {
@@ -60,8 +61,9 @@ var _remote = {
           var formattedComment = {
             id: comment.id,
             from: {
-              picture: comment.from.picture.data.url,
+              id: comment.from.id,
               name: comment.from.name,
+              picture: comment.from.picture && comment.from.picture.data.url
             },
             time: comment.created_time,
             message: comment.message,
@@ -310,7 +312,7 @@ var _remote = {
             }
           }
 
-          var meFields = 'name,first_name,picture,cover';
+          var meFields = 'cover,first_name,likes.fields(name,picture),name,picture';
           if (!remote.user.fb.permissions) {
             meFields += ',permissions';
           }
@@ -326,6 +328,14 @@ var _remote = {
               remote.user.picture = response.picture && response.picture.data.url;
               remote.user.cover = response.cover && response.cover.source;
 
+              remote.user.fb.likes = response.likes && response.likes.data.map(function (like) {
+                return {
+                  id: like.id,
+                  name: like.name,
+                  picture: like.picture.data.url
+                };
+              });
+
               if (response.permissions) {
                 remote.user.fb.permissions = response.permissions.data[0];
 
@@ -334,24 +344,6 @@ var _remote = {
             },
             failure: function(){
               console.error('_remote.parse.loginWithFBAuthResponse openFB.api "/me"', this, arguments);
-            }
-          });
-          openFB.api({
-            path: '/me/likes',
-            params: {fields: 'name,picture'},
-            success: function (response) {
-              console.log('_remote.parse.loginWithFBAuthResponse openFB.api "/me/likes"', this, arguments);
-
-              remote.user.fb.likes = response.data.map(function (like) {
-                return {
-                  id: like.id,
-                  name: like.name,
-                  picture: like.picture.data.url
-                };
-              });
-            },
-            failure: function(){
-              console.error('_remote.parse.loginWithFBAuthResponse openFB.api "/me/likes"', this, arguments);
             }
           });
 
@@ -411,6 +403,63 @@ var remote = {
     getPosts: function(fbId) {
       console.log('remote.fb.getPosts', this, arguments);
       return _remote.fb.getPostOrPosts(fbId, false);
+    },
+    getProfile: function (fbId, isPage, deferred) {
+      console.log('remote.fb.getProfile', arguments);
+
+      if (!deferred) deferred = when.defer();
+
+      var fbURL = '/' + fbId;
+
+      var fbParams;
+      if (isPage) {
+        fbParams = {fields: 'cover,likes.fields(name,picture)'};
+      } else {
+        fbParams = {fields: 'cover,first_name,likes.fields(name,picture)'};
+      }
+
+      openFB.api({
+        path: fbURL,
+        params: fbParams,
+        success: function(response){
+          console.log('remote.fb.getProfile response', response);
+          var output = {
+            cover: response.cover && response.cover.source,
+            firstName: response.first_name
+          }
+
+          if (response.likes && response.likes.data) {
+            output.likes = response.likes.data.map(function (like) {
+              return {
+                id: like.id,
+                name: like.name,
+                picture: like.picture.data.url
+              };
+            });
+          } else if (response.likes !== void 0) {
+            output.likes = response.likes;
+          }
+
+          if (isPage) {
+            output.isPage = true;
+          }
+
+          deferred.resolve(output);
+        },
+        error: function (response) {
+          var message = response.message.toLocaleLowerCase();
+          if (!isPage && message.indexOf('first_name') !== -1 && message.indexOf('page') !== -1) {
+            // Error message was something like "(#100) Tried accessing unexisting field (first_name) on node type (Page)"
+            // We're trying to view a page, not a user
+            remote.fb.getProfile(fbId, true, deferred);
+          } else {
+            console.error('remote.fb.getProfile response', response);
+            deferred.reject(response);
+          }
+        }
+      });
+
+      return deferred.promise;
     },
     createPostOrComment: function (isPostsOrComments, postOrComment, successCallback, failureCallback) {
       console.log('remote.fb.createPostOrComment', this, arguments);

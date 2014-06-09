@@ -15,6 +15,11 @@ var PostOrCommentToolbar = require('../component/postOrCommentToolbar.jsx');
 
 var PostsListItem = React.createClass({
   mixins: [likeMixin],
+  handleProfileChange: function (e) {
+    e.stopPropagation();
+    
+    this.props.handleProfileChange(this.props.from);
+  },
   render: function(){
     var commentCount = this.props.comments.length;
 
@@ -29,7 +34,7 @@ var PostsListItem = React.createClass({
       <li className="table-view-cell">
         <a onTouchEnd={this.props.handlePostChange.bind(null, this.props)}>
           <div className="details">
-            <img src={this.props.from.picture} />
+            <img onTouchEnd={this.handleProfileChange} src={this.props.from.picture} />
             <h4>{this.props.from.name}</h4>
             <div className="time">{utils.momentFromNowIfTime(this.props.time)}</div>
             <div className="stats">
@@ -70,7 +75,7 @@ var PostsList = React.createClass({
           return like.id === props.userFbId;
         });
 
-        return <PostsListItem key={index} id={post.id} handlePostChange={props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} likeCount={likeCount} userLikes={userLikes} comments={post.comments} handleLike={props.handleLike} refresh={props.refresh}></PostsListItem>;
+        return <PostsListItem key={index} id={post.id} handleProfileChange={props.handleProfileChange} handlePostChange={props.handlePostChange} from={post.from} time={post.time} post={post.post} likes={post.likes} likeCount={likeCount} userLikes={userLikes} comments={post.comments} handleLike={props.handleLike} refresh={props.refresh}></PostsListItem>;
       });
     }
     return (
@@ -245,7 +250,7 @@ var PostsScreen = React.createClass({
 
           {promotion}
 
-          <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handlePostChange={this.props.handlePostChange} handleLike={this.props.handleLike} refresh={this.refresh}></PostsList>
+          <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handleProfileChange={this.props.handleProfileChange} handlePostChange={this.props.handlePostChange} handleLike={this.props.handleLike} refresh={this.refresh}></PostsList>
         </div>
       </div>
     );
