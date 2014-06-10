@@ -140,6 +140,7 @@ var ProfileScreen = React.createClass({
               {coverImage}
               <div className="content-padded">
                 <h3>{this.props.user.name}</h3>
+                <h4>0 points</h4>
               </div>
             </div>
             <ul className="table-view">

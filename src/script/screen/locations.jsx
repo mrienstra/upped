@@ -164,13 +164,13 @@ var LocationsScreen = React.createClass({
                   <h4><span className="icon ion-person"></span> Profile</h4>
                 </a>
               </li>
-              <li className="table-view-cell">
+              <li className="table-view-cell hide">
                 <a href="bar-detail.html" data-transition="slide-in">
                   <h4><span className="icon ion-paper-airplane"></span> Gifts</h4>
                   <div className="status badge badge-negative">1</div>
                 </a>
               </li>
-              <li className="table-view-cell">
+              <li className="table-view-cell hide">
                 <a href="bar-detail.html" data-transition="slide-in">
                   <h4><span className="icon ion-gear-a"></span> Settings</h4>
                 </a>

@@ -20,8 +20,6 @@ var settings = {
  }
 };
 
-var CheckinParseClass = Parse.Object.extend('Checkin');
-
 var _remote = {
   fb: {
     init: function(){
@@ -609,11 +607,11 @@ var remote = {
       checkInOut: function (parseId, fbId, isIn) {
         console.log('remote.parse.checkin.checkInOut', this, arguments, JSON.stringify(remote.user.location));
 
-        var checkedIn = new CheckinParseClass();
+        var checkedIn = new (Parse.Object.extend('Checkin'))();
 
         if (isIn && remote.user.location.checkedIn) {
           // Check out of previous location
-          var checkedIn2 = new CheckinParseClass();
+          var checkedIn2 = new (Parse.Object.extend('Checkin'))();
           checkedIn2.save({
             checkedIn: {'__op': 'Increment', 'amount': -1},
             'id': remote.user.location.parseId
@@ -663,7 +661,7 @@ var remote = {
 
         var deferred = when.defer();
 
-        var query = new Parse.Query(CheckinParseClass);
+        var query = new Parse.Query(Parse.Object.extend('Checkin'));
         query.equalTo('region', region);
         query.find({
           success: function (response) {
@@ -688,6 +686,26 @@ var remote = {
     },
     getUser: function(){
       return Parse.User.current();
+    },
+    points: {
+      getByUserId: function(userId) {
+        console.log('remote.parse.points.getByUserId', this, arguments);
+
+        var deferred = when.defer();
+
+        var query = new Parse.Query(Parse.Object.extend('Points'));
+        query.equalTo('userId', userId);
+        query.find({
+          success: function (response) {
+            console.log('remote.parse.points.getByUserId success', this, arguments);
+
+            deferred.resolve(response[0].get('points'));
+          },
+          error: deferred.reject
+        });
+
+        return deferred.promise;
+      }
     },
     userExists: function(){
       if (typeof(parse.getUser()) != 'null') return true;
