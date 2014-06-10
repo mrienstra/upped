@@ -11,21 +11,20 @@ var ProfileScreen = React.createClass({
       cover: props.user.cover,
       firstName: props.user.firstName,
       likes: props.user.likes,
-      loading: false
+      loading: false,
+      points: props.user.points
     };
   },
   getProfileIfNeeded: function(){
-    if (!this.props.viewingSelf) {
-      var profilePromise = this.props.getProfile(this.props.user.id);
-      this.handlePromise(profilePromise);
-    }
-  },
-  handlePromise: function (profilePromise) {
+    if (this.props.viewingSelf) return;
+
     var that = this;
 
-    profilePromise.then(
+    this.setState({loading: true});
+
+    this.props.getProfile(this.props.user.id).then(
       function (user) {
-        console.log('ProfileScreen profilePromise', user);
+        console.log('ProfileScreen.getProfileIfNeeded getProfile.then success', user);
 
         that.setState({
           cover: user.cover,
@@ -36,14 +35,28 @@ var ProfileScreen = React.createClass({
         });
       },
       function (response) {
-        alert('ProfileScreen profilePromise failed!');
-        console.error('ProfileScreen profilePromise failed', response);
+        alert('ProfileScreen.getProfileIfNeeded getProfile.then failed!');
+        console.error('ProfileScreen.getProfileIfNeeded getProfile.then failed', response);
 
         that.setState(that.getCleanState(that.props));
       }
     );
 
-    this.setState({loading: true});
+    this.props.getPoints(this.props.user.id).then(
+      function (points) {
+        console.log('ProfileScreen.getProfileIfNeeded getPoints.then', points);
+
+        that.setState({
+          points: points
+        });
+      },
+      function (response) {
+        alert('ProfileScreen.getProfileIfNeeded getPoints.then failed!');
+        console.error('ProfileScreen.getProfileIfNeeded getPoints.then failed', response);
+
+        that.setState({points: void 0});
+      }
+    );
   },
   componentWillMount: function(){
     console.log('ProfileScreen.componentWillMount()', this, arguments);
@@ -101,6 +114,16 @@ var ProfileScreen = React.createClass({
       );
     }
 
+    var points, pointsEl;
+    if (this.state.points !== void 0) {
+      if (this.props.viewingSelf && this.state.points === 0) {
+        points = 'No points yet — get some by doin’ somethin’!';
+      } else {
+        points = this.state.points + ' ' + (this.state.points === 1 ? 'point' : 'points');
+      }
+      pointsEl = <h4>{points}</h4>;
+    }
+
     var i, l, userLikes, userLikesSection;
     l = this.state.likes && this.state.likes.length;
     if (l) {
@@ -140,7 +163,7 @@ var ProfileScreen = React.createClass({
               {coverImage}
               <div className="content-padded">
                 <h3>{this.props.user.name}</h3>
-                <h4>0 points</h4>
+                {pointsEl}
               </div>
             </div>
             <ul className="table-view">

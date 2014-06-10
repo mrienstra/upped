@@ -139,7 +139,8 @@ var handleProfileChange = function (user, fromMenu) {
       id: remote.user.fb.id,
       firstName: remote.user.firstName,
       likes: remote.user.fb.likes,
-      name: remote.user.name
+      name: remote.user.name,
+      points: remote.user.points.points
     };
 
     viewingSelf = true;
@@ -147,10 +148,12 @@ var handleProfileChange = function (user, fromMenu) {
 
   var getProfile = remote.fb.getProfile;
 
+  var getPoints = remote.parse.points.getByFbId;
+
   var ProfileScreen = require('./screen/profile.jsx');
 
   app.screens.addScreen(
-    <ProfileScreen user={user} viewingSelf={viewingSelf} fromMenu={fromMenu} getProfile={getProfile} handleBack={handleBack}></ProfileScreen>
+    <ProfileScreen user={user} viewingSelf={viewingSelf} fromMenu={fromMenu} getProfile={getProfile} getPoints={getPoints} handleBack={handleBack}></ProfileScreen>
   );
 };
 
