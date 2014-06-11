@@ -9,6 +9,7 @@ var WelcomeScreen = React.createClass({
   render: function(){
     return (
       <div className="welcome content">
+        <div className="logo"></div>
         <div className="slider" id="mySlider">
           <div className="ribbon_bg">&nbsp;</div>
           <div className="slide-group">

@@ -115,12 +115,12 @@ header.bar-nav {
   }
   h1.logo {
     position: relative;
-    top: .7rem;
-    height: 2.5rem;
-    width: 10.6rem;
+    top: .8rem;
+    height: 2.4rem;
+    width: 15.0rem;
     margin: 0 auto;
-    background: url('../img/logo_head.png') no-repeat 0 0 transparent;
-    @include image-2x('../img/logo_head_2x.png', 10.6rem, 2.5rem);
+    background: url('../img/logo_headb.png') no-repeat 0 0 transparent;
+    @include image-2x('../img/logo_headb_2x.png', 15.0rem, 2.4rem);
   }
   .status {
     position: absolute;
@@ -628,14 +628,20 @@ header.bar-nav {
   .icon { font-size: 200%; }
 }
 
-.welcome {
-  .content {
+.welcome.content {
     background: $primary-color;
     padding: 0;
     margin: 0;
+  .logo {
+    width: 11.6rem;
+    height: 19.6rem;
+    margin: 10rem auto 0 auto;
+    background: url('../img/logo_welcome.png') no-repeat 0 0;
+    @include image-2x('../img/logo_welcome_2x.png', 11.6rem, 19.6rem);
   }
   .slider {
     display: block;
+    display: none !important; // hack, need to hide this until it's fixed TODO
     position: absolute;
     z-index: 2000;
     height: 75% !important;
@@ -689,10 +695,12 @@ header.bar-nav {
     height: 25%;
     min-height: 10rem;
     width: 100%;
-    background: url('../img/bg_zigzag.png') repeat center center;
+    background: $primary-color;
+    border-bottom: 0;
     .arrow {
       position: absolute;
       display: table;
+      display: none; // TODO hack to hide slider fix later
       top: -13px;
       left: 50%;
       margin-left: -13px;
@@ -703,6 +711,7 @@ header.bar-nav {
     }
     .paginator {
       display: table;
+      display: none; // TODO hack to hide slider fix later
       position: absolute;
       top: 20%;
       left: 0;
@@ -732,9 +741,16 @@ header.bar-nav {
       margin: 0 10%;
       width: 80%;
       height: 35%;
+      font-size: 100%;
+      font-family: 'Avenir', 'Helvetica', Arial, sans-serif;
       background-color: $primary-color;
       text-transform: uppercase;
       color: $text-knockout-color;
+      border-color: #fff;
+    }
+    button:active {
+      background-color: #fff;
+      color: $primary-color;
     }
   }
   .slider {
