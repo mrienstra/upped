@@ -4,7 +4,7 @@ var postOrCommentSubmitMixin = {
     handleCreatePostOrComment: React.PropTypes.func.isRequired
   },
   handlePostOrCommentSubmit: function (isPostsOrComments, msg, pictureDataURI) {
-    console.log('postOrCommentSubmitMixin handlePostOrCommentSubmit', this, arguments);
+    console.log('postOrCommentSubmitMixin handlePostOrCommentSubmit', this, isPostsOrComments, msg, typeof pictureDataURI, Date.now());
 
     var that = this;
     var thatPostOrCommentId;

@@ -191,12 +191,13 @@ var handleCheckInOut = function (checkinId, placeId, isIn) {
 };
 
 var handleCreatePostOrComment = function (isPostsOrComments, msg, pictureDataURI, successCallback, failureCallback) {
-  console.log('handleCreatePostOrComment', this, arguments);
+  console.log('handleCreatePostOrComment', this, isPostsOrComments, msg, typeof pictureDataURI, successCallback, failureCallback, Date.now());
 
   var postOrComment = {
-    fbId: this.fbId || this.post.id,
+    subjectFbId: this.fbId || this.post.id,
     message: msg,
-    pictureDataURI: pictureDataURI
+    pictureDataURI: pictureDataURI,
+    subjectName: this.name || this.post.from.name
   };
 
   remote.fb.createPostOrComment(
@@ -207,11 +208,13 @@ var handleCreatePostOrComment = function (isPostsOrComments, msg, pictureDataURI
   );
 };
 
-var handleLike = function (id, userLikes, successCallback, failureCallback) {
+var handleLike = function (id, postOrComment, name, userLikes, successCallback, failureCallback) {
   console.log('handleLike', this, arguments);
 
   remote.fb.like(
     id,
+    postOrComment,
+    name,
     userLikes,
     successCallback,
     failureCallback

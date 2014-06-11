@@ -17,6 +17,8 @@ var _failureCallback = function (failureCallback, msg) {
 
 var camera = {
   getPicture: function (successCallback, failureCallback) {
+    console.log('camera.getPicture', !!navigator.camera);
+
     if (!navigator.camera) {
       alert('Todo: Unsupported.');
       return;

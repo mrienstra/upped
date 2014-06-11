@@ -276,8 +276,13 @@ var _remote = {
       );
     },
     loginFailureCallback: function (err) {
-      console.error('_remote.fcp.loginFailureCallback', this, arguments);
-      alert('Todo: _remote.fcp.loginFailureCallback: ' + err);
+      if (err === 'To use your Facebook account with this app, open Settings > Facebook and make sure this app is turned on.') {
+        // Todo: this error can also mean that there is a problem with the Settings > Facebook account, sometimes deleting it will fix this issue
+        alert(err);
+      } else {
+        console.error('_remote.fcp.loginFailureCallback', this, arguments);
+        alert('Todo: _remote.fcp.loginFailureCallback: ' + err);
+      }
     }
   },
   parse: {
@@ -304,6 +309,8 @@ var _remote = {
       remote.user.fb.id = authResponse.userID;
 
       openFB.init(settings.fb.appId, {accessToken: authResponse.accessToken});
+
+      console.log('Calling Parse.FacebookUtils.logIn', facebookAuthData);
 
       Parse.FacebookUtils.logIn(facebookAuthData, {
         success: function(_user) {
@@ -505,7 +512,7 @@ var remote = {
       return deferred.promise;
     },
     createPostOrComment: function (isPostsOrComments, postOrComment, successCallback, failureCallback) {
-      console.log('remote.fb.createPostOrComment', this, arguments);
+      console.log('remote.fb.createPostOrComment', this, arguments, Date.now());
 
       if (!remote.user.fb.publishPermissionsGranted) {
         var continueCallback = remote.fb.createPostOrComment.bind(null, isPostsOrComments, postOrComment, successCallback, failureCallback);
@@ -514,6 +521,21 @@ var remote = {
 
         return;
       }
+
+      var isPostOrComment = isPostsOrComments.substring(0, isPostsOrComments.length - 1);
+
+      var activityLogObj = {
+        actor: {
+          fbId: remote.user.fb.id,
+          name: remote.user.name
+        },
+        hasPhoto: !!postOrComment.pictureDataURI,
+        subject: {
+          fbId: postOrComment.subjectFbId,
+          name: postOrComment.subjectName
+        },
+        type: isPostOrComment
+      };
 
       if (postOrComment.pictureDataURI) {
         blob = _remote.utils.dataURItoBlob(postOrComment.pictureDataURI);
@@ -558,10 +580,11 @@ var remote = {
             if (isPostsOrComments === 'posts') {
               successCallback(responseText.post_id, deferred.promise);
               remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points[isPostsOrComments]);
+              remote.parse.activity.log(responseText.post_id, activityLogObj);
             } else {
               openFB.api({
                 method: 'POST',
-                path: '/' + postOrComment.fbId + '/comments',
+                path: '/' + postOrComment.subjectFbId + '/comments',
                 params: {
                   'attachment_id': responseText.id,
                   'message': postOrComment.message
@@ -569,6 +592,7 @@ var remote = {
                 success: function (response) {
                   successCallback(response.id, deferred.promise);
                   remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points[isPostsOrComments]);
+                  remote.parse.activity.log(response.id, activityLogObj);
                 },
                 error: function(){
                   // Sometimes we get "An unexpected error has occurred. Please retry your request later." (code: 2,type: OAuthException)
@@ -583,7 +607,7 @@ var remote = {
           }
         };
 
-        var photoPostId = isPostsOrComments === 'posts' ? postOrComment.fbId : remote.user.fb.id;
+        var photoPostId = isPostsOrComments === 'posts' ? postOrComment.subjectFbId : remote.user.fb.id;
 
         var request = new XMLHttpRequest();
         request.onload = reqListener;
@@ -599,13 +623,14 @@ var remote = {
 
         openFB.api({
           method: 'POST',
-          path: '/' + postOrComment.fbId + '/' + endpoint,
+          path: '/' + postOrComment.subjectFbId + '/' + endpoint,
           params: {
             'message': postOrComment.message
           },
           success: function (response) {
             successCallback(response.id);
             remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points[isPostsOrComments]);
+            remote.parse.activity.log(response.id, activityLogObj);
           },
           failure: function(){
             failureCallback.apply(this, arguments);
@@ -613,8 +638,8 @@ var remote = {
         });
       }
     },
-    like: function (id, isLike, successCallback, failureCallback) {
-      var continueCallback = remote.fb.like.bind(null, id, isLike, successCallback, failureCallback);
+    like: function (id, postOrComment, name, isLike, successCallback, failureCallback) {
+      var continueCallback = remote.fb.like.bind(null, id, postOrComment, name, isLike, successCallback, failureCallback);
 
       if (!remote.user.fb.publishPermissionsGranted) {
         _remote.fb.requestPublishPermissions(continueCallback, failureCallback);
@@ -630,9 +655,26 @@ var remote = {
       openFB.api({
         method: isLike ? 'POST' : 'DELETE',
         path: '/' + id + '/likes',
-        success: function (response) {
+        success: function(){
           statusAndCallbacks.successCallback();
           remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points.likes * (isLike ? 1 : -1));
+          console.log('remote.fb.like success', this, arguments);
+          if (isLike) {
+            remote.parse.activity.log(void 0, {
+              actor: {
+                fbId: remote.user.fb.id,
+                name: remote.user.name
+              },
+              postOrComment: postOrComment,
+              subject: {
+                fbId: id,
+                name: name
+              },
+              type: 'like'
+            });
+          } else {
+            // todo: remove "like" from activity log
+          }
         },
         failure: function(){
           statusAndCallbacks.failureCallback(response);
@@ -735,6 +777,63 @@ var remote = {
     },
     getUser: function(){
       return Parse.User.current();
+    },
+    activity: {
+      log: function (fbId, data) {
+        console.log('remote.parse.activity.log', data);
+
+        var activityObj = new (Parse.Object.extend('Activity'))();
+
+        var story;
+        if (data.type === 'post') {
+          if (data.hasPhoto) {
+            // <Actor Name> shared a photo on <Subject Name>'s timeline.
+            story = data.actor.name + ' shared a photo on ' + data.subject.name + '\'s timeline.';
+          } else {
+            // <Actor Name> wrote on <Subject Name>'s timeline.
+            story = data.actor.name + ' wrote on ' + data.subject.name + '\'s timeline.';
+          }
+        } else if (data.type === 'comment') {
+          if (data.actor.name === data.subject.name) {
+            // <Actor Name> commented on their own post.
+            story = data.actor.name + ' commented on their own post.';
+          } else {
+            // <Actor Name> commented on a post.
+            story = data.actor.name + ' commented on a post.';
+          }
+        } else if (data.type === 'like') {
+          var postOrComment = data.subject.fbId.indexOf('_') === -1 ? 'post' : 'comment';
+
+          if (data.actor.name === data.subject.name) {
+            // <Actor Name> likes their own <post or comment>. // Todo!
+            story = data.actor.name + ' likes their own ' + data.postOrComment + '.';
+          } else {
+            // <Actor Name> likes <Subject Name>'s <post or comment>. // Todo!
+            story = data.actor.name + ' likes ' + data.subject.name + '\'s ' + data.postOrComment + '.';
+          }
+        }
+
+        activityObj.save({
+          fbId: fbId + '',
+          actor: {
+            fbId: data.actor.fbId,
+            name: data.actor.name,
+            //offset: ,
+            //length: 
+          },
+          subject: {
+            fbId: data.subject.fbId,
+            name: data.subject.name,
+            //offset: ,
+            //length: 
+          },
+          story: story,
+          type: data.type,
+        }).then(
+          function(){ console.log('remote.parse.activity.log save success', this, arguments); },
+          function(){ console.log('remote.parse.activity.log save failure', this, arguments); }
+        );
+      }
     },
     points: {
       getByFbId: function(fbId, returnAnObject) {

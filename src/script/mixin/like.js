@@ -27,6 +27,8 @@ var likeMixin = {
     return likeClasses;
   },
   handleLike: function (e) {
+    console.log('likeMixin handleLike', this, arguments);
+
     e.stopPropagation();
 
     var that = this;
@@ -59,7 +61,11 @@ var likeMixin = {
       });
     };
 
-    this.props.handleLike(this.props.id, newUserLikes, onSuccess, onFailure);
+    var postOrComment = (this.props.post) ? 'post' : 'comment';
+
+    var name = this.props.from ? this.props.from.name : this.props.post.from.name;
+
+    this.props.handleLike(this.props.id, postOrComment, name, newUserLikes, onSuccess, onFailure);
   },
   componentWillReceiveProps: function(nextProps) {
     this.setState({

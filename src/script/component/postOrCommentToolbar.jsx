@@ -23,19 +23,29 @@ var PostOrCommentToolbar = React.createClass({
   },
   handleCamera: function(){
     // Desktop testing instructions: https://github.com/mrienstra/barchat/issues/6#issuecomment-43275084
+    console.log('PostOrCommentToolbar.handleCamera');
+
     camera.getPicture(
       this.showPicturePreview,
-      function(){ console.error('handleCamera error', this, arguments); }
+      function(){ console.error('PostOrCommentToolbar.handleCamera error', this, arguments); }
     );
   },
   handlePostOrCommentSubmit: function(){
-    console.log('PostOrCommentToolbar handlePostOrCommentSubmit', this, arguments);
+    console.log('PostOrCommentToolbar handlePostOrCommentSubmit', this, arguments, Date.now());
 
     var input = this.getDOMNode().querySelector('textarea');
 
     var msg = input.value.trim();
 
-    if (!msg) return;
+    if (!msg && !this.state.pictureDataURI) {
+      // Ignore submit if no text and no image
+      return;
+    } else if (!msg && this.props.isPostsOrComments === 'comments') {
+      // Ignore comment submit if no text, because it is currently failing
+      // Todo: make it possible to submit a comment with a photo but no text
+      alert('Ya gotta type somethin’.');
+      return;
+    }
 
     this.props.handlePostOrCommentSubmit(this.props.isPostsOrComments, msg, this.state.pictureDataURI);
 
