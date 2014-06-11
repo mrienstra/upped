@@ -12,6 +12,7 @@ var postOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
 
 // Components
 var PostOrCommentToolbar = require('../component/postOrCommentToolbar.jsx');
+var SideMenu = require('../component/sideMenu.jsx');
 
 var PostsListItem = React.createClass({
   mixins: [likeMixin],
@@ -222,36 +223,52 @@ var PostsScreen = React.createClass({
 
     var posts = (this.state.posts.length) ? this.state.posts : this.props.posts;
 
+    var postsLeftNav;
+    if (this.state.checkedIn) {
+      postsLeftNav = <a className="btn btn-link btn-nav pull-left" href="#sideMenu2"><span className="icon icon-bars"></span></a>;
+    } else {
+      postsLeftNav = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>;
+    }
+
     return (
       <div>
-        <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
-          <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleCheckInOut}>Check {this.state.checkedIn ? 'Out' : 'In'}</a>
-          <h1 className="title">Bar Wall</h1>
-        </header>
+        <div className="side-menu-siblings-wrapper">
 
-        <div className="content">
-          <div className="overview">
-            <div className="cover-image">
-              <span className="icon ion-loading-d"></span>
-              <img src="/img/pixel_trans_1x1.png" height="1" width="1" style={{backgroundImage: 'url(' + this.props.photoURL + ')'}}/>
+          <header className="bar bar-nav">
+            {postsLeftNav}
+            <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleCheckInOut}>Check {this.state.checkedIn ? 'Out' : 'In'}</a>
+            <h1 className="title">Bar Wall</h1>
+          </header>
+
+          <div className="content">
+            <div className="overview">
+              <div className="cover-image">
+                <span className="icon ion-loading-d"></span>
+                <img src="/img/pixel_trans_1x1.png" height="1" width="1" style={{backgroundImage: 'url(' + this.props.photoURL + ')'}}/>
+              </div>
+              <div className="content-overlay">
+                <h3>{this.props.name}</h3>
+                <h4><span className="icon ion-person-stalker"></span> <span className="count">{this.state.checkinCount ? this.state.checkinCount : '0'}</span> checked in / {this.props.distance ? this.props.distance : '0 ft'}
+                  <div className="buttons hide">
+                    <a href=""><span className="badge">Address</span></a>
+                  </div>
+                </h4>
+              </div>
             </div>
-            <div className="content-overlay">
-              <h3>{this.props.name}</h3>
-              <h4><span className="icon ion-person-stalker"></span> <span className="count">{this.state.checkinCount ? this.state.checkinCount : '0'}</span> checked in / {this.props.distance ? this.props.distance : '0 ft'}
-                <div className="buttons hide">
-                  <a href=""><span className="badge">Address</span></a>
-                </div>
-              </h4>
-            </div>
+
+            {toolbar}
+
+            {promotion}
+
+            <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handleProfileChange={this.props.handleProfileChange} handlePostChange={this.props.handlePostChange} handleLike={this.props.handleLike} refresh={this.refresh}></PostsList>
+
           </div>
-
-          {toolbar}
-
-          {promotion}
-
-          <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handleProfileChange={this.props.handleProfileChange} handlePostChange={this.props.handlePostChange} handleLike={this.props.handleLike} refresh={this.refresh}></PostsList>
+          <div id="sideMenu2" className="side-menu">
+            <SideMenu />
+          </div>
+          
         </div>
+
       </div>
     );
   }

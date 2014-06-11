@@ -6,6 +6,9 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 // Modules
 var pubSub = require('../pubSub.js');
 
+// Components
+var SideMenu = require('../component/sideMenu.jsx');
+
 var LocationListItem = React.createClass({
   render: function() {
     return (
@@ -152,36 +155,7 @@ var LocationsScreen = React.createClass({
         </div>
 
         <div id="sideMenu" className="side-menu">
-          <div className="content">
-            <ul className="table-view">
-              <li className="table-view-cell selected">
-                <a href="bar-detail.html" data-transition="slide-in">
-                  <h4><span className="icon ion-log-in"></span> Check In</h4>
-                </a>
-              </li>
-              <li className="table-view-cell">
-                <a onTouchEnd={this.props.handleProfileChange}>
-                  <h4><span className="icon ion-person"></span> Profile</h4>
-                </a>
-              </li>
-              <li className="table-view-cell hide">
-                <a href="bar-detail.html" data-transition="slide-in">
-                  <h4><span className="icon ion-paper-airplane"></span> Gifts</h4>
-                  <div className="status badge badge-negative">1</div>
-                </a>
-              </li>
-              <li className="table-view-cell hide">
-                <a href="bar-detail.html" data-transition="slide-in">
-                  <h4><span className="icon ion-gear-a"></span> Settings</h4>
-                </a>
-              </li>
-              <li className="table-view-cell">
-                <a onTouchEnd={this.props.handleLogOut}>
-                  <h4><span className="icon ion-gear-a"></span> Log Out</h4>
-                </a>
-              </li>
-            </ul>
-          </div>
+          <SideMenu />
         </div>
       </div>
     );

@@ -213,7 +213,11 @@ header.bar-nav {
     }
     .left a {
       float: right;
-      margin-right: .2rem;
+      position: relative;
+      top: 1rem;
+      left: .4rem;
+      margin: 0;
+      padding: 1rem .8rem 1rem 2rem;
       font-size: 200%;
       line-height: 2rem;
     }
@@ -564,6 +568,12 @@ header.bar-nav {
     color: $text-knockout-color;
     border: 0;
   }
+  .table-view-cell > a:not(.btn):active {
+    background-color: $primary-color;
+  }
+  .table-view-cell > a:not(.btn):active h4 span {
+    border-color: #fff;
+  }
   .content {
     padding-top: 3rem;
   }
@@ -576,8 +586,25 @@ header.bar-nav {
   .icon {
     border: 1px solid #777;
     @include border-radius(2rem);
-    padding: .8rem 1rem;
+    padding: .8rem .9rem .8rem 1.1rem;
     margin-right: 1.5rem;
+    width: 4rem;
+    height: 4rem;
+  }
+  .ion-ios7-location {
+    padding-left: 1.3rem;
+  }
+  .status.badge {
+    left: 4rem;
+    right: auto;
+    top: 1.5rem;
+    padding: .5rem .8rem;
+  }
+  .activity .icon {
+    background-color: $activity-color;
+  }
+  .table-view-cell > a.activity:active h4 span {
+    border-color: transparent;
   }
   .table-view h4 {
     font-size: 1.5rem;
