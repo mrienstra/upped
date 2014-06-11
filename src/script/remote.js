@@ -174,7 +174,13 @@ var _remote = {
       window.addEventListener('fbPublishPermissionsGranted', fbPublishPermissionsGranted);
       window.addEventListener('fbPublishPermissionsDenied', fbPublishPermissionsDenied);
 
-      if (window.facebookConnectPlugin) {
+      if (window.facebookConnectPlugin && settings.useOpenFBLogin) {
+        openFB.login(
+          settings.fb.permissions.publish.join(','),
+          _remote.fb.requestPublishPermissionsCallback,
+          function(){ console.error('requestPublishPermissions', this, arguments); }
+        );
+      } else if (window.facebookConnectPlugin) {
         facebookConnectPlugin.login(
           settings.fb.permissions.publish,
           _remote.fb.requestPublishPermissionsCallback,
