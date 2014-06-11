@@ -154,9 +154,8 @@ var LocationsScreen = React.createClass({
           <LocationList locations={this.props.locations} checkins={this.state.checkins} filters={this.state.filters} handleLocationChange={this.props.handleLocationChange}></LocationList>
         </div>
 
-        <div id="sideMenu" className="side-menu">
-          <SideMenu />
-        </div>
+        <SideMenu id="sideMenu" handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
+
       </div>
     );
   }

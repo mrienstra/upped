@@ -227,7 +227,7 @@ var PostsScreen = React.createClass({
     if (this.state.checkedIn) {
       postsLeftNav = <a className="btn btn-link btn-nav pull-left" href="#sideMenu2"><span className="icon icon-bars"></span></a>;
     } else {
-      postsLeftNav = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>;
+      postsLeftNav = <a className="btn btn-link btn-nav pull-left" href="#" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>;
     }
 
     return (
@@ -263,11 +263,9 @@ var PostsScreen = React.createClass({
             <PostsList posts={posts} status={this.state.status} userFbId={this.props.user.fb.id} handleProfileChange={this.props.handleProfileChange} handlePostChange={this.props.handlePostChange} handleLike={this.props.handleLike} refresh={this.refresh}></PostsList>
 
           </div>
-          <div id="sideMenu2" className="side-menu">
-            <SideMenu />
-          </div>
-          
         </div>
+
+      <SideMenu id="sideMenu2" handleBack={this.props.handleBack} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
 
       </div>
     );
