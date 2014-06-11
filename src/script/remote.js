@@ -22,7 +22,8 @@ var settings = {
     posts: 20,
     comments: 10,
     likes: 5
-  }
+  },
+  useOpenFBLogin: true
 };
 
 var _remote = {
@@ -269,6 +270,31 @@ var _remote = {
     },
     login: function(){
       console.log('remote.fcp.login');
+
+      if (settings.useOpenFBLogin) {
+        openFB.init(settings.fb.appId);
+        openFB.login(
+          settings.fb.permissions.initial.join(','),
+          function (response) {
+            openFB.api({
+            path: '/me',
+            params: {fields: 'id'},
+            success: function (response2) {
+              console.log('remote.fcp.login openFB.api "/me"', this, arguments);
+
+              response.authResponse.userID = response2.id;
+
+              _remote.fb.loginCallback(response);
+            },
+            failure: _remote.fcp.loginFailureCallback
+          });
+          },
+          _remote.fcp.loginFailureCallback
+        );
+
+        return;
+      }
+
       facebookConnectPlugin.login(
         settings.fb.permissions.initial,
         _remote.fb.loginCallback, // Done with `fcp`-specific code, switching to `fb`
@@ -282,7 +308,9 @@ var _remote = {
         alert(err);
       } else {
         console.error('_remote.fcp.loginFailureCallback', this, arguments);
-        alert('Todo: _remote.fcp.loginFailureCallback: ' + err);
+        alert('Todo: _remote.fcp.loginFailureCallback (' + (settings.useOpenFBLogin  ? 't' : 'f') + '): ' +  err);
+
+        settings.useOpenFBLogin = !settings.useOpenFBLogin;
       }
     }
   },

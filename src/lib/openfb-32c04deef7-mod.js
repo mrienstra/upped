@@ -132,7 +132,7 @@ var openFB = (function () {
     /**
      * Called either by oauthcallback.html (when the app is running the browser) or by the loginWindow loadstart event
      * handler defined in the login() function (when the app is running in the Cordova/PhoneGap container).
-     * @param url - The oautchRedictURL called by Facebook with the access_token in the querystring at the ned of the
+     * @param url - The oauth redirect URL called by Facebook with the access_token in the querystring at the end of the
      * OAuth workflow.
      */
     function oauthCallback(url) {
@@ -145,7 +145,15 @@ var openFB = (function () {
             queryString = url.substr(url.indexOf('#') + 1);
             obj = parseQueryString(queryString);
             tokenStore['fbtoken'] = obj['access_token'];
-            if (loginSuccessHandler) loginSuccessHandler();
+            if (loginSuccessHandler) {
+              loginSuccessHandler({
+                status: 'connected',
+                authResponse: {
+                  accessToken: obj['access_token'],
+                  expiresIn: obj['expires_in']
+                }
+              });
+            }
         } else if (url.indexOf("error=") > 0) {
             queryString = url.substring(url.indexOf('?') + 1, url.indexOf('#'));
             obj = parseQueryString(queryString);
