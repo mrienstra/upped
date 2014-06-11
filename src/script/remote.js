@@ -268,6 +268,7 @@ var _remote = {
       }
     },
     login: function(){
+      console.log('remote.fcp.login');
       facebookConnectPlugin.login(
         settings.fb.permissions.initial,
         _remote.fb.loginCallback, // Done with `fcp`-specific code, switching to `fb`
