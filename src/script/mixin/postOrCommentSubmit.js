@@ -91,8 +91,9 @@ var postOrCommentSubmitMixin = {
         comments:[],
         from: {
           // todo: handle `this.props.user` not being available
-          picture: this.props.user.picture,
-          name: this.props.user.name
+          id: this.props.user.fb.id,
+          name: this.props.user.name,
+          picture: this.props.user.picture
         },
         id: '',
         post: {

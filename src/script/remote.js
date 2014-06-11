@@ -15,9 +15,14 @@ var settings = {
     postFields: 'from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,attachment,message,like_count,user_likes)'
   },
   parse: {
-   appId: 'fGL4H9M5JTIZPsJrLKflSPpl0XV6NbJQYaHpgPzN',
-   jsKey: 'a5sGHg7mZkdkksgJBkv6BlUxM26HpoQEaEt2FHlt'
- }
+    appId: 'fGL4H9M5JTIZPsJrLKflSPpl0XV6NbJQYaHpgPzN',
+    jsKey: 'a5sGHg7mZkdkksgJBkv6BlUxM26HpoQEaEt2FHlt'
+  },
+  points: {
+    posts: 20,
+    comments: 10,
+    likes: 5
+  }
 };
 
 var _remote = {
@@ -278,7 +283,7 @@ var _remote = {
   parse: {
     loginWithFBAuthResponse: function (authResponse, attemptCount) {
       attemptCount = attemptCount || 0;
-      console.log('_remote.parse.loginWithFBAuthResponse', attemptCount);
+      console.log('_remote.parse.loginWithFBAuthResponse', arguments);
 
       if (!Parse.applicationId) {
         Parse.initialize(settings.parse.appId, settings.parse.jsKey);
@@ -296,6 +301,7 @@ var _remote = {
       }
 
       remote.user.fb.accessToken = authResponse.accessToken;
+      remote.user.fb.id = authResponse.userID;
 
       openFB.init(settings.fb.appId, {accessToken: authResponse.accessToken});
 
@@ -314,6 +320,8 @@ var _remote = {
             }
           }
 
+          _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
+
           var meFields = 'cover,first_name,likes.fields(name,picture),name,picture';
           if (!remote.user.fb.permissions) {
             meFields += ',permissions';
@@ -324,7 +332,6 @@ var _remote = {
             success: function (response) {
               console.log('_remote.parse.loginWithFBAuthResponse openFB.api "/me"', this, arguments);
 
-              remote.user.fb.id = response.id;
               remote.user.name = response.name;
               remote.user.firstName = response.first_name;
               remote.user.picture = response.picture && response.picture.data.url;
@@ -349,7 +356,32 @@ var _remote = {
             }
           });
 
-          _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
+          remote.user.points = {};
+          remote.parse.points.getByFbId(remote.user.fb.id, true).then(
+            function (pointsObj) {
+              console.log('pointsObj', pointsObj);
+              
+              if (pointsObj) {
+                remote.user.points = {
+                  parseId: pointsObj.id,
+                  points: pointsObj.get('points')
+                };
+              } else {
+                // New user
+                remote.user.points.points = 0;
+
+                var pointsObj = new (Parse.Object.extend('Points'))();
+                pointsObj.save({
+                  fbId: remote.user.fb.id,
+                  points: 0
+                }).then(function (pointsObj) {
+                  remote.user.points.parseId = pointsObj && pointsObj.id;
+                }, function(){
+                  console.error('error while saving new Parse points obj', this, arguments); // todo: handle
+                });
+              }
+            }
+          );
         },
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
@@ -367,7 +399,6 @@ var _remote = {
       });
     }
   },
-  pending: {},
   utils: {
     dataURItoBlob: function (dataURI) {
       var mime = dataURI.split(';')[0].split(':')[1];
@@ -526,6 +557,7 @@ var remote = {
 
             if (isPostsOrComments === 'posts') {
               successCallback(responseText.post_id, deferred.promise);
+              remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points[isPostsOrComments]);
             } else {
               openFB.api({
                 method: 'POST',
@@ -536,6 +568,7 @@ var remote = {
                 },
                 success: function (response) {
                   successCallback(response.id, deferred.promise);
+                  remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points[isPostsOrComments]);
                 },
                 error: function(){
                   // Sometimes we get "An unexpected error has occurred. Please retry your request later." (code: 2,type: OAuthException)
@@ -572,6 +605,7 @@ var remote = {
           },
           success: function (response) {
             successCallback(response.id);
+            remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points[isPostsOrComments]);
           },
           failure: function(){
             failureCallback.apply(this, arguments);
@@ -598,6 +632,7 @@ var remote = {
         path: '/' + id + '/likes',
         success: function (response) {
           statusAndCallbacks.successCallback();
+          remote.parse.points.increaseByFbId(remote.user.fb.id, settings.points.likes * (isLike ? 1 : -1));
         },
         failure: function(){
           statusAndCallbacks.failureCallback(response);
@@ -702,23 +737,54 @@ var remote = {
       return Parse.User.current();
     },
     points: {
-      getByUserId: function(userId) {
-        console.log('remote.parse.points.getByUserId', this, arguments);
+      getByFbId: function(fbId, returnAnObject) {
+        console.log('remote.parse.points.getByFbId', this, arguments);
 
         var deferred = when.defer();
 
         var query = new Parse.Query(Parse.Object.extend('Points'));
-        query.equalTo('userId', userId);
+        query.equalTo('fbId', fbId);
         query.find({
           success: function (response) {
-            console.log('remote.parse.points.getByUserId success', this, arguments);
+            console.log('remote.parse.points.getByFbId success', this, arguments);
 
-            deferred.resolve(response[0].get('points'));
+            if (response.length) {
+              deferred.resolve(returnAnObject ? response[0] : response[0].get('points'));
+            } else {
+              // Nothing returned by Parse, let's assume they aren't using our app
+              deferred.resolve();
+            }
           },
           error: deferred.reject
         });
 
         return deferred.promise;
+      },
+      increaseByFbId: function(fbId, pointsIncrease) {
+        // Todo: consider moving this to Parse "Cloud Code"
+        // Todo: add error handling
+        console.log('remote.parse.points.increaseByFbId', arguments);
+
+        if (fbId === remote.user.fb.id) {
+          remote.user.points.points += pointsIncrease;
+
+          var pointsObj = new (Parse.Object.extend('Points'))();
+          pointsObj.save({
+            id: remote.user.points.parseId,
+            points: {'__op': 'Increment', 'amount': pointsIncrease}
+          }, {error: function(){ console.error('remote.parse.points.increaseByFbId save (self) error', this, arguments); }});
+        } else {
+          remote.parse.points.getByFbId(fbId, true).then(
+            function (pointsObj) {
+              if (pointsObj) {
+                pointsObj.save({
+                  points: {'__op': 'Increment', 'amount': pointsIncrease}
+                }, {error: function(){ console.error('remote.parse.points.increaseByFbId save (other) error', this, arguments); }});
+              }
+            },
+            function(){ console.error('remote.parse.points.increaseByFbId getByFbId error', this, arguments); }
+          );
+        }
       }
     },
     userExists: function(){
