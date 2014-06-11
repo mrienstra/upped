@@ -4,6 +4,7 @@ var React = require('react/addons');
 
 var SideMenu = React.createClass({
   propTypes: {
+    handleActivityChange: React.PropTypes.func.isRequired,
     handleBack: React.PropTypes.func, // Not required
     handleMyProfileChange: React.PropTypes.func.isRequired,
     handleLogOut: React.PropTypes.func.isRequired,
@@ -25,7 +26,7 @@ var SideMenu = React.createClass({
               </a>
             </li>
             <li className="table-view-cell">
-              <a className="activity">
+              <a className="activity" onTouchEnd={this.props.handleActivityChange}>
                 <h4><span className="icon ion-star"></span>Activity</h4>
                 <div className="status badge badge-negative">1</div>
               </a>

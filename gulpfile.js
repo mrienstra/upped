@@ -162,8 +162,12 @@ gulp.task('watchdog', function () {
   gulp.watch(path.style.in, ['sass']);
   gulp.watch(path.img.in, ['img']);
   gulp.watch(path.font.in, ['font']);
+});
+
+gulp.task('open', function () {
   open('http://localhost:' + port);
 });
 
 gulp.task('watch', ['default', 'connect', 'watchdog']);
+gulp.task('watchopen', ['default', 'connect', 'watchdog', 'open']);
 gulp.task('default', ['html', 'lib', 'mocks', 'script', 'sass', 'img', 'font']);

@@ -96,6 +96,18 @@ var app = {
 
 
 
+var handleActivityChange = function(){
+  console.log('handleActivityChange', arguments, remote.user);
+
+  var getActivity = remote.parse.activity.get;
+
+  var ActivityScreen = require('./screen/activity.jsx');
+
+  app.screens.addScreen(
+    <ActivityScreen user={remote.user} getActivity={getActivity} handleBack={handleBack} />
+  );
+};
+
 var handleBack = function (e) {
   console.log('handleBack', this, arguments);
 
@@ -114,7 +126,7 @@ var handleLocationsChange = function(){
   var handleMyProfileChange = handleProfileChange.bind(null, remote.user, true);
 
   app.screens.addScreen(
-    <LocationsScreen locations={props.locations} getCheckins={getCheckins} handleLocationChange={handleLocationChange} handleMyProfileChange={handleMyProfileChange} handleLogOut={handleLogOut}></LocationsScreen>
+    <LocationsScreen locations={props.locations} getCheckins={getCheckins} handleLocationChange={handleLocationChange} handleMyProfileChange={handleMyProfileChange} handleActivityChange={handleActivityChange} handleLogOut={handleLogOut}></LocationsScreen>
   );
 };
 
@@ -128,7 +140,7 @@ var handleLocationChange = function (props) {
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handleProfileChange={handleProfileChange} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike} handleMyProfileChange={handleMyProfileChange} handleLogOut={handleLogOut}></PostsScreen>
+    <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handleProfileChange={handleProfileChange} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike} handleActivityChange={handleActivityChange} handleMyProfileChange={handleMyProfileChange} handleLogOut={handleLogOut}></PostsScreen>
   );
 };
 

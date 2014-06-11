@@ -123,7 +123,6 @@ var PostsScreen = React.createClass({
 
     if (!options || !options.quietStart) {
       this.setState({
-        postsPromise: postsPromise,
         status: 'loading',
         posts: []
       });
@@ -265,7 +264,7 @@ var PostsScreen = React.createClass({
           </div>
         </div>
 
-      <SideMenu id="sideMenu2" handleBack={this.props.handleBack} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
+      <SideMenu id="sideMenu2" handleActivityChange={this.props.handleActivityChange} handleBack={this.props.handleBack} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
 
       </div>
     );

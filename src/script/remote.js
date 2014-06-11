@@ -780,6 +780,34 @@ var remote = {
       return Parse.User.current();
     },
     activity: {
+      get: function(){
+        console.log('remote.parse.activity.get');
+
+        var deferred = when.defer();
+
+        var query = new Parse.Query(Parse.Object.extend('Activity'));
+        query.find({
+          success: function (response) {
+            console.log('remote.parse.activity.get success', this, arguments);
+
+            var responseMapped = response.map(function (activity) {
+              return {
+                actor: activity.get('actor'),
+                fbId: activity.get('fbId'),
+                id: activity.id,
+                story: activity.get('story'),
+                subject: activity.get('subject'),
+                type: activity.get('type')
+              };
+            });
+
+            deferred.resolve(responseMapped);
+          },
+          error: deferred.reject
+        });
+
+        return deferred.promise;
+      },
       log: function (fbId, data) {
         console.log('remote.parse.activity.log', data);
 
