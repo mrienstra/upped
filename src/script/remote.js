@@ -20,7 +20,7 @@ var settings = {
   },
   points: {
     posts: 20,
-    comments: 10,
+    comments: 15,
     likes: 5
   },
   useOpenFBLogin: true
