@@ -6,6 +6,9 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 // Modules
 var pubSub = require('../pubSub.js');
 
+// Mixins
+var badgeMixin = require('../mixin/badge.js');
+
 // Components
 var SideMenu = require('../component/sideMenu.jsx');
 
@@ -72,6 +75,7 @@ var LocationList = React.createClass({
 });
 
 var LocationsScreen = React.createClass({
+  mixins: [badgeMixin],
   getInitialState: function(){
     return {
       checkins: [],
@@ -135,6 +139,11 @@ var LocationsScreen = React.createClass({
     });
   },
   render: function(){
+    var badge;
+    if (this.state.newCount) {
+      badge = <div className="status badge badge-negative">{this.state.newCount}</div>;
+    }
+
     return (
       <div>
         <div className="side-menu-siblings-wrapper">
@@ -142,7 +151,7 @@ var LocationsScreen = React.createClass({
             <a className="icon icon-bars pull-left" href="#sideMenu"></a>
             <a className="icon ion-search pull-right" href="#todo"></a>
             <h1 className="logo"><span className="dwyer">BarChat</span></h1>
-            <div className="status badge badge-negative">1</div>
+            {badge}
           </header>
 
           <div className="bar bar-standard bar-header-secondary">

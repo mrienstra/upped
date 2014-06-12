@@ -4,6 +4,8 @@ var remote = require('./remote.js');
 
 var reactDomRoot = document.querySelector('.container');
 
+var puller = require('./puller.js');
+
 var stub = {
   locations: {
     locations: [
@@ -91,6 +93,8 @@ var app = {
     this.screens = new ReactScreens(reactDomRoot);
 
     handleLocationsChange();
+
+    puller.start();
   }
 };
 
@@ -240,6 +244,7 @@ var handleLogOut = function(){
 
   remote.logOut();
   delete app.screens; // Todo: does this leak memory?
+  puller.stop();
   showWelcomeScreen(void 0, true);
 };
 

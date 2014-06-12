@@ -29,6 +29,8 @@ var camera = {
       _failureCallback.bind(null, failureCallback),
       {
         quality: 50, // Todo: is this desirable? Should we raise/lower if we detect a fast/slow network connection? Supposedly there can be memory errors on older iOS devices, which can be fixed by lowering this value (see plugin docs).
+        targetWidth: 800,
+        targetHeight: 800,
         destinationType: Camera.DestinationType.DATA_URL // Todo: Docs say "To avoid common memory problems, set Camera.destinationType to FILE_URI rather than DATA_URL.".
       }
     );

@@ -820,6 +820,7 @@ var remote = {
         var deferred = when.defer();
 
         var query = new Parse.Query(Parse.Object.extend('Activity'));
+        query.descending('createdAt');
         query.find({
           success: function (response) {
             console.log('remote.parse.activity.get success', this, arguments);
@@ -831,12 +832,31 @@ var remote = {
                 id: activity.id,
                 story: activity.get('story'),
                 subject: activity.get('subject'),
+                time: activity.createdAt,
                 type: activity.get('type')
               };
             });
 
             deferred.resolve(responseMapped);
           },
+          error: deferred.reject
+        });
+
+        return deferred.promise;
+      },
+      getCount: function (subject) {
+        console.log('remote.parse.activity.getCount');
+
+        var deferred = when.defer();
+
+        var query = new Parse.Query(Parse.Object.extend('Activity'));
+
+        if (subject) {
+          query.equalTo('subject', subject);
+        }
+
+        query.count({
+          success: deferred.resolve,
           error: deferred.reject
         });
 
@@ -868,10 +888,10 @@ var remote = {
           var postOrComment = data.subject.fbId.indexOf('_') === -1 ? 'post' : 'comment';
 
           if (data.actor.name === data.subject.name) {
-            // <Actor Name> likes their own <post or comment>. // Todo!
+            // <Actor Name> likes their own <post or comment>.
             story = data.actor.name + ' likes their own ' + data.postOrComment + '.';
           } else {
-            // <Actor Name> likes <Subject Name>'s <post or comment>. // Todo!
+            // <Actor Name> likes <Subject Name>'s <post or comment>.
             story = data.actor.name + ' likes ' + data.subject.name + '\'s ' + data.postOrComment + '.';
           }
         }

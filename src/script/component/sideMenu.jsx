@@ -2,7 +2,14 @@
 
 var React = require('react/addons');
 
+// Modules
+var pubSub = require('../pubSub.js');
+
+// Mixins
+var badgeMixin = require('../mixin/badge.js');
+
 var SideMenu = React.createClass({
+  mixins: [badgeMixin],
   propTypes: {
     handleActivityChange: React.PropTypes.func.isRequired,
     handleBack: React.PropTypes.func, // Not required
@@ -11,6 +18,11 @@ var SideMenu = React.createClass({
     id: React.PropTypes.string.isRequired
   },
   render: function(){
+    var badge;
+    if (this.state.newCount) {
+      badge = <div className="status badge badge-negative">{this.state.newCount}</div>;
+    }
+
     return (
       <div id={this.props.id} className="side-menu">
         <div className="content">
@@ -28,7 +40,7 @@ var SideMenu = React.createClass({
             <li className="table-view-cell">
               <a className="activity" onTouchEnd={this.props.handleActivityChange}>
                 <h4><span className="icon ion-star"></span>Activity</h4>
-                <div className="status badge badge-negative">1</div>
+                {badge}
               </a>
             </li>
             <li className="table-view-cell hide">

@@ -7,6 +7,7 @@ var utils = require('../utils.js');
 var pubSub = require('../pubSub.js');
 
 // Mixins
+var badgeMixin = require('../mixin/badge.js');
 var likeMixin = require('../mixin/like.js');
 var postOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
 
@@ -88,7 +89,7 @@ var PostsList = React.createClass({
 });
 
 var PostsScreen = React.createClass({
-  mixins: [postOrCommentSubmitMixin],
+  mixins: [badgeMixin, postOrCommentSubmitMixin],
   getInitialState: function(){
     return {
       checkinCount: this.props.checkin.count,
@@ -220,14 +221,18 @@ var PostsScreen = React.createClass({
       );
     };
 
-    var posts = (this.state.posts.length) ? this.state.posts : this.props.posts;
-
     var postsLeftNav;
     if (this.state.checkedIn) {
       postsLeftNav = <a className="btn btn-link btn-nav pull-left" href="#sideMenu2"><span className="icon icon-bars"></span></a>;
+      var badge;
+      if (this.state.newCount) {
+        badge = <div className="status badge badge-negative">{this.state.newCount}</div>;
+      }
     } else {
       postsLeftNav = <a className="btn btn-link btn-nav pull-left" href="#" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>;
     }
+
+    var posts = (this.state.posts.length) ? this.state.posts : this.props.posts;
 
     return (
       <div>
@@ -237,6 +242,7 @@ var PostsScreen = React.createClass({
             {postsLeftNav}
             <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleCheckInOut}>Check {this.state.checkedIn ? 'Out' : 'In'}</a>
             <h1 className="title">Bar Wall</h1>
+            {badge}
           </header>
 
           <div className="content">

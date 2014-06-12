@@ -2,6 +2,10 @@
 
 var React = require('react/addons');
 
+// Modules
+var pubSub = require('../pubSub.js');
+var utils = require('../utils.js');
+
 var ActivitiesListItem = React.createClass({
   render: function(){
     var story = this.props.activity.story;
@@ -12,6 +16,9 @@ var ActivitiesListItem = React.createClass({
     return (
       <li className="table-view-cell">
         <a>
+          <div className="details">
+            <div className="time">{utils.momentFromNowIfTime(this.props.activity.time)}</div>
+          </div>
           <div className="copy">
             <p className="emotes">{story}</p>
           </div>
@@ -72,6 +79,8 @@ var ActivityScreen = React.createClass({
           status: 'loaded',
           activities: activities
         });
+
+        pubSub.publish('activity.seenOrTotal', {count: {seen: activities.length, total: activities.length}});
       },
       function(response){
         alert('ActivityScreen activityPromise failed!');
