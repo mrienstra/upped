@@ -3,6 +3,58 @@
 var React = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+// Libs
+var swipeStack = require('../../lib/swipe-stack-0.1.js');
+var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
+  'use strict';
+
+  // Feature Test
+  if ( 'querySelector' in document && 'addEventListener' in window && Array.prototype.forEach ) {
+
+    // SELECTORS
+    var sliders = document.querySelectorAll('[data-slider]');
+    var mySwipe = Array;
+
+
+    // EVENTS, LISTENERS, AND INITS
+
+    // Add class to HTML element to activate conditional CSS
+    document.documentElement.className += ' js-slider';
+
+    // Activate all sliders
+    Array.prototype.forEach.call(sliders, function (slider, index) {
+
+      // METHODS
+
+      // Handle next button
+      var handleNextBtn = function (event) {
+        event.preventDefault();
+        mySwipe[index].nextRight();
+      };
+
+      // Handle previous button
+      var handlePrevBtn = function (event) {
+        event.preventDefault();
+        mySwipe[index].nextLeft();
+      };
+
+
+      // EVENTS, LISTENERS, AND INITS
+
+      // Activate Slider
+      mySwipe[index] = swipeStack(slider);
+
+      // Toggle Previous & Next Buttons
+      if (btnNext) {
+        btnNext.addEventListener('click', handleNextBtn, false);
+      }
+      if (btnPrev) {
+        btnPrev.addEventListener('click', handlePrevBtn, false);
+      }
+    });
+  }
+};
+
 // Modules
 var pubSub = require('../pubSub.js');
 
@@ -13,16 +65,57 @@ var badgeMixin = require('../mixin/badge.js');
 var SideMenu = require('../component/sideMenu.jsx');
 
 var LocationListItem = React.createClass({
+  getInitialState: function(){
+    return {
+      expanded: false
+    };
+  },
   render: function() {
+    var that = this;
+
+    var handleToggleDetails = function(){
+      that.setState({expanded: !that.state.expanded});
+    };
+
+    var img = this.props.location.photoURL ? <img src={this.props.location.photoURL}/> : '';
+
+    var skills = this.props.location.skills.map(function (name) {
+      return <li>{name}</li>;
+    });
+
+    var nominations = this.props.location.nominations.map(function (nomination) {
+      return (
+        <li>
+          <img/>
+          <h5>{nomination.name}</h5>
+          <span className="skill">{nomination.skill}</span>
+          <p>{nomination.text}</p>
+        </li>
+      );
+    });
+
     return (
-      <li className="table-view-cell media">
-        <a className="navigate-right" onTouchEnd={this.props.handleLocationChange.bind(null, this.props)} data-transition="slide-in">
-          <div className="media-body">
-            <h4>{this.props.name}</h4>
-            <p>{this.props.checkin.count ? this.props.checkin.count : 0} checked in, {this.props.distance}</p>
+      <div onTouchEnd={handleToggleDetails}>
+        {img}
+        <div className="topSkillAndCount">{this.props.location.skills[0]}<span className="count icon ion-ios7-bolt"> {this.props.location.skills.length}</span></div>
+        <div className="nameAndAge">{this.props.location.name}, {this.props.location.age}</div>
+        <div className="distance">{this.props.location.distance}</div>
+        <div className="location">{this.props.location.location}</div>
+        <div className={'details' + (this.state.expanded ? ' show' : '')}>
+          <div className="skills">
+            <h4><span className="icon ion-ios7-bolt"></span> Super Powers:<span className="count">{this.props.location.skills.length}</span></h4>
+            <ul>
+              {skills}
+            </ul>
           </div>
-        </a>
-      </li>
+          <div className="nominations">
+            <h4><span className="icon ion-ribbon-b"></span> Hero Nominations:<span className="count">{this.props.location.nominations.length}</span></h4>
+            <ul>
+              {nominations}
+            </ul>
+          </div>
+        </div>
+      </div>
     );
   }
 });
@@ -56,7 +149,7 @@ var LocationList = React.createClass({
           }
         });
       }
-      return <LocationListItem key={keys[index]} name={location.name} fbId={location.fbId} photoURL={location.photoURL} checkin={checkin} address1={location.address1} address2={location.address2} promotion={location.promotion} distance={location.distance} handleLocationChange={that.props.handleLocationChange}></LocationListItem>;
+      return <LocationListItem key={keys[index]} location={location}></LocationListItem>;
     });
     return (
       <div className="content content-main">
@@ -64,11 +157,16 @@ var LocationList = React.createClass({
           <h3>{this.props.name}</h3>
         </div>
 
-        <ul className="table-view">
-          <ReactCSSTransitionGroup transitionName="list-item">
+        <div className="slider" data-slider>
+          <div className="slides">
             {locationNodes}
-          </ReactCSSTransitionGroup>
-        </ul>
+          </div>
+        </div>
+
+        <div>
+          <h3>Galaxy Explored</h3>
+          <p>You've seen all our hero profiles. We'll reach out if you score any mutual matches.</p>
+        </div>
       </div>
     );
   }
@@ -138,6 +236,12 @@ var LocationsScreen = React.createClass({
       }
     });
   },
+  componentDidMount: function(){
+    var el = this.getDOMNode();
+    var btnNext = el.querySelector('[data-slider-nav-next]');
+    var btnPrev = el.querySelector('[data-slider-nav-prev]');
+    sliderInit(window, document, btnNext, btnPrev);
+  },
   render: function(){
     var badge;
     if (this.state.newCount) {
@@ -149,18 +253,16 @@ var LocationsScreen = React.createClass({
         <div className="side-menu-siblings-wrapper">
           <header className="bar bar-nav">
             <a className="icon icon-bars pull-left" href="#sideMenu"></a>
-            <a className="icon ion-search pull-right" href="#todo"></a>
-            <h1 className="logo"><span className="dwyer">BarChat</span></h1>
+            <h1 className="logo"><span className="dwyer">Upped</span></h1>
             {badge}
           </header>
 
-          <div className="bar bar-standard bar-header-secondary">
-            <form>
-              <input type="search" onChange={this.handleFilterChange} placeholder="Search" />
-            </form>
-          </div>
-
           <LocationList locations={this.props.locations} checkins={this.state.checkins} filters={this.state.filters} handleLocationChange={this.props.handleLocationChange}></LocationList>
+
+          <div className="bar bar-standard bar-footer">
+            <a data-slider-nav-prev className="icon icon-left pull-left"></a>
+            <a data-slider-nav-next className="icon icon-right pull-right"></a>
+          </div>
         </div>
 
         <SideMenu id="sideMenu" handleActivityChange={this.props.handleActivityChange} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />

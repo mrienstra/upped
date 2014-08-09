@@ -14,9 +14,9 @@ var uglify = require('gulp-uglify');
 
 var port = 8000;
 
-var libs = ['react/addons', '../lib/ratchet-mod/ratchet-mod.js', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/react-screens/react-screens.jsx', '../lib/openfb-32c04deef7-mod.js', '../lib/noTouchendAfterTouchmove.js'];
+var libs = ['react/addons', '../lib/ratchet-mod/ratchet-mod.js', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/react-screens/react-screens.jsx', '../lib/openfb-32c04deef7-mod.js', '../lib/noTouchendAfterTouchmove.js', '../lib/swipe-stack-0.1.js'];
 
-var cssLibs = 'src/lib/{react-screens/react-screens,ratchet-mod/ratchet-mod,ionicons-1.4.1/ionicons}.css';
+var cssLibs = 'src/lib/{react-screens/react-screens,ratchet-mod/ratchet-mod,ionicons-1.5.2/ionicons,swipe-stack-0.1}.css';
 
 var mainJsFile = 'src/script/main.js';
 var parseJsFile = 'src/lib/parse-1.2.18/parse-1.2.18.min.js';

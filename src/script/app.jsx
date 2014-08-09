@@ -10,76 +10,78 @@ var stub = {
   locations: {
     locations: [
       {
-        name: '515 Kitchen & Cocktails',
-        fbId: 240545564672,
-        photoURL: 'https://scontent-b-sjc.xx.fbcdn.net/hphotos-xfa1/t31.0-8/209601_615446883190_2111600019_o.jpg',
-        thumbURL: 'https://scontent-b.xx.fbcdn.net/hphotos-xpf1/t1.0-9/s130x130/228348_615446883190_2111600019_n.jpg',
-        address1: '515 Cedar St',
-        address2: 'Santa Cruz, CA 95060',
-        distance: '1.2 mi'
+        photoURL: './img/kate_li.jpg',
+        name: 'Kate Svodoba',
+        linkedinURL: 'https://www.linkedin.com/pub/kate-svoboda-spanbock/17/525/8a8',
+        age: 35,
+        distance: '5 mi',
+        location: 'Los Angeles, CA',
+        skills: [
+          'Interior design',
+          'Space planning',
+          'Architecture',
+          'Rendering',
+          'Space-planning'
+        ],
+        secondarySkills: [
+          'Copy writing',
+          'Blog writing',
+          'Creative writing'
+        ],
+        nominations: [{
+          name: 'Jared Krause',
+          skill: 'Interior design',
+          text: 'Kate is the best interior designer I\'ve ever worked with. She quickly stepped into our home and saw the possibilities of how we could make our space beautiful while holding to a moderate budget. We had a dinner party and the guests almost fainted with delight. She\'s the real deal!'
+        }]
       },
       {
-        name: 'Cafe Mare',
-        fbId: 269901256358819,
-        photoURL: 'https://scontent-a-sjc.xx.fbcdn.net/hphotos-xpa1/t31.0-8/10317583_851293891552883_5832842782109228495_o.jpg',
-        thumbURL: 'https://fbcdn-photos-a-a.akamaihd.net/hphotos-ak-xpf1/t1.0-0/10273822_851293891552883_5832842782109228495_s.jpg',
-        address1: '740 Front St, #100',
-        address2: 'Santa Cruz, CA 95060',
-        distance: '0.2 mi'
+        photoURL: './img/jordana_li.jpg',
+        name: 'Jordana Reim',
+        linkedinURL: 'https://www.linkedin.com/in/jordana',
+        age: 30,
+        distance: '5 mi',
+        location: 'Los Angeles, CA',
+        skills: [
+          'Digital Strategy',
+          'Online Advertising',
+          'Advertising',
+          'Social Media Marketing',
+          'User Experience'
+        ],
+        secondarySkills: [
+          'Grass Roots Campaigns'
+        ],
+        nominations: [{
+          name: 'Morgan Carson',
+          skill: 'Digital Strategy',
+          text: 'She\'s the tops!'
+        }]
       },
       {
-        name: 'MOTIV',
-        fbId: 112468103763, // 204393176242846 was merged into page
-        photoURL: 'https://scontent-a-sjc.xx.fbcdn.net/hphotos-xaf1/t1.0-9/419945_10150719331073764_1700138881_n.jpg',
-        thumbURL: 'https://scontent-b.xx.fbcdn.net/hphotos-xaf1/t1.0-9/s130x130/532107_10151613262373764_211726629_n.jpg',
-        address1: '1209 Pacific Ave.',
-        address2: 'Santa Cruz, CA 95060',
-        distance: '0.1 mi',
-        promotion: {
-          title: 'James Bond',
-          message: 'Every 50th BarChat posted to our wall is rewarded with a swanky drink upgrade!'
-        }
-      },
-      {
-        name: 'The Red Room',
-        fbId: 111627012207432,
-        photoURL: 'https://fbcdn-sphotos-a-a.akamaihd.net/hphotos-ak-frc3/t1.0-9/10269644_676768595693268_7156454855741968687_n.jpg',
-        thumbURL: 'https://fbcdn-photos-b-a.akamaihd.net/hphotos-ak-xpf1/t1.0-0/10176261_674984622538332_3803597536558734519_s.jpg',
-        address1: '343 Cedar St',
-        address2: 'Santa Cruz, CA 95060',
-        distance: '500 ft',
-        promotion: {
-          title: 'Score Free Drinks',
-          message: 'Every 50th BarChat posted to our wall scores the poster a free penny drink, courtesy of The Red Room!'
-        }
-      },
-      {
-        name: 'Rosie McCann’s',
-        fbId: 111229748910005,
-        photoURL: 'https://scontent-b-sjc.xx.fbcdn.net/hphotos-xpa1/t1.0-9/1010091_752914534741520_1709817537_n.jpg',
-        thumbURL: 'https://fbcdn-photos-f-a.akamaihd.net/hphotos-ak-xpa1/t1.0-0/1010091_752914534741520_1709817537_s.jpg',
-        address1: '1220 Pacific Ave.',
-        address2: 'Santa Cruz, CA 95060',
-        distance: '0.1 mi'
-      },
-      {
-        name: 'The Blue Lagoon',
-        fbId: 79541193863,
-        photoURL: 'https://scontent-a-sjc.xx.fbcdn.net/hphotos-xaf1/t1.0-9/4445_79593858863_7376662_n.jpg',
-        thumbURL: 'https://scontent-a.xx.fbcdn.net/hphotos-xaf1/t1.0-9/s130x130/4445_79593858863_7376662_n.jpg',
-        address1: '923 Pacific Ave.',
-        address2: 'Santa Cruz, CA 95060',
-        distance: '0.1 mi'
+        photoURL: './img/tian_li.jpg',
+        name: 'Tian Mu',
+        linkedinURL: 'http://www.linkedin.com/pub/tian-mu/0/4a2/77',
+        age: 35,
+        location: 'Los Angeles, CA',
+        skills: [
+          'Social Activism',
+          'Game Development',
+          'Product Development',
+          'Mobile Games',
+          'Casual Games'
+        ],
+        secondarySkills: [
+          'Fundraising',
+          'Rallying Community',
+          'Storytelling',
+          'Mentoring Children'
+        ],
+        nominations: [{
+          name: 'Morgan Carson',
+          skill: 'Social Activism',
+          text: 'He\'s the tops!'
+        }]
       }
-      // {
-      //   name: 'The Rush Inn',
-      //   fbId: 460268814089550, // Alternate: 100000701335606
-      //   photoURL: 'https://scontent-a-sjc.xx.fbcdn.net/hphotos-prn2/t1.0-9/1390471_460278620755236_1620332253_n.jpg',
-      //   thumbURL: '',
-      //   address1: '113 Knight St',
-      //   address2: 'Santa Cruz, CA 95060',
-      //   distance: '.2 mi away'
-      // }
     ]
   }
 };
