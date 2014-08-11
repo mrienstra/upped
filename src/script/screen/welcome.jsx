@@ -4,9 +4,20 @@ var React = require('react/addons');
 
 var WelcomeScreen = React.createClass({
   getInitialState: function() {
-    return {};
+    return {
+      loading: false
+    };
+  },
+  handleLoginButton: function(){
+    this.setState({loading: true});
+    this.props.handleLoginButton();
   },
   render: function(){
+    var loading;
+    if (this.state.loading) {
+      loading = <span className="icon ion-loading-d pull-right"></span>;
+    }
+
     return (
       <div className="welcome content">
         <div className="logo"></div>
@@ -55,7 +66,7 @@ var WelcomeScreen = React.createClass({
             <li id="slide_2" data-slide="2"></li>
              <li id="slide_3" data-slide="3"></li>
           </ul>
-          <button className="btn" onTouchEnd={this.props.handleLoginButton}>Log In with Facebook</button>
+          <button className="btn" onTouchEnd={this.handleLoginButton}>Log In with Facebook {loading}</button>
         </div>
       </div>
     );

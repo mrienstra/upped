@@ -28,29 +28,24 @@ var SideMenu = React.createClass({
         <div className="content">
           <ul className="table-view">
             <li className="table-view-cell">
-              <a href={'#' + this.props.id} onTouchEnd={this.props.handleBack}>
-                <h4><span className="icon ion-ios7-location"></span>Bars</h4>
-              </a>
-            </li>
-            <li className="table-view-cell">
               <a onTouchEnd={this.props.handleMyProfileChange}>
                 <h4><span className="icon ion-person"></span>Profile</h4>
               </a>
             </li>
             <li className="table-view-cell">
-              <a className="activity" onTouchEnd={this.props.handleActivityChange}>
-                <h4><span className="icon ion-star"></span>Activity</h4>
-                {badge}
+              <a href={'#' + this.props.id} onTouchEnd={this.props.handleBack}>
+                <h4><span className="icon ion-ios7-bolt"></span>Heroes</h4>
               </a>
             </li>
-            <li className="table-view-cell hide">
-              <a>
-                <h4><span className="icon ion-gear-a"></span>Settings</h4>
+            <li className="table-view-cell">
+              <a className="activity" onTouchEnd={this.props.handleActivityChange}>
+                <h4><span className="icon icon-star-filled"></span>Matches</h4>
+                {badge}
               </a>
             </li>
             <li className="table-view-cell">
               <a onTouchEnd={this.props.handleLogOut}>
-                <h4><span className="icon ion-log-out"></span>Log Out</h4>
+                <h4><span className="icon ion-ios7-paw"></span>Log Out</h4>
               </a>
             </li>
           </ul>

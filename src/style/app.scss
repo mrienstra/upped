@@ -625,9 +625,10 @@ header.bar-nav {
   text-align: center;
   height: 100%;
   width: 100%;
-  background: $primary-color;
+  background: $primary-color url('../img/splash_fueling_up.png') no-repeat 50%;
+  background-size: 90%;
   color: $text-knockout-color;
-  h1 { margin-top: 20rem; font-size: 150%; color: $text-knockout-color; }
+  h1 { margin-top: 20rem; font-size: 150%; color: $text-knockout-color; display: none; }
   .icon { font-size: 200%; }
 }
 
@@ -750,6 +751,9 @@ header.bar-nav {
       text-transform: uppercase;
       color: $text-knockout-color;
       border-color: #fff;
+      .icon {
+        margin-right: 0.5em;
+      }
     }
     button:active {
       background-color: #fff;
@@ -822,19 +826,23 @@ header.bar-nav {
     box-shadow: 10px 0px 20px 0px rgba(0,0,0,0.75), -10px 0px 20px 0px rgba(0,0,0,0.75);
   }
 
-  .topSkillAndCount {
-    margin-top: -4px;
-    padding: 0.25em;
-    background: #e7e7e7;
-    .count {
-      float: right;
-      font-size: inherit;
+  .summary, .details {
+    margin-top: -10px;
+
+    .statement {
+      background: #e7e7e7;
     }
   }
 
-  .nameAndAge {
-    margin-top: 0.5em;
+  .nameAndSkillCount {
+    padding: 0.25em;
+    background: #e7e7e7;
     font-weight: bold;
+    .count {
+      float: right;
+      font-size: inherit;
+      font-weight: normal;
+    }
   }
 
   .distance {
@@ -843,6 +851,8 @@ header.bar-nav {
   }
 
   .details {
+    margin-top: -4px;
+
     max-height: 0;
     overflow: hidden;
 
@@ -949,6 +959,32 @@ header.bar-nav {
   margin-top: -30px;
   margin-bottom: -29px;
   -webkit-transform: scale3d(1, 0, 1);
+}
+
+.round-buttons .icon, .round-buttons button {
+  border: 12px solid #ddd;
+  border-radius: 200px;
+  padding: 5px;
+  font-weight: bold;
+  font-size: 60px;
+  margin: 14px;
+  background: inherit;
+  &.icon-star-filled {
+    font-size: 50px;
+    padding: 10px;
+  }
+}
+
+.round-buttons button {
+  font-size: 30px;
+  padding: 0;
+  width: 1.5em;
+  height: 1.5em;
+  border-width: 8px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -22px 0 0 -22px;
 }
 
 /* --------- */

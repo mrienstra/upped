@@ -12,6 +12,7 @@ var stub = {
       {
         photoURL: './img/kate_li.jpg',
         name: 'Kate Svodoba',
+        statement: 'Interior designer bridging beauty & function',
         linkedinURL: 'https://www.linkedin.com/pub/kate-svoboda-spanbock/17/525/8a8',
         age: 35,
         distance: '5 mi',
@@ -37,6 +38,7 @@ var stub = {
       {
         photoURL: './img/jordana_li.jpg',
         name: 'Jordana Reim',
+        statement: 'Digital Strategy for the analog age',
         linkedinURL: 'https://www.linkedin.com/in/jordana',
         age: 30,
         distance: '5 mi',
@@ -60,6 +62,7 @@ var stub = {
       {
         photoURL: './img/tian_li.jpg',
         name: 'Tian Mu',
+        statement: 'Social Activism as a form of game development',
         linkedinURL: 'http://www.linkedin.com/pub/tian-mu/0/4a2/77',
         age: 35,
         location: 'Los Angeles, CA',

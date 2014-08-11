@@ -97,11 +97,15 @@ var LocationListItem = React.createClass({
     return (
       <div onTouchEnd={handleToggleDetails}>
         {img}
-        <div className="topSkillAndCount">{this.props.location.skills[0]}<span className="count icon ion-ios7-bolt"> {this.props.location.skills.length}</span></div>
-        <div className="nameAndAge">{this.props.location.name}, {this.props.location.age}</div>
-        <div className="distance">{this.props.location.distance}</div>
-        <div className="location">{this.props.location.location}</div>
+        <div className={'summary' + (this.state.expanded ? ' hide' : '')}>
+          <div className="nameAndSkillCount">{this.props.location.name}<span className="count icon ion-ios7-bolt"> {this.props.location.skills.length}</span></div>
+          <div className="statement">{this.props.location.statement}</div>
+        </div>
         <div className={'details' + (this.state.expanded ? ' show' : '')}>
+          <div className="nameAndSkillCount">{this.props.location.name}, {this.props.location.age}<span className="count icon ion-ios7-bolt"> {this.props.location.skills.length}</span></div>
+          <div className="distance">{this.props.location.distance}</div>
+          <div className="location">{this.props.location.location}</div>
+          <div className="statement">{this.props.location.statement}</div>
           <div className="skills">
             <h4><span className="icon ion-ios7-bolt"></span> Super Powers:<span className="count">{this.props.location.skills.length}</span></h4>
             <ul>
@@ -259,9 +263,10 @@ var LocationsScreen = React.createClass({
 
           <LocationList locations={this.props.locations} checkins={this.state.checkins} filters={this.state.filters} handleLocationChange={this.props.handleLocationChange}></LocationList>
 
-          <div className="bar bar-standard bar-footer">
-            <a data-slider-nav-prev className="icon icon-left pull-left"></a>
-            <a data-slider-nav-next className="icon icon-right pull-right"></a>
+          <div className="bar bar-standard bar-footer round-buttons">
+            <a data-slider-nav-prev className="icon icon-close pull-left"></a>
+            <button>i</button>
+            <a data-slider-nav-next className="icon icon-star-filled pull-right"></a>
           </div>
         </div>
 
