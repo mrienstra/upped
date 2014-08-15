@@ -5,6 +5,7 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 // Libs
 var swipeStack = require('../../lib/swipe-stack-0.1.js');
+var swipeStackCallback;
 var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
   'use strict';
 
@@ -42,7 +43,9 @@ var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
       // EVENTS, LISTENERS, AND INITS
 
       // Activate Slider
-      mySwipe[index] = swipeStack(slider);
+      mySwipe[index] = swipeStack(slider, {
+        callback: swipeStackCallback
+      });
 
       // Toggle Previous & Next Buttons
       if (btnNext) {
@@ -64,7 +67,7 @@ var badgeMixin = require('../mixin/badge.js');
 // Components
 var SideMenu = require('../component/sideMenu.jsx');
 
-var LocationListItem = React.createClass({
+var UserListItem = React.createClass({
   getInitialState: function(){
     return {
       expanded: false
@@ -77,13 +80,13 @@ var LocationListItem = React.createClass({
       that.setState({expanded: !that.state.expanded});
     };
 
-    var img = this.props.location.photoURL ? <img src={this.props.location.photoURL}/> : '';
+    var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
-    var skills = this.props.location.skills.map(function (name) {
+    var skills = this.props.user.skills.map(function (name) {
       return <li>{name}</li>;
     });
 
-    var nominations = this.props.location.nominations.map(function (nomination) {
+    var nominations = this.props.user.nominations.map(function (nomination) {
       return (
         <li>
           <img/>
@@ -98,22 +101,22 @@ var LocationListItem = React.createClass({
       <div onTouchEnd={handleToggleDetails}>
         {img}
         <div className={'summary' + (this.state.expanded ? ' hide' : '')}>
-          <div className="nameAndSkillCount">{this.props.location.name}<span className="count icon ion-ios7-bolt"> {this.props.location.skills.length}</span></div>
-          <div className="statement">{this.props.location.statement}</div>
+          <div className="nameAndSkillCount">{this.props.user.name}<span className="count icon ion-ios7-bolt"> {this.props.user.skills.length}</span></div>
+          <div className="statement">{this.props.user.statement}</div>
         </div>
         <div className={'details' + (this.state.expanded ? ' show' : '')}>
-          <div className="nameAndSkillCount">{this.props.location.name}, {this.props.location.age}<span className="count icon ion-ios7-bolt"> {this.props.location.skills.length}</span></div>
-          <div className="distance">{this.props.location.distance}</div>
-          <div className="location">{this.props.location.location}</div>
-          <div className="statement">{this.props.location.statement}</div>
+          <div className="nameAndSkillCount">{this.props.user.name}, {this.props.user.age}<span className="count icon ion-ios7-bolt"> {this.props.user.skills.length}</span></div>
+          <div className="distance">{this.props.user.distance}</div>
+          <div className="location">{this.props.user.location}</div>
+          <div className="statement">{this.props.user.statement}</div>
           <div className="skills">
-            <h4><span className="icon ion-ios7-bolt"></span> Super Powers:<span className="count">{this.props.location.skills.length}</span></h4>
+            <h4><span className="icon ion-ios7-bolt"></span> Super Powers:<span className="count">{this.props.user.skills.length}</span></h4>
             <ul>
               {skills}
             </ul>
           </div>
           <div className="nominations">
-            <h4><span className="icon ion-ribbon-b"></span> Hero Nominations:<span className="count">{this.props.location.nominations.length}</span></h4>
+            <h4><span className="icon ion-ribbon-b"></span> Hero Nominations:<span className="count">{this.props.user.nominations.length}</span></h4>
             <ul>
               {nominations}
             </ul>
@@ -124,37 +127,53 @@ var LocationListItem = React.createClass({
   }
 });
 
-var LocationList = React.createClass({
-  render: function() {
+var UserList = React.createClass({
+  componentWillMount: function(){
+    var that = this;
     var i;
     var l;
-    var that = this;
-    var keys = [];
-    var locations = this.props.locations.filter(function (location, index) {
-      var name = location.name.toLowerCase();
+    var users = this.props.users; /*this.props.users.filter(function (user, index) {
+      var choice = {
+        count: 0
+      };
+      if (that.props.choices || that.props.choices.length) {
+        that.props.choices.some(function (aChoice) {
+          if (aChoice.fbId === user.fbId) {
+            choice.count = aChoice.count;
+            choice.parseId = aChoice.parseId;
+            return true;
+          }
+        });
+      }
       for (i = 0, l = that.props.filters.length; i < l; i++) {
         if (name.indexOf(that.props.filters[i]) === -1) {
           return false;
         }
       }
-      keys.push(index);
       return true;
+    });*/
+
+    this.setState({users: users});
+  },
+  componentDidMount: function(){
+    var that = this;
+    swipeStackCallback = function (index, direction) {
+      console.log('UserList swipeStackCallback', this, arguments, that, that.state.users);
+      var targetUser = that.state.users[index];
+      var choice = direction === 'left' ? 0 : 1;
+      that.props.handleChoice(targetUser.id, choice);
+    };
+
+    var el = this.getDOMNode();
+    var btnNext = el.querySelector('[data-slider-nav-next]');
+    var btnPrev = el.querySelector('[data-slider-nav-prev]');
+    sliderInit(window, document, btnNext, btnPrev);
+  },
+  render: function() {
+    var userNodes = this.state.users.map(function (user, index) {
+      return <UserListItem key={index} user={user}></UserListItem>;
     });
-    var locationNodes = locations.map(function (location, index) {
-      var checkin = {
-        count: 0
-      };
-      if (that.props.checkins || that.props.checkins.length) {
-        that.props.checkins.some(function (aCheckin) {
-          if (aCheckin.fbId === location.fbId) {
-            checkin.count = aCheckin.count;
-            checkin.parseId = aCheckin.parseId;
-            return true;
-          }
-        });
-      }
-      return <LocationListItem key={keys[index]} location={location}></LocationListItem>;
-    });
+
     return (
       <div className="content content-main">
         <div className="subhead">
@@ -163,7 +182,7 @@ var LocationList = React.createClass({
 
         <div className="slider" data-slider>
           <div className="slides">
-            {locationNodes}
+            {userNodes}
           </div>
         </div>
 
@@ -171,85 +190,65 @@ var LocationList = React.createClass({
           <h3>Galaxy Explored</h3>
           <p>You've seen all our hero profiles. We'll reach out if you score any mutual matches.</p>
         </div>
+
+        <div className="round-buttons">
+            <a data-slider-nav-prev className="icon icon-close pull-left"></a>
+            <button>i</button>
+            <a data-slider-nav-next className="icon icon-star-filled pull-right"></a>
+          </div>
       </div>
     );
   }
 });
 
-var LocationsScreen = React.createClass({
+var ChooseScreen = React.createClass({
   mixins: [badgeMixin],
   getInitialState: function(){
     return {
-      checkins: [],
-      filters: []
+      users: void 0
     };
   },
-  handleFilterChange: function (event) {
-    console.log('handleFilterChange', event);
-    this.setState({filters: event.target.value.toLowerCase().split(' ')});
-  },
-  handlePromise: function (checkinsPromise) {
+  handlePromise: function (usersPromise) {
     var that = this;
 
-    checkinsPromise.then(
-      function (checkins) {
-        console.log('LocationsScreen checkinsPromise', checkins);
+    usersPromise.then(
+      function (users) {
+        console.log('ChooseScreen usersPromise', users);
 
         that.setState({
-          checkins: checkins
+          users: users
         });
       },
       function (response) {
-        alert('LocationsScreen checkinsPromise failed!');
+        alert('ChooseScreen usersPromise failed!');
         console.warn('bad', response);
       }
     );
   },
   componentWillMount: function(){
-    console.log('LocationsScreen.componentWillMount', this, arguments);
+    console.log('ChooseScreen.componentWillMount', this, arguments);
 
     var that = this;
 
-    var checkinsPromise = this.props.getCheckins();
+    var usersPromise = this.props.getUsers();
 
-    this.handlePromise(checkinsPromise);
-
-    pubSub.subscribe('location', function (topic, data) {
-      console.log('LocationsScreen.componentWillMount pubSub.subscribe "location"', this, arguments);
-
-      var outstandingChanges = data.previousFbId ? 2 : 1;
-
-      console.log('outstandingChanges', outstandingChanges)
-
-      var newCheckins = that.state.checkins.concat();
-      if (newCheckins.some(function (checkin, i) {
-        if (checkin.fbId === data.fbId) {
-          newCheckins[i].count += data.checkedIn ? 1 : -1;
-
-          if (!--outstandingChanges) return true;
-        } else if (data.previousFbId && checkin.fbId === data.previousFbId) {
-          newCheckins[i].count -= 1;
-
-          if (!--outstandingChanges) return true;
-        }
-      })) {
-        console.log('newCheckins', newCheckins)
-        that.setState({checkins: newCheckins});
-      } else {
-        console.error('todo: update when new?');
-      }
-    });
-  },
-  componentDidMount: function(){
-    var el = this.getDOMNode();
-    var btnNext = el.querySelector('[data-slider-nav-next]');
-    var btnPrev = el.querySelector('[data-slider-nav-prev]');
-    sliderInit(window, document, btnNext, btnPrev);
+    this.handlePromise(usersPromise);
   },
   render: function(){
     var badge;
     if (this.state.newCount) {
       badge = <div className="status badge badge-negative">{this.state.newCount}</div>;
+    }
+
+    var userList;
+    if (this.state.users === void 0) {
+      userList = (
+        <div className="content content-main">
+          <span className="icon ion-loading-d"></span>
+        </div>
+      );
+    } else {
+      userList = <UserList users={this.state.users} choices={this.props.userChoices} handleChoice={this.props.handleChoice}></UserList>
     }
 
     return (
@@ -261,13 +260,7 @@ var LocationsScreen = React.createClass({
             {badge}
           </header>
 
-          <LocationList locations={this.props.locations} checkins={this.state.checkins} filters={this.state.filters} handleLocationChange={this.props.handleLocationChange}></LocationList>
-
-          <div className="bar bar-standard bar-footer round-buttons">
-            <a data-slider-nav-prev className="icon icon-close pull-left"></a>
-            <button>i</button>
-            <a data-slider-nav-next className="icon icon-star-filled pull-right"></a>
-          </div>
+          {userList}
         </div>
 
         <SideMenu id="sideMenu" handleActivityChange={this.props.handleActivityChange} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
@@ -277,4 +270,4 @@ var LocationsScreen = React.createClass({
   }
 });
 
-module.exports = LocationsScreen;
+module.exports = ChooseScreen;
