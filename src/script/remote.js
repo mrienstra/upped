@@ -393,6 +393,11 @@ var _remote = {
                 skills: userData.get('skills'),
                 statement: userData.get('statement')
               };
+            },
+            error: function(){
+              // Todo: handle!
+              console.error('_user.get(\'data\').fetch', this, arguments);
+              alert('Whoops! We have no idea who you are. Here be monsters.');
             }
           });
 
@@ -728,8 +733,14 @@ var remote = {
           chosen: chosen,
           choice: choiceId
         }).then(
-          function(){ console.log('remote.parse.choice.set save success', this, arguments); },
-          function(){ console.error('remote.parse.choice.set save failure', this, arguments); }
+          function(){
+            console.log('remote.parse.choice.set save success', this, arguments);
+            ga('send', 'event', 'person', 'choice', 'successfully submitted to Parse', choiceId);
+          },
+          function(){
+            console.error('remote.parse.choice.set save failure', this, arguments);
+            ga('send', 'event', 'person', 'choice', 'unable to submit to Parse', choiceId);
+          }
         );
       },
       getByChooser: function (chooserId) {
