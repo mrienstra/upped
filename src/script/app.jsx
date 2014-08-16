@@ -10,7 +10,7 @@ var stub = {
   locations: {
     locations: [
       {
-        photoURL: './img/kate_li.jpg',
+        photoURL: './img/profiles/kate_li.jpg',
         name: 'Kate Svodoba',
         statement: 'Interior designer bridging beauty & function',
         linkedinURL: 'https://www.linkedin.com/pub/kate-svoboda-spanbock/17/525/8a8',
@@ -36,7 +36,7 @@ var stub = {
         }]
       },
       {
-        photoURL: './img/jordana_li.jpg',
+        photoURL: './img/profiles/jordana_li.jpg',
         name: 'Jordana Reim',
         statement: 'Digital Strategy for the analog age',
         linkedinURL: 'https://www.linkedin.com/in/jordana',
@@ -60,7 +60,7 @@ var stub = {
         }]
       },
       {
-        photoURL: './img/tian_li.jpg',
+        photoURL: './img/profiles/tian_li.jpg',
         name: 'Tian Mu',
         statement: 'Social Activism as a form of game development',
         linkedinURL: 'http://www.linkedin.com/pub/tian-mu/0/4a2/77',
@@ -88,7 +88,6 @@ var stub = {
     ]
   }
 };
-
 
 
 var app = {
