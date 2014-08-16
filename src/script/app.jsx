@@ -6,90 +6,6 @@ var reactDomRoot = document.querySelector('.container');
 
 var puller = require('./puller.js');
 
-var stub = {
-  locations: {
-    locations: [
-      {
-        photoURL: './img/profiles/kate_li.jpg',
-        name: 'Kate Svodoba',
-        statement: 'Interior designer bridging beauty & function',
-        linkedinURL: 'https://www.linkedin.com/pub/kate-svoboda-spanbock/17/525/8a8',
-        age: 35,
-        distance: '5 mi',
-        location: 'Los Angeles, CA',
-        skills: [
-          'Interior design',
-          'Space planning',
-          'Architecture',
-          'Rendering',
-          'Space-planning'
-        ],
-        secondarySkills: [
-          'Copy writing',
-          'Blog writing',
-          'Creative writing'
-        ],
-        nominations: [{
-          name: 'Jared Krause',
-          skill: 'Interior design',
-          text: 'Kate is the best interior designer I\'ve ever worked with. She quickly stepped into our home and saw the possibilities of how we could make our space beautiful while holding to a moderate budget. We had a dinner party and the guests almost fainted with delight. She\'s the real deal!'
-        }]
-      },
-      {
-        photoURL: './img/profiles/jordana_li.jpg',
-        name: 'Jordana Reim',
-        statement: 'Digital Strategy for the analog age',
-        linkedinURL: 'https://www.linkedin.com/in/jordana',
-        age: 30,
-        distance: '5 mi',
-        location: 'Los Angeles, CA',
-        skills: [
-          'Digital Strategy',
-          'Online Advertising',
-          'Advertising',
-          'Social Media Marketing',
-          'User Experience'
-        ],
-        secondarySkills: [
-          'Grass Roots Campaigns'
-        ],
-        nominations: [{
-          name: 'Morgan Carson',
-          skill: 'Digital Strategy',
-          text: 'She\'s the tops!'
-        }]
-      },
-      {
-        photoURL: './img/profiles/tian_li.jpg',
-        name: 'Tian Mu',
-        statement: 'Social Activism as a form of game development',
-        linkedinURL: 'http://www.linkedin.com/pub/tian-mu/0/4a2/77',
-        age: 35,
-        location: 'Los Angeles, CA',
-        skills: [
-          'Social Activism',
-          'Game Development',
-          'Product Development',
-          'Mobile Games',
-          'Casual Games'
-        ],
-        secondarySkills: [
-          'Fundraising',
-          'Rallying Community',
-          'Storytelling',
-          'Mentoring Children'
-        ],
-        nominations: [{
-          name: 'Morgan Carson',
-          skill: 'Social Activism',
-          text: 'He\'s the tops!'
-        }]
-      }
-    ]
-  }
-};
-
-
 var app = {
   init: function () {
     var ReactScreens = require('../lib/react-screens/react-screens.jsx');
@@ -127,14 +43,13 @@ var handleBack = function (e) {
 var handleLocationsChange = function(){
   console.log('handleLocationsChange', this, arguments);
   var LocationsScreen = require('./screen/locations.jsx');
-  var props = stub.locations;
 
-  var getCheckins = remote.parse.checkin.getByRegion.bind(remote.parse.checkin, '0');
+  var getUsers = remote.parse.userData.getAll.bind(remote.parse.userData);
 
   var handleMyProfileChange = handleProfileChange.bind(null, remote.user, true);
 
   app.screens.addScreen(
-    <LocationsScreen locations={props.locations} getCheckins={getCheckins} handleLocationChange={handleLocationChange} handleMyProfileChange={handleMyProfileChange} handleActivityChange={handleActivityChange} handleLogOut={handleLogOut}></LocationsScreen>
+    <LocationsScreen userChoices={remote.user.choices} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleActivityChange={handleActivityChange} handleLogOut={handleLogOut}></LocationsScreen>
   );
 };
 
@@ -204,10 +119,10 @@ var handlePostChange = function (props) {
 
 
 
-var handleCheckInOut = function (checkinId, placeId, isIn) {
-  console.log('handleCheckInOut', this, arguments);
+var handleChoice = function (chosenId, choice) {
+  console.log('handleChoice', this, arguments, remote.parse.userData);
 
-  remote.parse.checkin.checkInOut(checkinId, placeId, isIn);
+  remote.parse.choice.set(chosenId, choice);
 };
 
 var handleCreatePostOrComment = function (isPostsOrComments, msg, pictureDataURI, successCallback, failureCallback) {

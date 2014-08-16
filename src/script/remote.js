@@ -8,15 +8,15 @@ var settings = {
   fb: {
     appId: '637656759644763',
     permissions: {
-      initial: ['public_profile', 'email', 'user_likes'],
+      initial: ['public_profile'],
       // Asking for publish_* permissions initially using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
       publish: ['publish_actions']
     },
     postFields: 'from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,attachment,message,like_count,user_likes)'
   },
   parse: {
-    appId: 'fGL4H9M5JTIZPsJrLKflSPpl0XV6NbJQYaHpgPzN',
-    jsKey: 'a5sGHg7mZkdkksgJBkv6BlUxM26HpoQEaEt2FHlt'
+    appId: 'wiH0dm2K766KFaLdMBQ3DWFHuQExkXBmmsBh9NYF',
+    jsKey: 'npZirjJx5ofr7GQiqrl7lrf6gca6Ag5IUUWhJ3Jr'
   },
   points: {
     posts: 20,
@@ -352,78 +352,60 @@ var _remote = {
           remote.user.parse = _user;
           remote.user.ftu = _user.existed() ? false : true;
 
-          var locationParseId = _user.get('locationParseId');
-          if (locationParseId) {
-            var locationFbId = _user.get('locationFbId');
-            remote.user.location = {
-              checkedIn: true,
-              fbId: locationFbId,
-              parseId: locationParseId
+          var userDataId = (_user.get('data') && _user.get('data').id) || void 0;
+
+          if (!userDataId) {
+            if (document.location.search.substring(0, 6) === '?udid=') {
+              userDataId = document.location.search.substring(6);
+              var udPointer = new (Parse.Object.extend('UserData'))({id: userDataId});
+              _user.set({'data': udPointer});
+            } else {
+              // Unknown user!
+              // Todo: get name from FB and use it to guess?
+
+              if (remote.user.ftu) {
+                alert('Hmm, we weren\'t able to figure out who you are...');
+              } else {
+                alert('Hmm, we weren\'t able to figure out who you are... Please contact us so we can help!');
+              }
+
+              return;
             }
           }
+
+          remote.user.userData = {
+            id: userDataId
+          };
 
           _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
 
-          var meFields = 'cover,first_name,likes.fields(name,picture),name,picture';
-          if (!remote.user.fb.permissions) {
-            meFields += ',permissions';
-          }
-          openFB.api({
-            path: '/me',
-            params: {fields: meFields},
-            success: function (response) {
-              console.log('_remote.parse.loginWithFBAuthResponse openFB.api "/me"', this, arguments);
-
-              remote.user.name = response.name;
-              remote.user.firstName = response.first_name;
-              remote.user.picture = response.picture && response.picture.data.url;
-              remote.user.cover = response.cover && response.cover.source;
-
-              remote.user.fb.likes = response.likes && response.likes.data.map(function (like) {
-                return {
-                  id: like.id,
-                  name: like.name,
-                  picture: like.picture.data.url
-                };
-              });
-
-              if (response.permissions) {
-                remote.user.fb.permissions = response.permissions.data[0];
-
-                _remote.fb.updatePermissions();
-              }
-            },
-            failure: function(){
-              console.error('_remote.parse.loginWithFBAuthResponse openFB.api "/me"', this, arguments);
+          _user.get('data').fetch({
+            success: function (userData) {
+              remote.user.userData = {
+                id: userData.id,
+                age: userData.get('age'),
+                distance: userData.get('distance'),
+                linkedinURL: userData.get('linkedinURL'),
+                location: userData.get('location'),
+                name: userData.get('name'),
+                nominations: userData.get('nominations'),
+                photoURL: userData.get('photoURL'),
+                skills: userData.get('skills'),
+                statement: userData.get('statement')
+              };
             }
           });
 
-          remote.user.points = {};
-          remote.parse.points.getByFbId(remote.user.fb.id, true).then(
-            function (pointsObj) {
-              console.log('pointsObj', pointsObj);
-              
-              if (pointsObj) {
-                remote.user.points = {
-                  parseId: pointsObj.id,
-                  points: pointsObj.get('points')
-                };
-              } else {
-                // New user
-                remote.user.points.points = 0;
-
-                var pointsObj = new (Parse.Object.extend('Points'))();
-                pointsObj.save({
-                  fbId: remote.user.fb.id,
-                  points: 0
-                }).then(function (pointsObj) {
-                  remote.user.points.parseId = pointsObj && pointsObj.id;
-                }, function(){
-                  console.error('error while saving new Parse points obj', this, arguments); // todo: handle
-                });
+          if (remote.user.ftu) {
+            remote.user.choices = [];
+          } else {
+            remote.parse.choice.getByChooser(remote.user.userData.id).then(
+              function (choices) {
+                remote.user.choices = choices;
+                // todo: trigger custom event for interested parties?
               }
-            }
-          );
+            );
+          }
         },
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
@@ -729,80 +711,50 @@ var remote = {
     remote.resetUser();
   },
   parse: {
-    checkin: {
-      checkInOut: function (parseId, fbId, isIn) {
-        console.log('remote.parse.checkin.checkInOut', this, arguments, JSON.stringify(remote.user.location));
+    choice: {
+      set: function (chosenId, choiceId) {
+        console.log('remote.parse.choice.set', this, arguments, remote.user.userData.id);
 
-        var checkedIn = new (Parse.Object.extend('Checkin'))();
+        if (!remote.user.userData.id || !chosenId) return;
 
-        if (isIn && remote.user.location.checkedIn) {
-          // Check out of previous location
-          var checkedIn2 = new (Parse.Object.extend('Checkin'))();
-          checkedIn2.save({
-            checkedIn: {'__op': 'Increment', 'amount': -1},
-            'id': remote.user.location.parseId
-          });
-        }
+        var chooser = new (Parse.Object.extend('UserData'))({id: remote.user.userData.id});
 
-        checkedIn.set('checkedIn', {'__op': 'Increment', 'amount': isIn ? 1 : -1});
+        var chosen = new (Parse.Object.extend('UserData'))({id: chosenId});
 
-        if (isIn) {
-          remote.user.location = {
-            checkedIn: true,
-            fbId: fbId,
-            parseId: parseId
-          };
+        var choice = new (Parse.Object.extend('Choice'))();
 
-          remote.user.parse.save({
-            locationFbId: fbId,
-            locationParseId: parseId
-          });
-        } else {
-          remote.user.location = {
-            checkedIn: false
-          };
-
-          remote.user.parse.save({
-            locationFbId: null,
-            locationParseId: null
-          });
-        }
-
-        if (parseId) {
-          // Existing
-          checkedIn.set('id', parseId);
-        } else {
-          // New
-          // Todo: this is not fully supported
-          checkedIn.set({
-            fbId: fbId,
-            region: '0'
-          });
-        }
-
-        checkedIn.save();
+        choice.save({
+          chooser: chooser,
+          chosen: chosen,
+          choice: choiceId
+        }).then(
+          function(){ console.log('remote.parse.choice.set save success', this, arguments); },
+          function(){ console.error('remote.parse.choice.set save failure', this, arguments); }
+        );
       },
-      getByRegion: function (region) {
-        console.log('remote.parse.checkin.getByRegion', this, arguments);
+      getByChooser: function (chooserId) {
+        console.log('remote.parse.choice.getByChooser', this, arguments);
 
         var deferred = when.defer();
 
-        var query = new Parse.Query(Parse.Object.extend('Checkin'));
-        query.equalTo('region', region);
+        var chooser = new (Parse.Object.extend('UserData'))({id: chooserId});
+
+        var query = new Parse.Query(Parse.Object.extend('Choice'));
+        query.equalTo('chooser', chooser);
         query.find({
           success: function (response) {
-            console.log('remote.parse.checkin.getByRegion success', this, arguments);
+            console.log('remote.parse.choice.getByChooser success', this, arguments);
 
-            var checkins = [];
-            response.forEach(function (aCheckin) {
-              checkins.push({
-                count: aCheckin.get('checkedIn'),
-                parseId: aCheckin.id,
-                fbId: aCheckin.get('fbId')
+            var choices = [];
+            response.forEach(function (aChoice) {
+              choices.push({
+                chosen: aChoice.get('object'),
+                parseId: aChoice.id,
+                choice: aChoice.get('choice')
               });
             });
 
-            deferred.resolve(checkins);
+            deferred.resolve(choices);
           },
           error: deferred.reject
         });
@@ -918,20 +870,76 @@ var remote = {
         );
       }
     },
-    points: {
-      getByFbId: function(fbId, returnAnObject) {
-        console.log('remote.parse.points.getByFbId', this, arguments);
+    userData: {
+      getAll: function(){
+        console.log('remote.parse.userData.getAll', this, arguments, remote.parse.userData.id);
 
         var deferred = when.defer();
 
-        var query = new Parse.Query(Parse.Object.extend('Points'));
-        query.equalTo('fbId', fbId);
+        var query = new Parse.Query(Parse.Object.extend('UserData'));
+        //query.notEqualTo('id', remote.user.userData.id);
         query.find({
           success: function (response) {
-            console.log('remote.parse.points.getByFbId success', this, arguments);
+            console.log('remote.parse.userData.getAll success', this, arguments);
 
             if (response.length) {
-              deferred.resolve(returnAnObject ? response[0] : response[0].get('points'));
+              if (remote.user.userData.id) {
+                response = response.filter(function (aUserData) {
+                  return aUserData.id !== remote.user.userData.id;
+                });
+              }
+
+              var allUserData = response.map(function (aUserData) {
+                return {
+                  id: aUserData.id,
+                  age: aUserData.get('age'),
+                  distance: aUserData.get('distance'),
+                  linkedinURL: aUserData.get('linkedinURL'),
+                  location: aUserData.get('location'),
+                  name: aUserData.get('name'),
+                  nominations: aUserData.get('nominations'),
+                  photoURL: aUserData.get('photoURL'),
+                  skills: aUserData.get('skills'),
+                  statement: aUserData.get('statement')
+                };
+              });
+              deferred.resolve(allUserData);
+            } else {
+              // Nothing returned by Parse, let's assume they aren't using our app
+              deferred.resolve([]);
+            }
+          },
+          error: deferred.reject
+        });
+
+        return deferred.promise;
+      },
+      getById: function(id) {
+        console.log('remote.parse.userData.getById', this, arguments);
+
+        var deferred = when.defer();
+
+        var user = new Parse.User({id: parseUserId});
+
+        var query = new Parse.Query(Parse.Object.extend('UserData'));
+        query.get(id, {
+          success: function (response) {
+            console.log('remote.parse.userData.getById success', this, arguments);
+
+            if (response.length) {
+              var userData = {
+                id: response[0].id,
+                age: response[0].get('age'),
+                distance: response[0].get('distance'),
+                linkedinURL: response[0].get('linkedinURL'),
+                location: response[0].get('location'),
+                name: response[0].get('name'),
+                nominations: response[0].get('nominations'),
+                photoURL: response[0].get('photoURL'),
+                skills: response[0].get('skills'),
+                statement: response[0].get('statement')
+              };
+              deferred.resolve(userData);
             } else {
               // Nothing returned by Parse, let's assume they aren't using our app
               deferred.resolve();
@@ -941,32 +949,6 @@ var remote = {
         });
 
         return deferred.promise;
-      },
-      increaseByFbId: function(fbId, pointsIncrease) {
-        // Todo: consider moving this to Parse "Cloud Code"
-        // Todo: add error handling
-        console.log('remote.parse.points.increaseByFbId', arguments);
-
-        if (fbId === remote.user.fb.id) {
-          remote.user.points.points += pointsIncrease;
-
-          var pointsObj = new (Parse.Object.extend('Points'))();
-          pointsObj.save({
-            id: remote.user.points.parseId,
-            points: {'__op': 'Increment', 'amount': pointsIncrease}
-          }, {error: function(){ console.error('remote.parse.points.increaseByFbId save (self) error', this, arguments); }});
-        } else {
-          remote.parse.points.getByFbId(fbId, true).then(
-            function (pointsObj) {
-              if (pointsObj) {
-                pointsObj.save({
-                  points: {'__op': 'Increment', 'amount': pointsIncrease}
-                }, {error: function(){ console.error('remote.parse.points.increaseByFbId save (other) error', this, arguments); }});
-              }
-            },
-            function(){ console.error('remote.parse.points.increaseByFbId getByFbId error', this, arguments); }
-          );
-        }
       }
     },
     userExists: function(){

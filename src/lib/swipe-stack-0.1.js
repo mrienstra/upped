@@ -128,6 +128,9 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
       if (index < slides.length) {
         move(index, slidePos[index] - width - 20, speed); // 20 so shadow can clear viewport before disappearing. if side margin: - sliderSideMargin
+        
+        offloadFn(options.callback && options.callback(index, 'left'));
+
         index = circle(index+1);
       }
 
@@ -137,6 +140,9 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
       if (index < slides.length) {
         move(index, slidePos[index] + width + 20, speed); // 20 so shadow can clear viewport before disappearing. if side margin: + sliderSideMargin
+
+        offloadFn(options.callback && options.callback(index, 'right'));
+
         index = circle(index+1);
       }
 
@@ -190,7 +196,6 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
       }
 
       index = to;
-      offloadFn(options.callback && options.callback(index, slides[index]));
     };
 
     var move = function (index, dist, speed) {
@@ -451,6 +456,9 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
               move(index, slidePos[index] - width - 20, speed); // 20 so shadow can clear viewport before disappearing. if side margin: - sliderSideMargin
               // deleted line: don't move other slides
+
+              offloadFn(options.callback && options.callback(index, 'left'));
+
               index = circle(index+1);
 
             } else { // direction: backward
@@ -458,11 +466,12 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
               move(index, slidePos[index] + width + 20, speed); // 20 so shadow can clear viewport before disappearing. if side margin: + sliderSideMargin
               // deleted line: don't move other slides
+
+              offloadFn(options.callback && options.callback(index, 'right'));
+
               index = circle(index+1); //index = circle(index-1);
 
             }
-
-            options.callback && options.callback(index, slides[index]);
 
           } else { // return to previous position
 
