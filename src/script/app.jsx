@@ -46,7 +46,7 @@ var handleLocationsChange = function(){
 
   var getUsers = remote.parse.userData.getAll.bind(remote.parse.userData);
 
-  var handleMyProfileChange = handleProfileChange.bind(null, remote.user, true);
+  var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
 
   app.screens.addScreen(
     <LocationsScreen userChoices={remote.user.choices} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleActivityChange={handleActivityChange} handleLogOut={handleLogOut}></LocationsScreen>
@@ -58,7 +58,7 @@ var handleLocationChange = function (props) {
 
   var getPosts = remote.fb.getPosts.bind(remote.fb, props.fbId);
 
-  var handleMyProfileChange = handleProfileChange.bind(null, remote.user, true);
+  var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
 
   var PostsScreen = require('./screen/posts.jsx');
 
@@ -67,33 +67,20 @@ var handleLocationChange = function (props) {
   );
 };
 
-var handleProfileChange = function (user, fromMenu) {
+var handleProfileChange = function (userData, fromMenu) {
   console.log('handleProfileChange', arguments, remote.user);
 
-  var viewingSelf;
+  var viewingSelf = false;
 
-  if ((user.id || user.fb.id) === remote.user.fb.id) {
-    // Todo: this seems a little fragile
-    user = {
-      cover: remote.user.cover,
-      id: remote.user.fb.id,
-      firstName: remote.user.firstName,
-      likes: remote.user.fb.likes,
-      name: remote.user.name,
-      points: remote.user.points.points
-    };
-
+  if (userData.id === remote.user.userData.id) {
     viewingSelf = true;
+    userData = remote.user.userData;
   }
-
-  var getProfile = remote.fb.getProfile;
-
-  var getPoints = remote.parse.points.getByFbId;
 
   var ProfileScreen = require('./screen/profile.jsx');
 
   app.screens.addScreen(
-    <ProfileScreen user={user} viewingSelf={viewingSelf} fromMenu={fromMenu} getProfile={getProfile} getPoints={getPoints} handleBack={handleBack}></ProfileScreen>
+    <ProfileScreen userData={userData} viewingSelf={viewingSelf} fromMenu={fromMenu} handleBack={handleBack}></ProfileScreen>
   );
 };
 

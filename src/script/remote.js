@@ -378,9 +378,12 @@ var _remote = {
           };
 
           _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
+          ga('send', 'event', 'session', 'login', 'fbAndParseLoginSuccess');
 
           _user.get('data').fetch({
             success: function (userData) {
+              _user.save({'data': userData});
+
               remote.user.userData = {
                 id: userData.id,
                 age: userData.get('age'),
@@ -418,10 +421,12 @@ var _remote = {
           if (attemptCount < 2) {
             attemptCount++;
             _remote.parse.loginWithFBAuthResponse(authResponse, attemptCount);
+            ga('send', 'event', 'session', 'login', 'fbAndParseLogin Error');
           } else {
             window.setTimeout(function(){
               alert('Unable to log you in at this time');
             }, 0);
+            ga('send', 'event', 'session', 'login', 'fbAndParseLogin Error 3 times');
             throw '_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn failed 3 times';
           }
         }
@@ -735,11 +740,11 @@ var remote = {
         }).then(
           function(){
             console.log('remote.parse.choice.set save success', this, arguments);
-            ga('send', 'event', 'person', 'choice', 'successfully submitted to Parse', choiceId);
+            ga('send', 'event', 'person', 'choice ' + choiceId, 'successfully submitted to Parse');
           },
           function(){
             console.error('remote.parse.choice.set save failure', this, arguments);
-            ga('send', 'event', 'person', 'choice', 'unable to submit to Parse', choiceId);
+            ga('send', 'event', 'person', 'choice ' + choiceId, 'unable to submit to Parse');
           }
         );
       },

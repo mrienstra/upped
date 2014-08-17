@@ -807,22 +807,24 @@ header.bar-nav {
 
 .js-slider .slider {
   visibility: visible;
-  /* margin: 10px; */
   overflow: visible;
   background-color: #e9e9e9;
   z-index: 1;
+  .slides {
+    overflow: visible;
+    .userListItem {
+      background: white;
+      left: 0;
+      top: 0;
+      position: absolute;
+    }
+  }
 }
 
-.js-slider .slides {
-  overflow: visible;
-  > div {
-    background: white;
-    /* padding: 0.5em;
-    border: 1px solid #ddd;
-    border-radius: 0.5em; */
-    left: 0;
-    top: 0;
-    position: absolute;
+.userListItem {
+  img {
+    width: 100%;
+    height: auto;
   }
 
   .summary, .details {
@@ -852,19 +854,9 @@ header.bar-nav {
   .details {
     margin-top: -4px;
 
-    max-height: 0;
-    overflow: hidden;
-
-    -webkit-transform-origin: top;
-    -o-transform-origin: top;
-    -ms-transform-origin: top;
-    transform-origin: top;
-
-    -webkit-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-
+    display: none;
     &.show {
-      max-height: 1000px;
+      display: block;
     }
 
     .skills, .nominations {
