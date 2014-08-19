@@ -20,7 +20,7 @@ var app = {
 
 
 
-var handleMatchesChange = function(){
+var handleMatchesChange = function (fromMenu) {
   console.log('handleMatchesChange', arguments, remote.user);
 
   var getMatches = remote.parse.choice.getMatchesByUserDataId.bind(remote.parse.choice, remote.user.userData.id);
@@ -28,7 +28,7 @@ var handleMatchesChange = function(){
   var MatchesScreen = require('./screen/activity.jsx');
 
   app.screens.addScreen(
-    <MatchesScreen getMatches={getMatches} handleBack={handleBack} udid={remote.user.userData.id} />
+    <MatchesScreen getMatches={getMatches} handleBack={handleBack} udid={remote.user.userData.id} fromMenu={fromMenu} />
   );
 };
 
@@ -109,7 +109,7 @@ var handlePostChange = function (props) {
 var handleChoice = function (chosenId, choice) {
   console.log('handleChoice', this, arguments, remote.parse.userData);
 
-  remote.parse.choice.set(chosenId, choice);
+  return remote.parse.choice.set(chosenId, choice);
 };
 
 var handleCreatePostOrComment = function (isPostsOrComments, msg, pictureDataURI, successCallback, failureCallback) {

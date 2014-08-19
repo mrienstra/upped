@@ -406,16 +406,11 @@ var _remote = {
             }
           });
 
-          if (remote.user.ftu) {
-            remote.user.choices = [];
-          } else {
-            remote.parse.choice.getByChooser(remote.user.userData.id).then(
-              function (choices) {
-                remote.user.choices = choices;
-                // todo: trigger custom event for interested parties?
-              }
-            );
-          }
+          remote.parse.choice.getChoicesByUserDataId(remote.user.userData.id).then(
+            function (choices) {
+              remote.choices = choices;
+            }
+          );
         },
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
@@ -749,27 +744,45 @@ var remote = {
             ga('send', 'event', 'person', 'choice ' + choiceId, 'unable to submit to Parse');
           }
         );
+
+        if (choiceId === 1) {
+          remote.choices.chosenOnes.push(chosenId);
+          if (remote.parse.choice.isMatch(chosenId)) {
+            return _.find(remote.allUserData, {id: chosenId});
+          }
+        }
       },
-      getByChooser: function (chooserId) {
-        console.log('remote.parse.choice.getByChooser', this, arguments);
+      getChoicesByUserDataId: function (userDataId) {
+        console.log('remote.parse.choice.getChoicesByUserDataId', this, arguments);
 
         var deferred = when.defer();
 
-        var chooser = new (Parse.Object.extend('UserData'))({id: chooserId});
+        var userDataPointer = new (Parse.Object.extend('UserData'))({id: userDataId});
 
-        var query = new Parse.Query(Parse.Object.extend('Choice'));
-        query.equalTo('chooser', chooser);
-        query.find({
+        var chooserQuery = new Parse.Query(Parse.Object.extend('Choice'));
+        chooserQuery.equalTo('chooser', userDataPointer);
+
+        var chosenQuery = new Parse.Query(Parse.Object.extend('Choice'));
+        chosenQuery.equalTo('chosen', userDataPointer);
+
+        var orQuery = Parse.Query.or(chooserQuery, chosenQuery);
+        orQuery.find({
           success: function (response) {
-            console.log('remote.parse.choice.getByChooser success', this, arguments);
+            console.log('remote.parse.choice.getChoicesByUserDataId success', this, arguments);
 
-            var choices = [];
+            var choices = {
+              chosenOnes: [],
+              chosenBy: []
+            };
+
             response.forEach(function (aChoice) {
-              choices.push({
-                chosen: aChoice.get('object'),
-                parseId: aChoice.id,
-                choice: aChoice.get('choice')
-              });
+              var chooserId = aChoice.get('chooser').id;
+              var chosenId = aChoice.get('chosen').id;
+              if (chooserId === userDataId) {
+                choices.chosenOnes.push(chosenId);
+              } else {
+                choices.chosenBy.push(chooserId);
+              }
             });
 
             deferred.resolve(choices);
@@ -819,6 +832,15 @@ var remote = {
         });
 
         return deferred.promise;
+      },
+      isMatch: function (chosenUdid) {
+        return _.contains(remote.choices.chosenBy, chosenUdid);
+      },
+      getMatches: function(){
+        var matches = _.intersection(remote.choices.chosenOnes, remote.choices.chosenBy);
+        return matches.map(function (match) {
+          return _.find(remote.allUserData, {'id': match});
+        });
       }
     },
     getUser: function(){

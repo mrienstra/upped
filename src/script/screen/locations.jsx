@@ -102,7 +102,16 @@ var UserList = React.createClass({
       console.log('UserList swipeStackCallback', this, arguments, that, that.state.users);
       var targetUser = that.state.users[index];
       var choice = direction === 'left' ? 0 : 1;
-      that.props.handleChoice(targetUser.id, choice);
+      
+      var match = that.props.handleChoice(targetUser.id, choice);
+
+      if (match) {
+        console.log('UserList swipeStackCallback match', match);
+
+        that.setState({
+          match: match
+        });
+      }
     };
 
     var el = this.getDOMNode();
@@ -110,13 +119,37 @@ var UserList = React.createClass({
     var btnPrev = el.querySelector('[data-slider-nav-prev]');
     sliderInit(window, document, btnNext, btnPrev);
   },
+  closeMatchOverlay: function(){
+    this.setState({
+      match: void 0
+    });
+  },
+  showMatchesScreen: function(){
+    this.props.showMatchesScreen();
+    this.closeMatchOverlay();
+  },
   render: function() {
+    var matchOverlay;
+    if (this.state.match) {
+      matchOverlay = (
+        <div className="aMatch">
+          <h1>A Match!</h1>
+          <p>You've matched with {this.state.match.name}!</p>
+          <img src={this.state.match.photoURL}/>
+          <button className="btn btn-block" onTouchEnd={this.showMatchesScreen}><span className="icon icon-search"></span> Show Matches</button>
+          <button className="btn btn-block" onTouchEnd={this.closeMatchOverlay}><span className="icon icon-person"></span> Keep Exploring</button>
+        </div>
+      );
+    }
+
     var userNodes = this.state.users.map(function (user, index) {
       return <UserListItem key={index} user={user}></UserListItem>;
     });
 
     return (
       <div className="content content-main">
+        {matchOverlay}
+
         <div className="subhead">
           <h3>{this.props.name}</h3>
         </div>
@@ -189,7 +222,7 @@ var ChooseScreen = React.createClass({
         </div>
       );
     } else {
-      userList = <UserList users={this.state.users} choices={this.props.userChoices} handleChoice={this.props.handleChoice}></UserList>
+      userList = <UserList users={this.state.users} choices={this.props.userChoices} handleChoice={this.props.handleChoice} showMatchesScreen={this.props.handleMatchesChange}></UserList>
     }
 
     return (

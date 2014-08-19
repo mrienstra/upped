@@ -38,7 +38,7 @@ var SideMenu = React.createClass({
               </a>
             </li>
             <li className="table-view-cell">
-              <a className="activity" onTouchEnd={this.props.handleMatchesChange}>
+              <a className="activity" onTouchEnd={this.props.handleMatchesChange.bind(null, true)}>
                 <h4><span className="icon icon-star-filled"></span>Matches</h4>
                 {badge}
               </a>

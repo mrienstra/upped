@@ -61,7 +61,7 @@ var MatchesScreen = React.createClass({
           matches: matches
         });
 
-        //pubSub.publish('matches.seenOrTotal', {count: {seen: matches.length, total: matches.length}});
+        pubSub.publish('matches.seenOrTotal', {count: {seen: matches.length, total: matches.length}});
       },
       function(response){
         alert('MatchesScreen matchesPromise failed!');
@@ -98,10 +98,17 @@ var MatchesScreen = React.createClass({
   render: function(){
     console.log('MatchesScreen.render()', this, arguments);
 
+    var leftNavButton;
+    if (this.props.fromMenu) {
+      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>;
+    } else {
+      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>;
+    }
+
     return (
       <div>
         <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>
+          {leftNavButton}
           <h1 className="title">Matches</h1>
         </header>
 
