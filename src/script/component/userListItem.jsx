@@ -9,8 +9,6 @@ var UserListItem = React.createClass({
     };
   },
   render: function() {
-    console.log('this.props', this.props);
-
     var that = this;
 
     var handleToggleDetails = function(){

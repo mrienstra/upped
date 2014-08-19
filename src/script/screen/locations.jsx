@@ -204,7 +204,7 @@ var ChooseScreen = React.createClass({
           {userList}
         </div>
 
-        <SideMenu id="sideMenu" handleActivityChange={this.props.handleActivityChange} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
+        <SideMenu id="sideMenu" handleMatchesChange={this.props.handleMatchesChange} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
 
       </div>
     );

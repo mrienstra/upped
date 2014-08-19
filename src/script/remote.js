@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 var when = require('when');
 
 var openFB = require('../lib/openfb-32c04deef7-mod.js');
@@ -776,6 +778,47 @@ var remote = {
         });
 
         return deferred.promise;
+      },
+      getMatchesByUserDataId: function (userDataId) {
+        console.log('remote.parse.choice.getMatchesByUserDataId', this, arguments);
+
+        var deferred = when.defer();
+
+        var userDataPointer = new (Parse.Object.extend('UserData'))({id: userDataId});
+
+        var chooserQuery = new Parse.Query(Parse.Object.extend('Choice'));
+        chooserQuery.equalTo('chooser', userDataPointer);
+
+        var chosenQuery = new Parse.Query(Parse.Object.extend('Choice'));
+        chosenQuery.equalTo('chosen', userDataPointer);
+
+        var orQuery = Parse.Query.or(chooserQuery, chosenQuery);
+        orQuery.find({
+          success: function (response) {
+            console.log('remote.parse.choice.getMatchesByUserDataId success', this, arguments);
+
+            var chosenOnes = [];
+            var chosenBy = [];
+            response.forEach(function (aChoice) {
+              var chooserId = aChoice.get('chooser').id;
+              var chosenId = aChoice.get('chosen').id;
+              if (chooserId === userDataId) {
+                chosenOnes.push(chosenId);
+              } else {
+                chosenBy.push(chooserId);
+              }
+            });
+            var matches = _.intersection(chosenOnes, chosenBy);
+            matches = matches.map(function (match) {
+              return _.find(remote.allUserData, {'id': match});
+            });
+
+            deferred.resolve(matches);
+          },
+          error: deferred.reject
+        });
+
+        return deferred.promise;
       }
     },
     getUser: function(){
@@ -920,6 +963,8 @@ var remote = {
                 };
               });
               deferred.resolve(allUserData);
+
+              remote.allUserData = allUserData;
             } else {
               // Nothing returned by Parse, let's assume they aren't using our app
               deferred.resolve([]);

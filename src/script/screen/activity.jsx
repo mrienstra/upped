@@ -6,125 +6,108 @@ var React = require('react/addons');
 var pubSub = require('../pubSub.js');
 var utils = require('../utils.js');
 
-var ActivitiesListItem = React.createClass({
-  render: function(){
-    var story = this.props.activity.story;
-    if (this.props.user.name === this.props.activity.actor.name) {
-      // Todo: change <First Last> to "You"?
-    }
+// Components
+var UserListItem = require('../component/userListItem.jsx');
 
-    return (
-      <li className="table-view-cell">
-        <a>
-          <div className="details">
-            <div className="time">{utils.momentFromNowIfTime(this.props.activity.time)}</div>
-          </div>
-          <div className="copy">
-            <p className="emotes">{story}</p>
-          </div>
-        </a>
-      </li>
-    );
-  }
-});
-
-var ActivitiesList = React.createClass({
+var MatchesList = React.createClass({
   render: function(){
     var props = this.props;
 
-    var activitiesNodes;
+    var matchesNodes;
     if (this.props.status === 'loading') {
-      activitiesNodes = (
+      matchesNodes = (
         <li className="table-view-cell loading"><p><span className="icon ion-ios7-reloading"></span> Loading...</p></li>
       );
-    } else if (!this.props.activities || this.props.activities.length === 0) {
-      activitiesNodes = (
+    } else if (!this.props.matches || this.props.matches.length === 0) {
+      matchesNodes = (
         <li className="table-view-cell"><p><span className="icon ion-eye-disabled"></span> Nothing to see here.</p></li>
       );
     } else {
-      activitiesNodes = this.props.activities.map(function (activity, index) {
-        return <ActivitiesListItem key={index} user={props.user} activity={activity} />;
+      matchesNodes = this.props.matches.map(function (match, index) {
+        return <UserListItem key={index} user={match} fromMenu={true} />;
       });
     }
     return (
-      <ul className="table-view posts-list">
-        {activitiesNodes}
+      <ul className="table-view matches-list">
+        {matchesNodes}
       </ul>
     );
   }
 });
 
-var ActivityScreen = React.createClass({
+var MatchesScreen = React.createClass({
   getInitialState: function(){
     return {
       status: 'loading',
-      activities: []
+      matches: []
     };
   },
-  handlePromise: function (activityPromise, options) {
+  handlePromise: function (matchesPromise, options) {
     var that = this;
 
     if (!options || !options.quietStart) {
       this.setState({
         status: 'loading',
-        activities: []
+        matches: []
       });
     }
 
-    activityPromise.then(
-      function(activities){
-        console.log('ActivityScreen activityPromise', activities);
+    matchesPromise.then(
+      function(matches){
+        console.log('MatchesScreen matchesPromise', matches);
 
         that.setState({
           status: 'loaded',
-          activities: activities
+          matches: matches
         });
 
-        pubSub.publish('activity.seenOrTotal', {count: {seen: activities.length, total: activities.length}});
+        //pubSub.publish('matches.seenOrTotal', {count: {seen: matches.length, total: matches.length}});
       },
       function(response){
-        alert('ActivityScreen activityPromise failed!');
+        alert('MatchesScreen matchesPromise failed!');
         console.warn('bad', response);
 
         that.setState({
           status: 'loaded',
-          activities: []
+          matches: []
         });
       }
     );
   },
   refresh: function(){
-    var activityPromise = this.props.getActivity();
+    console.log('MatchesScreen.refresh()', this, arguments);
 
-    this.handlePromise(activityPromise, {quietStart: true});
+    var matchesPromise = this.props.getMatches();
+
+    this.handlePromise(matchesPromise, {quietStart: true});
   },
   componentWillMount: function(){
-    console.log('ActivityScreen.componentWillMount()', this, arguments);
+    console.log('MatchesScreen.componentWillMount()', this, arguments);
 
-    var activityPromise = this.props.getActivity();
+    var matchesPromise = this.props.getMatches();
 
-    this.handlePromise(activityPromise);
+    this.handlePromise(matchesPromise);
   },
   componentWillReceiveProps: function (nextProps) {
-    console.log('ActivityScreen.componentWillReceiveProps()', this, arguments);
+    console.log('MatchesScreen.componentWillReceiveProps()', this, arguments);
 
-    var activityPromise = nextProps.getActivity();
+    var matchesPromise = nextProps.getMatches();
 
-    this.handlePromise(activityPromise);
+    this.handlePromise(matchesPromise);
   },
   render: function(){
-    console.log('ActivityScreen.render()', this, arguments);
+    console.log('MatchesScreen.render()', this, arguments);
 
     return (
       <div>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>
-          <h1 className="title">Activity</h1>
+          <h1 className="title">Matches</h1>
         </header>
 
         <div className="content">
 
-          <ActivitiesList user={this.props.user} activities={this.state.activities} status={this.state.status} />
+          <MatchesList matches={this.state.matches} status={this.state.status} />
 
         </div>
       </div>
@@ -132,4 +115,4 @@ var ActivityScreen = React.createClass({
   }
 });
 
-module.exports = ActivityScreen;
+module.exports = MatchesScreen;

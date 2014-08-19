@@ -20,15 +20,15 @@ var app = {
 
 
 
-var handleActivityChange = function(){
-  console.log('handleActivityChange', arguments, remote.user);
+var handleMatchesChange = function(){
+  console.log('handleMatchesChange', arguments, remote.user);
 
-  var getActivity = remote.parse.activity.get;
+  var getMatches = remote.parse.choice.getMatchesByUserDataId.bind(remote.parse.choice, remote.user.userData.id);
 
-  var ActivityScreen = require('./screen/activity.jsx');
+  var MatchesScreen = require('./screen/activity.jsx');
 
   app.screens.addScreen(
-    <ActivityScreen user={remote.user} getActivity={getActivity} handleBack={handleBack} />
+    <MatchesScreen getMatches={getMatches} handleBack={handleBack} udid={remote.user.userData.id} />
   );
 };
 
@@ -49,7 +49,7 @@ var handleLocationsChange = function(){
   var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
 
   app.screens.addScreen(
-    <LocationsScreen userChoices={remote.user.choices} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleActivityChange={handleActivityChange} handleLogOut={handleLogOut}></LocationsScreen>
+    <LocationsScreen userChoices={remote.user.choices} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleLogOut={handleLogOut}></LocationsScreen>
   );
 };
 
@@ -63,7 +63,7 @@ var handleLocationChange = function (props) {
   var PostsScreen = require('./screen/posts.jsx');
 
   app.screens.addScreen(
-    <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handleProfileChange={handleProfileChange} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike} handleActivityChange={handleActivityChange} handleMyProfileChange={handleMyProfileChange} handleLogOut={handleLogOut}></PostsScreen>
+    <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handleProfileChange={handleProfileChange} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike} handleMatchesChange={handleMatchesChange} handleMyProfileChange={handleMyProfileChange} handleLogOut={handleLogOut}></PostsScreen>
   );
 };
 

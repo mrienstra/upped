@@ -11,7 +11,7 @@ var badgeMixin = require('../mixin/badge.js');
 var SideMenu = React.createClass({
   mixins: [badgeMixin],
   propTypes: {
-    handleActivityChange: React.PropTypes.func.isRequired,
+    handleMatchesChange: React.PropTypes.func.isRequired,
     handleBack: React.PropTypes.func, // Not required
     handleMyProfileChange: React.PropTypes.func.isRequired,
     handleLogOut: React.PropTypes.func.isRequired,
@@ -38,7 +38,7 @@ var SideMenu = React.createClass({
               </a>
             </li>
             <li className="table-view-cell">
-              <a className="activity" onTouchEnd={this.props.handleActivityChange}>
+              <a className="activity" onTouchEnd={this.props.handleMatchesChange}>
                 <h4><span className="icon icon-star-filled"></span>Matches</h4>
                 {badge}
               </a>
