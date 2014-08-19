@@ -197,7 +197,6 @@ var ChooseScreen = React.createClass({
         <div className="side-menu-siblings-wrapper">
           <header className="bar bar-nav">
             <a className="icon icon-bars pull-left" href="#sideMenu"></a>
-            <h1 className="logo"><span className="dwyer">Upped</span></h1>
             {badge}
           </header>
 

@@ -625,23 +625,32 @@ header.bar-nav {
   text-align: center;
   height: 100%;
   width: 100%;
-  background: $primary-color url('../img/splash_fueling_up.png') no-repeat 50%;
-  background-size: 90%;
+  background: $primary-color url('../img/splash.png') no-repeat 50%;
+  @include image-2x('../img/splash_2x.png', 100%, 100%);
   color: $text-knockout-color;
-  h1 { margin-top: 20rem; font-size: 150%; color: $text-knockout-color; display: none; }
-  .icon { font-size: 200%; }
+  h1 {
+    margin-top: 20rem;
+    width: 100%;
+    height: 14.7rem;
+    background: url('../img/fueling_up.png') no-repeat 50% 50%;
+    @include image-2x('../img/fueling_up_2x.png', 17.3rem, 14.7rem);
+  }
+  .icon {
+    font-size: 200%;
+  }
 }
 
 .welcome.content {
-    background: $primary-color;
+    background: $primary-color url('../img/splash.png') no-repeat 50%;
+    @include image-2x('../img/splash_2x.png', 100%, 100%);
     padding: 0;
     margin: 0;
   .logo {
-    width: 11.6rem;
-    height: 19.6rem;
+    width: 25.0rem;
+    height: 17.6rem;
     margin: 10rem auto 0 auto;
     background: url('../img/logo_welcome.png') no-repeat 0 0;
-    @include image-2x('../img/logo_welcome_2x.png', 11.6rem, 19.6rem);
+    @include image-2x('../img/logo_welcome_2x.png', 25.0rem, 17.6rem);
   }
   .slider {
     display: block;
@@ -699,7 +708,7 @@ header.bar-nav {
     height: 25%;
     min-height: 10rem;
     width: 100%;
-    background: $primary-color;
+    background: transparent;
     border-bottom: 0;
     .arrow {
       position: absolute;
