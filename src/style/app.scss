@@ -97,7 +97,7 @@ p {
 header.bar-nav {
   position: relative;
   height: 4.4rem;
-  background-color: $primary-color;
+  background-color: $header-bg;
   border-bottom: 0;
   @include font-size(16);
   font-weight: bold;
@@ -140,12 +140,16 @@ header.bar-nav {
   }
 }
 
+.bar-nav ~ .content {
+  padding-top: 0;
+}
+
 .bar-standard ~ .content {
-  padding-top: 44px;
+  padding-top: 0;
 }
 
 .bar-header-secondary ~ .content {
-  padding-top: 88px;
+  padding-top: 44px;
 }
 
 .bar-header-secondary {
