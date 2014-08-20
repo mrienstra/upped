@@ -990,7 +990,7 @@ header.bar-nav {
   -webkit-transform: scale3d(1, 0, 1);
 }
 
-.content .round-buttons {
+.round-buttons {
   position: absolute;
   bottom: 0;
   z-index: 1;
@@ -1020,6 +1020,24 @@ header.bar-nav {
     left: 50%;
     top: 50%;
     margin: -22px 0 0 -22px;
+  }
+  &.top {
+    top: 0;
+    right: 0;
+    bottom: initial;
+    width: 40%;
+    background: transparent;
+    z-index: 10;
+    .icon {
+      font-size: 15px;
+      margin: 0;
+      &.icon-star-filled {
+        font-size: 5px;
+      }
+    }
+    button {
+      display: none;
+    }
   }
 }
 

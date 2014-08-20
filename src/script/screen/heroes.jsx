@@ -69,49 +69,27 @@ var SideMenu = require('../component/sideMenu.jsx');
 var UserListItem = require('../component/userListItem.jsx');
 
 var UserList = React.createClass({
-  componentWillMount: function(){
-    var that = this;
-    var i;
-    var l;
-    var users = this.props.users; /*this.props.users.filter(function (user, index) {
-      var choice = {
-        count: 0
-      };
-      if (that.props.choices || that.props.choices.length) {
-        that.props.choices.some(function (aChoice) {
-          if (aChoice.fbId === user.fbId) {
-            choice.count = aChoice.count;
-            choice.parseId = aChoice.parseId;
-            return true;
-          }
-        });
-      }
-      for (i = 0, l = that.props.filters.length; i < l; i++) {
-        if (name.indexOf(that.props.filters[i]) === -1) {
-          return false;
-        }
-      }
-      return true;
-    });*/
-
-    this.setState({users: users});
-  },
   componentDidMount: function(){
     var that = this;
     swipeStackCallback = function (index, direction) {
-      console.log('UserList swipeStackCallback', this, arguments, that, that.state.users);
-      var targetUser = that.state.users[index];
+      console.log('UserList swipeStackCallback', this, arguments, that, that.props.users);
+
+      pubSub.publish('userlist.current', {index: index});
+
+      var targetUser = that.props.users[index];
       var choice = direction === 'left' ? 0 : 1;
       that.props.handleChoice(targetUser.id, choice);
+
+      if (that.props.buttonsToTop) pubSub.publish('toggleButtons');
     };
 
     var el = this.getDOMNode();
-    var btnNext = el.querySelector('[data-slider-nav-next]');
-    var btnPrev = el.querySelector('[data-slider-nav-prev]');
+    var btnNext = el.parentNode.querySelector('[data-slider-nav-next]');
+    var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
     sliderInit(window, document, btnNext, btnPrev);
   },
   render: function() {
-    var userNodes = this.state.users.map(function (user, index) {
+    var userNodes = this.props.users.map(function (user, index) {
       return <UserListItem key={index} user={user}></UserListItem>;
     });
 
@@ -131,12 +109,6 @@ var UserList = React.createClass({
           <h3>Galaxy Explored</h3>
           <p>You've seen all our hero profiles. We'll reach out if you score any mutual matches.</p>
         </div>
-
-        <div className="round-buttons">
-            <a data-slider-nav-prev className="icon icon-close pull-left"></a>
-            <button>i</button>
-            <a data-slider-nav-next className="icon icon-star-filled pull-right"></a>
-          </div>
       </div>
     );
   }
@@ -146,6 +118,8 @@ var ChooseScreen = React.createClass({
   mixins: [badgeMixin],
   getInitialState: function(){
     return {
+      buttonsToTop: false,
+      currentIndex: 0,
       users: void 0
     };
   },
@@ -174,8 +148,23 @@ var ChooseScreen = React.createClass({
     var usersPromise = this.props.getUsers();
 
     this.handlePromise(usersPromise);
+
+    pubSub.unsubscribe('userlist.current', this.updateCurrentIndex);
+    pubSub.subscribe('userlist.current', this.updateCurrentIndex);
+
+    pubSub.unsubscribe('toggleButtons', this.toggleButtons);
+    pubSub.subscribe('toggleButtons', this.toggleButtons);
+
+  },
+  toggleButtons: function(){
+    this.setState({buttonsToTop: !this.state.buttonsToTop});
+  },
+  updateCurrentIndex: function (channel, data) {
+    this.setState({currentIndex: data.index});
   },
   render: function(){
+    var that = this;
+
     var badge;
     if (this.state.newCount) {
       badge = <div className="status badge badge-negative">{this.state.newCount}</div>;
@@ -189,8 +178,12 @@ var ChooseScreen = React.createClass({
         </div>
       );
     } else {
-      userList = <UserList users={this.state.users} choices={this.props.userChoices} handleChoice={this.props.handleChoice}></UserList>
+      userList = <UserList users={this.state.users} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></UserList>
     }
+
+    var handleToggleDetails = function(){
+      pubSub.publish('toggleDataUserListItem.' + that.state.currentIndex);
+    };
 
     return (
       <div>
@@ -201,6 +194,12 @@ var ChooseScreen = React.createClass({
           </header>
 
           {userList}
+
+          <div className={'round-buttons' + (this.state.buttonsToTop ? ' top' : '')}>
+            <a data-slider-nav-prev className="icon icon-close pull-left"></a>
+            <button onTouchEnd={handleToggleDetails}>i</button>
+            <a data-slider-nav-next className="icon icon-star-filled pull-right"></a>
+          </div>
         </div>
 
         <SideMenu id="sideMenu" handleMatchesChange={this.props.handleMatchesChange} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />

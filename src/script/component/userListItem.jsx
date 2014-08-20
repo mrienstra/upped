@@ -2,21 +2,27 @@
 
 var React = require('react/addons');
 
+// Modules
+var pubSub = require('../pubSub.js');
+
 var UserListItem = React.createClass({
   getInitialState: function(){
     return {
       expanded: this.props.fromMenu
     };
   },
+  componentWillMount: function(){
+    pubSub.unsubscribe('toggleDataUserListItem.' + this.props.key, this.handleToggleDetails);
+    pubSub.subscribe('toggleDataUserListItem.' + this.props.key, this.handleToggleDetails);
+  },
+  handleToggleDetails: function(){
+    if (!this.props.fromMenu) {
+      this.setState({expanded: !this.state.expanded});
+
+      pubSub.publish('toggleButtons');
+    }
+  },
   render: function() {
-    var that = this;
-
-    var handleToggleDetails = function(){
-      if (!that.props.fromMenu) {
-        that.setState({expanded: !that.state.expanded});
-      }
-    };
-
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
     var skills = this.props.user.skills.map(function (name) {
@@ -35,7 +41,7 @@ var UserListItem = React.createClass({
     });
 
     return (
-      <div className="userListItem" onTouchEnd={handleToggleDetails}>
+      <div className="userListItem" onTouchEnd={this.handleToggleDetails}>
         {img}
         <div className={'summary' + (this.state.expanded ? ' hide' : '')}>
           <div className="nameAndSkillCount">{this.props.user.name}<span className="count icon ion-ios7-bolt"> {this.props.user.skills.length}</span></div>
