@@ -990,14 +990,15 @@ header.bar-nav {
   -webkit-transform: scale3d(1, 0, 1);
 }
 
-.round-buttons {
+.content .round-buttons {
   position: absolute;
   bottom: 0;
   z-index: 1;
   width: 100%;
   border: 0;
+  background: $buttons-bg-color;
   .icon, button {
-    border: 12px solid #ddd;
+    border: 8px solid #ddd;
     border-radius: 200px;
     padding: 5px;
     font-weight: bold;

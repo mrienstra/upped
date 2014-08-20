@@ -19,7 +19,6 @@ var app = {
 };
 
 
-
 var handleMatchesChange = function (fromMenu) {
   console.log('handleMatchesChange', arguments, remote.user);
 
