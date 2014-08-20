@@ -12,7 +12,7 @@ var app = {
 
     this.screens = new ReactScreens(reactDomRoot);
 
-    handleLocationsChange();
+    handleHeroesChange();
 
     puller.start();
   }
@@ -40,16 +40,16 @@ var handleBack = function (e) {
   app.screens.back();
 };
 
-var handleLocationsChange = function(){
-  console.log('handleLocationsChange', this, arguments);
-  var LocationsScreen = require('./screen/locations.jsx');
+var handleHeroesChange = function(){
+  console.log('handleHeroesChange', this, arguments);
+  var HeroesScreen = require('./screen/heroes.jsx');
 
   var getUsers = remote.parse.userData.getAll.bind(remote.parse.userData);
 
   var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
 
   app.screens.addScreen(
-    <LocationsScreen userChoices={remote.user.choices} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleLogOut={handleLogOut}></LocationsScreen>
+    <HeroesScreen userChoices={remote.user.choices} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleLogOut={handleLogOut}></HeroesScreen>
   );
 };
 
