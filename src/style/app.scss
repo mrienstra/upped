@@ -577,10 +577,9 @@ header.bar-nav {
     border: 0;
   }
   .table-view-cell > a:not(.btn):active {
-    background-color: $primary-color;
+    background-color: transparent;
   }
   .table-view-cell > a:not(.btn):active h4 span {
-    border-color: #fff;
   }
   .content {
     padding-top: 3rem;
