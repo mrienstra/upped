@@ -7,7 +7,7 @@ var pubSub = require('../pubSub.js');
 var utils = require('../utils.js');
 
 // Components
-var UserListItem = require('../component/userListItem.jsx');
+var UserListItemCompact = require('../component/userListItemCompact.jsx');
 
 var MatchesList = React.createClass({
   render: function(){
@@ -24,7 +24,7 @@ var MatchesList = React.createClass({
       );
     } else {
       matchesNodes = this.props.matches.map(function (match, index) {
-        return <UserListItem key={index} user={match} fromMenu={true} />;
+        return <UserListItemCompact key={index} user={match} handleProfileChange={props.handleProfileChange} />;
       });
     }
     return (
@@ -114,7 +114,7 @@ var MatchesScreen = React.createClass({
 
         <div className="content">
 
-          <MatchesList matches={this.state.matches} status={this.state.status} />
+          <MatchesList matches={this.state.matches} status={this.state.status} handleProfileChange={this.props.handleProfileChange} />
 
         </div>
       </div>
