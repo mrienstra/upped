@@ -4,6 +4,7 @@ var React = require('react/addons');
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 // Libs
+var _ = require('lodash');
 var swipeStack = require('../../lib/swipe-stack-0.1.js');
 var swipeStackCallback;
 var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
@@ -61,14 +62,16 @@ var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
 // Modules
 var pubSub = require('../pubSub.js');
 
-// Mixins
-var badgeMixin = require('../mixin/badge.js');
-
 // Components
 var SideMenu = require('../component/sideMenu.jsx');
 var UserListItem = require('../component/userListItem.jsx');
 
 var UserList = React.createClass({
+  getInitialState: function(){
+    return {
+      match: void 0
+    };
+  },
   componentDidMount: function(){
     var that = this;
     swipeStackCallback = function (index, direction) {
@@ -78,7 +81,15 @@ var UserList = React.createClass({
 
       var targetUser = that.props.users[index];
       var choice = direction === 'left' ? 0 : 1;
-      that.props.handleChoice(targetUser.id, choice);
+      var match = that.props.handleChoice(targetUser.id, choice);
+
+      if (match) {
+        console.log('UserList swipeStackCallback match', match);
+
+        that.setState({
+          match: match
+        });
+      }
 
       if (that.props.buttonsToTop) pubSub.publish('toggleButtons');
     };
@@ -88,13 +99,41 @@ var UserList = React.createClass({
     var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
     sliderInit(window, document, btnNext, btnPrev);
   },
+  closeMatchOverlay: function (e) {
+    this.setState({
+      match: void 0
+    });
+
+    e && e.preventDefault();
+  },
+  showMatchesScreen: function (e) {
+    this.props.showMatchesScreen();
+    this.closeMatchOverlay();
+
+    e && e.preventDefault();
+  },
   render: function() {
+    var matchOverlay;
+    if (this.state.match) {
+      matchOverlay = (
+        <div className="aMatch">
+          <h1>A Match!</h1>
+          <p>You’ve matched with {this.state.match.name}!</p>
+          <img src={this.state.match.photoURL}/>
+          <button className="btn btn-block" onTouchEnd={this.showMatchesScreen}><span className="icon icon-search"></span> Show Matches</button>
+          <button className="btn btn-block" onTouchEnd={this.closeMatchOverlay}><span className="icon icon-person"></span> Keep Exploring</button>
+        </div>
+      );
+    }
+
     var userNodes = this.props.users.map(function (user, index) {
       return <UserListItem key={index} user={user}></UserListItem>;
     });
 
     return (
       <div className="content content-main">
+        {matchOverlay}
+
         <div className="subhead">
           <h3>{this.props.name}</h3>
         </div>
@@ -107,7 +146,7 @@ var UserList = React.createClass({
 
         <div>
           <h3>Galaxy Explored</h3>
-          <p>You've seen all our hero profiles. We'll reach out if you score any mutual matches.</p>
+          <p>You’ve seen all our hero profiles. We’ll reach out if you score any mutual matches.</p>
         </div>
       </div>
     );
@@ -115,7 +154,6 @@ var UserList = React.createClass({
 });
 
 var ChooseScreen = React.createClass({
-  mixins: [badgeMixin],
   getInitialState: function(){
     return {
       buttonsToTop: false,
@@ -128,7 +166,20 @@ var ChooseScreen = React.createClass({
 
     usersPromise.then(
       function (users) {
-        console.log('ChooseScreen usersPromise', users);
+        console.log('ChooseScreen usersPromise success', users, that.props.remote.choices);
+
+        var choices = that.props.remote.choices;
+
+        users = users.filter(function (user) {
+          return (
+            !_.contains(choices.unchosenOnes, user.id) && // Don't show people we've already unchosen
+            !_.contains(choices.chosenOnes, user.id) // Don't show people we've already chosen
+          );
+        });
+
+        users = _.sortBy(users, function (user) {
+          return !_.contains(choices.chosenBy, user.id); // Show `chosenBy` people first
+        });
 
         that.setState({
           users: users
@@ -165,11 +216,6 @@ var ChooseScreen = React.createClass({
   render: function(){
     var that = this;
 
-    var badge;
-    if (this.state.newCount) {
-      badge = <div className="status badge badge-negative">{this.state.newCount}</div>;
-    }
-
     var userList;
     if (this.state.users === void 0) {
       userList = (
@@ -178,7 +224,7 @@ var ChooseScreen = React.createClass({
         </div>
       );
     } else {
-      userList = <UserList users={this.state.users} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></UserList>
+      userList = <UserList users={this.state.users} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop} showMatchesScreen={this.props.handleMatchesChange}></UserList>
     }
 
     var handleToggleDetails = function(){
@@ -190,7 +236,6 @@ var ChooseScreen = React.createClass({
         <div className="side-menu-siblings-wrapper">
           <header className="bar bar-nav">
             <a className="icon icon-bars pull-left" href="#sideMenu"></a>
-            {badge}
           </header>
 
           {userList}

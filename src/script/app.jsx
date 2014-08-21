@@ -4,8 +4,6 @@ var remote = require('./remote.js');
 
 var reactDomRoot = document.querySelector('.container');
 
-var puller = require('./puller.js');
-
 var app = {
   init: function () {
     var ReactScreens = require('../lib/react-screens/react-screens.jsx');
@@ -13,8 +11,6 @@ var app = {
     this.screens = new ReactScreens(reactDomRoot);
 
     handleHeroesChange();
-
-    puller.start();
   }
 };
 
@@ -48,7 +44,7 @@ var handleHeroesChange = function(){
   var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
 
   app.screens.addScreen(
-    <HeroesScreen userChoices={remote.user.choices} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleLogOut={handleLogOut}></HeroesScreen>
+    <HeroesScreen remote={remote} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleLogOut={handleLogOut}></HeroesScreen>
   );
 };
 
@@ -149,7 +145,6 @@ var handleLogOut = function(){
 
   remote.logOut();
   delete app.screens; // Todo: does this leak memory?
-  puller.stop();
   showWelcomeScreen(void 0, true);
 };
 

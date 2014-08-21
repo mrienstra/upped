@@ -379,8 +379,11 @@ var _remote = {
             id: userDataId
           };
 
-          _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
-          ga('send', 'event', 'session', 'login', 'fbAndParseLoginSuccess');
+          remote.parse.choice.getChoicesByUserDataId(remote.user.userData.id).then(
+            function (choices) {
+              remote.choices = choices;
+            }
+          );
 
           _user.get('data').fetch({
             success: function (userData) {
@@ -406,11 +409,8 @@ var _remote = {
             }
           });
 
-          remote.parse.choice.getChoicesByUserDataId(remote.user.userData.id).then(
-            function (choices) {
-              remote.choices = choices;
-            }
-          );
+          _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
+          ga('send', 'event', 'session', 'login', 'fbAndParseLoginSuccess');
         },
         error: function(){
           console.error('_remote.parse.loginWithFBAuthResponse Parse.FacebookUtils.logIn', this, arguments);
@@ -772,16 +772,27 @@ var remote = {
 
             var choices = {
               chosenOnes: [],
-              chosenBy: []
+              unchosenOnes: [],
+              chosenBy: [],
+              unchosenBy: []
             };
 
             response.forEach(function (aChoice) {
               var chooserId = aChoice.get('chooser').id;
               var chosenId = aChoice.get('chosen').id;
+              var choice = aChoice.get('choice');
               if (chooserId === userDataId) {
-                choices.chosenOnes.push(chosenId);
+                if (choice === 1) {
+                  choices.chosenOnes.push(chosenId);
+                } else if (choice === 0) {
+                  choices.unchosenOnes.push(chosenId);
+                }
               } else {
-                choices.chosenBy.push(chooserId);
+                if (choice === 1) {
+                  choices.chosenBy.push(chooserId);
+                } else if (choice === 0) {
+                  choices.unchosenBy.push(chooserId);
+                }
               }
             });
 
