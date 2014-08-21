@@ -44,22 +44,22 @@ var UserListItem = React.createClass({
       <div className="userListItem" onTouchEnd={this.handleToggleDetails}>
         {img}
         <div className={'summary' + (this.state.expanded ? ' hide' : '')}>
-          <div className="nameAndSkillCount">{this.props.user.name}<span className="count icon ion-ios7-bolt"> {this.props.user.skills.length}</span></div>
-          <div className="statement">{this.props.user.statement}</div>
+          <div className="nameAndSkillCount">{this.props.user.name}</div>
+          <div className="statement">&#8220;{this.props.user.statement}&#8221;</div>
         </div>
         <div className={'details' + (this.state.expanded ? ' show' : '')}>
-          <div className="nameAndSkillCount">{this.props.user.name}<span className="count icon ion-ios7-bolt"> {this.props.user.skills.length}</span></div>
+          <div className="nameAndSkillCount">{this.props.user.name}</div>
+          <div className="statement">&#8220;{this.props.user.statement}&#8221;</div>
           <div className="distance hide">{this.props.user.distance}</div>
           <div className="location">{this.props.user.location}</div>
-          <div className="statement">{this.props.user.statement}</div>
           <div className="skills">
-            <h4><span className="icon ion-ios7-bolt"></span> Super Powers:<span className="count">{this.props.user.skills.length}</span></h4>
+            <h4><span className="icon ion-ios7-bolt"></span> Super Powers</h4>
             <ul>
               {skills}
             </ul>
           </div>
           <div className="nominations">
-            <h4><span className="icon ion-ribbon-b"></span> Hero Nominations:<span className="count">{this.props.user.nominations.length}</span></h4>
+            <h4><span className="icon ion-ribbon-b"></span> Hero Nominations</h4>
             <ul>
               {nominations}
             </ul>
