@@ -252,7 +252,7 @@ var ChooseScreen = React.createClass({
 
           <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
             <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
-            <button onTouchEnd={handleToggleDetails}></button>
+            <button onTouchEnd={handleToggleDetails} className="icon icon-button button-info"></button>
             <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
           </div>
         </div>

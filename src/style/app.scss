@@ -568,7 +568,7 @@ header.bar-nav {
 }
 
 .side-menu {
-  background: url('../img/splash.png') no-repeat 0 0;
+  background: url('../img/splash_dk.jpg') no-repeat 0 0;
   background-size: 100% 100%;
   color: $text-knockout-color;
   .content, .content .table-view {
@@ -592,24 +592,23 @@ header.bar-nav {
     border-top: 0;
   }
   .icon {
-    border: 1px solid #fff;
+    border: 2px solid #666;
+    background-color: #e2e2e2;
+    color: #333;
     @include border-radius(2rem);
-    padding: .8rem .9rem .8rem 1.1rem;
+    padding: .7rem .9rem .9rem 1.1rem;
     margin-right: 1.5rem;
     width: 4rem;
     height: 4rem;
   }
-  .ion-ios7-location {
-    padding-left: 1.3rem;
+  .icon-star-filled {
+    padding-left: .8rem;
   }
   .status.badge {
     left: 4rem;
     right: auto;
     top: 1.5rem;
     padding: .5rem .8rem;
-  }
-  .activity .icon {
-    background-color: $activity-color;
   }
   .table-view-cell > a.activity:active h4 span {
     border-color: transparent;
@@ -763,7 +762,7 @@ header.bar-nav {
       font-family: 'Avenir', 'Helvetica', Arial, sans-serif;
       background-color: $primary-color;
       text-transform: uppercase;
-      color: $text-knockout-color;
+      color: #000;
       border-color: #fff;
       .icon {
         margin-right: 0.5em;

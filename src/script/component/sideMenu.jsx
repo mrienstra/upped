@@ -25,7 +25,7 @@ var SideMenu = React.createClass({
             </li>
             <li className="table-view-cell">
               <a href={'#' + this.props.id} onTouchEnd={this.props.handleBack}>
-                <h4><span className="icon ion-ios7-bolt"></span>Heroes</h4>
+                <h4><span className="icon ion-search"></span>Heroes</h4>
               </a>
             </li>
             <li className="table-view-cell">
@@ -35,7 +35,7 @@ var SideMenu = React.createClass({
             </li>
             <li className="table-view-cell">
               <a onTouchEnd={this.props.handleLogOut}>
-                <h4><span className="icon ion-ios7-paw"></span>Log Out</h4>
+                <h4><span className="icon ion-log-out"></span>Log Out</h4>
               </a>
             </li>
           </ul>
