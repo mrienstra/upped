@@ -91,7 +91,11 @@ var UserList = React.createClass({
         });
       }
 
-      if (that.props.buttonsToTop) pubSub.publish('toggleButtons');
+      if (index + 1 === that.props.users.length) {
+        pubSub.publish('heroes.hideButtons');
+      } else if (that.props.buttonsToTop) {
+        pubSub.publish('heroes.toggleButtons');
+      }
     };
 
     var el = this.getDOMNode();
@@ -157,6 +161,7 @@ var ChooseScreen = React.createClass({
   getInitialState: function(){
     return {
       buttonsToTop: false,
+      hideButtons: false,
       currentIndex: 0,
       users: void 0
     };
@@ -203,9 +208,14 @@ var ChooseScreen = React.createClass({
     pubSub.unsubscribe('userlist.current', this.updateCurrentIndex);
     pubSub.subscribe('userlist.current', this.updateCurrentIndex);
 
-    pubSub.unsubscribe('toggleButtons', this.toggleButtons);
-    pubSub.subscribe('toggleButtons', this.toggleButtons);
+    pubSub.unsubscribe('heroes.toggleButtons', this.toggleButtons);
+    pubSub.subscribe('heroes.toggleButtons', this.toggleButtons);
 
+    pubSub.unsubscribe('heroes.hideButtons', this.hideButtons);
+    pubSub.subscribe('heroes.hideButtons', this.hideButtons);
+  },
+  hideButtons: function(){
+    this.setState({hideButtons: true});
   },
   toggleButtons: function(){
     this.setState({buttonsToTop: !this.state.buttonsToTop});
@@ -240,7 +250,7 @@ var ChooseScreen = React.createClass({
 
           {userList}
 
-          <div className={'round-buttons' + (this.state.buttonsToTop ? ' top' : '')}>
+          <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
             <a data-slider-nav-prev className="icon icon-close pull-left"></a>
             <button onTouchEnd={handleToggleDetails}>i</button>
             <a data-slider-nav-next className="icon icon-star-filled pull-right"></a>

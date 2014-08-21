@@ -23,7 +23,7 @@ var handleMatchesChange = function (fromMenu) {
   var MatchesScreen = require('./screen/activity.jsx');
 
   app.screens.addScreen(
-    <MatchesScreen getMatches={getMatches} handleBack={handleBack} udid={remote.user.userData.id} fromMenu={fromMenu} />
+    <MatchesScreen getMatches={getMatches} handleProfileChange={handleProfileChange} handleBack={handleBack} udid={remote.user.userData.id} fromMenu={fromMenu} />
   );
 };
 
