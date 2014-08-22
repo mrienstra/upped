@@ -10,7 +10,11 @@ var app = {
 
     this.screens = new ReactScreens(reactDomRoot);
 
-    handleHeroesChange();
+    if (remote.user.parse.get('hasBegun')) {
+      handleHeroesChange();
+    } else {
+      handleWelcome2Change();
+    }
   }
 };
 
@@ -33,6 +37,15 @@ var handleBack = function (e) {
   e.preventDefault();
 
   app.screens.back();
+};
+
+var handleWelcome2Change = function(){
+  console.log('handleWelcome2Change', this, arguments);
+  var Welcome2Screen = require('./screen/welcome2.jsx');
+
+  app.screens.addScreen(
+    <Welcome2Screen handleContinue={continuePastWelcome2Screen}></Welcome2Screen>
+  );
 };
 
 var handleHeroesChange = function(){
@@ -161,6 +174,14 @@ var continuePastWelcomeScreen = function(){
   else console.log ('returning user!')
 
   app.init();
+};
+
+var continuePastWelcome2Screen = function(){
+  console.log('continuePastWelcome2Screen');
+
+  remote.user.parse.save({hasBegun: true});
+
+  handleHeroesChange();
 };
 
 var showFirstScreen = function(){

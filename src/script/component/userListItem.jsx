@@ -19,7 +19,7 @@ var UserListItem = React.createClass({
     if (!this.props.fromMenu) {
       this.setState({expanded: !this.state.expanded});
 
-      pubSub.publish('heroes.toggleButtons');
+      pubSub.publish('heroes.toggleButtons', {expanded: !this.state.expanded});
     }
   },
   render: function() {

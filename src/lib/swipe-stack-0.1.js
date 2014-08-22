@@ -57,6 +57,7 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
     var index = parseInt(options.startSlide - 1, 10) || 0;
     var speed = options.speed !== undefined ? options.speed : 300;
     options.continuous = options.continuous !== undefined ? options.continuous : true;
+    var paused = false;
 
     var setup = function () {
 
@@ -146,6 +147,14 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
         index = circle(index+1);
       }
 
+    };
+
+    var pause = function () {
+      paused = true;
+    };
+
+    var unpause = function () {
+      paused = false;
     };
 
     var circle = function (index) {
@@ -367,6 +376,8 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
       },
       move: function(event) {
+
+        if (paused) return;
 
         if ( browser.pointer && (event.pointerType !== pointerType) ) return;
 
@@ -600,6 +611,18 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
         // return total number of slides
         return length;
+      },
+      pause: function() {
+
+        // Temporarily disable slideshow (will not respond to drags)
+        pause();
+
+      },
+      unpause: function() {
+
+        // Unpause slideshow (will respond to drags again)
+        unpause();
+
       },
       kill: function() {
 

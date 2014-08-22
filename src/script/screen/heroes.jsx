@@ -7,6 +7,8 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var _ = require('lodash');
 var swipeStack = require('../../lib/swipe-stack-0.1.js');
 var swipeStackCallback;
+var handlePause;
+var handleUnpause;
 var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
   'use strict';
 
@@ -40,6 +42,13 @@ var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
         mySwipe[index].nextLeft();
       };
 
+      handlePause = function(){
+        mySwipe[index].pause();
+      };
+
+      handleUnpause = function(){
+        mySwipe[index].unpause();
+      };
 
       // EVENTS, LISTENERS, AND INITS
 
@@ -94,7 +103,8 @@ var UserList = React.createClass({
       if (index + 1 === that.props.users.length) {
         pubSub.publish('heroes.hideButtons');
       } else if (that.props.buttonsToTop) {
-        pubSub.publish('heroes.toggleButtons');
+        pubSub.publish('heroes.toggleButtons', {expanded: false});
+        handleUnpause();
       }
     };
 
@@ -217,8 +227,13 @@ var ChooseScreen = React.createClass({
   hideButtons: function(){
     this.setState({hideButtons: true});
   },
-  toggleButtons: function(){
-    this.setState({buttonsToTop: !this.state.buttonsToTop});
+  toggleButtons: function (channel, data) {
+    this.setState({buttonsToTop: data.expanded});
+    if (data.expanded) {
+      handlePause();
+    } else {
+      handleUnpause();
+    }
   },
   updateCurrentIndex: function (channel, data) {
     this.setState({currentIndex: data.index});
