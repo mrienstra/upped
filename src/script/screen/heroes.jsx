@@ -86,7 +86,7 @@ var UserList = React.createClass({
     swipeStackCallback = function (index, direction) {
       console.log('UserList swipeStackCallback', this, arguments, that, that.props.users);
 
-      pubSub.publish('userlist.current', {index: index});
+      pubSub.publish('userlist.current', {index: index + 1});
 
       var targetUser = that.props.users[index];
       var choice = direction === 'left' ? 0 : 1;

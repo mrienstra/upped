@@ -8,7 +8,7 @@ var pubSub = require('../pubSub.js');
 var UserListItem = React.createClass({
   getInitialState: function(){
     return {
-      expanded: this.props.fromMenu
+      expanded: !!this.props.fromMenu
     };
   },
   componentWillMount: function(){
@@ -17,9 +17,13 @@ var UserListItem = React.createClass({
   },
   handleToggleDetails: function(){
     if (!this.props.fromMenu) {
-      this.setState({expanded: !this.state.expanded});
+      console.log('pubsub.subscribe toggleDataUserListItem.' + this.props.key + ' handleToggleDetails', this.state.expanded);
 
       pubSub.publish('heroes.toggleButtons', {expanded: !this.state.expanded});
+
+      this.setState({expanded: !this.state.expanded});
+    } else {
+      console.log('pubsub.subscribe toggleDataUserListItem.' + this.props.key + ' handleToggleDetails, ignoring because this.props.fromMenu', this.props.fromMenu);
     }
   },
   render: function() {
