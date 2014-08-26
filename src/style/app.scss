@@ -629,12 +629,14 @@ header.bar-nav {
   height: 100%;
   width: 100%;
   background: $primary-color url('../img/splash.png') no-repeat 50%;
+  background-size: 100% 100%;
   @include image-2x('../img/splash_2x.png', 100%, 100%);
   color: $text-knockout-color;
   h1 {
     margin-top: 20rem;
     width: 100%;
     height: 14.7rem;
+    background-size: 100% 100%;
     background: url('../img/fueling_up.png') no-repeat 50% 50%;
     @include image-2x('../img/fueling_up_2x.png', 17.3rem, 14.7rem);
   }
@@ -645,6 +647,7 @@ header.bar-nav {
 
 .welcome.content {
     background: $primary-color url('../img/splash.png') no-repeat 50%;
+    background-size: 100% 100%;
     @include image-2x('../img/splash_2x.png', 100%, 100%);
     padding: 0;
     margin: 0;
@@ -866,6 +869,7 @@ header.bar-nav {
 
   .statement {
     padding-left: .5rem;
+    font-style: italic;
   }
   .details {
 
@@ -908,7 +912,6 @@ header.bar-nav {
         }
 
         .skill {
-          font-style: italic;
         }
 
         p {
@@ -1010,10 +1013,12 @@ header.bar-nav {
   .button-yes {
     background: url('../img/button_yes_big.png') no-repeat 0 0;
     @include image-2x('../img/button_yes_big_2x.png', 7.5rem, 7.5rem);
+    background-size: 7.5rem, 7.5rem;
   }
   .button-no {
     background: url('../img/button_no_big.png') no-repeat 0 0;
     @include image-2x('../img/button_no_big_2x.png', 7.5rem, 7.5rem);
+    background-size: 7.5rem, 7.5rem;
   }
   .button-info {
     padding: 0;
@@ -1026,6 +1031,7 @@ header.bar-nav {
     margin: -3.5rem 0 0 -3.5rem;
     background: url('../img/button_info_big.png') no-repeat 0 0;
     @include image-2x('../img/button_info_big_2x.png', 6.5rem, 6.5rem);
+    background-size: 7.5rem, 7.5rem;
   }
   &.top {
     top: 0.8rem;

@@ -49,11 +49,11 @@ var UserListItem = React.createClass({
         {img}
         <div className={'summary' + (this.state.expanded ? ' hide' : '')}>
           <div className="nameAndSkillCount">{this.props.user.name}</div>
-          <div className="statement">&#8220;{this.props.user.statement}&#8221;</div>
+          <div className="statement">{this.props.user.statement}</div>
         </div>
         <div className={'details' + (this.state.expanded ? ' show' : '')}>
           <div className="nameAndSkillCount">{this.props.user.name}</div>
-          <div className="statement">&#8220;{this.props.user.statement}&#8221;</div>
+          <div className="statement">{this.props.user.statement}</div>
           <div className="distance hide">{this.props.user.distance}</div>
           <div className="location">{this.props.user.location}</div>
           <div className="skills">
