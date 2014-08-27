@@ -176,30 +176,39 @@ var ChooseScreen = React.createClass({
       users: void 0
     };
   },
+  handlePromiseThen: function (users) {
+    console.log('ChooseScreen usersPromise success handlePromiseThen', users, this.props.remote.choices, this.pendingUsers);
+
+    var choices = this.props.remote.choices;
+
+    window.removeEventListener('getParseChoicesSuccess', this.handlePromiseThen);
+    if (!choices) {
+      this.pendingUsers = users;
+      window.addEventListener('getParseChoicesSuccess', this.handlePromiseThen);
+      console.log('ChooseScreen.handlePromiseThen: Waiting for getParseChoicesSuccess...');
+      return;
+    } else if (users  instanceof window.Event) {
+      users = this.pendingUsers;
+    }
+
+    users = users.filter(function (user) {
+      return (
+        !_.contains(choices.unchosenOnes, user.id) && // Don't show people we've already unchosen
+        !_.contains(choices.chosenOnes, user.id) // Don't show people we've already chosen
+      );
+    });
+
+    users = _.sortBy(users, function (user) {
+      return !_.contains(choices.chosenBy, user.id); // Show `chosenBy` people first
+    });
+
+    this.setState({
+      users: users
+    });
+  },
   handlePromise: function (usersPromise) {
-    var that = this;
-
     usersPromise.then(
-      function (users) {
-        console.log('ChooseScreen usersPromise success', users, that.props.remote.choices);
-
-        var choices = that.props.remote.choices;
-
-        users = users.filter(function (user) {
-          return (
-            !_.contains(choices.unchosenOnes, user.id) && // Don't show people we've already unchosen
-            !_.contains(choices.chosenOnes, user.id) // Don't show people we've already chosen
-          );
-        });
-
-        users = _.sortBy(users, function (user) {
-          return !_.contains(choices.chosenBy, user.id); // Show `chosenBy` people first
-        });
-
-        that.setState({
-          users: users
-        });
-      },
+      this.handlePromiseThen,
       function (response) {
         alert('ChooseScreen usersPromise failed!');
         console.warn('bad', response);

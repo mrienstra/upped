@@ -382,6 +382,7 @@ var _remote = {
           remote.parse.choice.getChoicesByUserDataId(remote.user.userData.id).then(
             function (choices) {
               remote.choices = choices;
+              _remote.utils.dispatchCustomEvent('getParseChoicesSuccess');
             }
           );
 
