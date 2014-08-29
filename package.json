@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node app",
-    "postinstall": "node node_modules/.bin/gulp default"
+    "install": "gulp watch"
   },
   "dependencies": {
     "react": "~0.10.0",
