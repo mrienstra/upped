@@ -1065,10 +1065,14 @@ header.bar-nav {
   right: 0;
   bottom: 0;
   left: 0;
-  background: white;
+  color: #fff;
+  background: #000;
   z-index: 2;
   text-align: center;
-  padding-top: 4em;
+  padding-top: 20rem;
+  .icon {
+    font-size: 300%;
+  }
 }
 .js-slider .heroes .loadingOverlay {
   display: none;

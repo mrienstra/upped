@@ -275,7 +275,7 @@ var ChooseScreen = React.createClass({
           </header>
 
           <div className="loadingOverlay">
-            <p><span className="icon ion-ios7-reloading"></span> Loading...</p>
+            <p><span className="icon ion-ios7-reloading"></span></p>
           </div>
 
           {userList}
