@@ -64,7 +64,9 @@ var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
     });
 
     // Add class to HTML element to activate conditional CSS
-    document.documentElement.className += ' js-slider';
+    window.setTimeout(function(){
+      document.documentElement.className += ' js-slider';
+    }, 10);
   }
 };
 
