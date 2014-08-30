@@ -14,10 +14,6 @@
     "gulp-concat-css": "^0.1.4",
     "gulp-flatten": "0.0.2"
   },
-  "scripts": {
-    "start": "node app",
-    "install": "gulp watch"
-  },
   "dependencies": {
     "react": "~0.10.0",
     "moment": "^2.6.0",
