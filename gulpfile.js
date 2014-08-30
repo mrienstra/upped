@@ -157,7 +157,7 @@ gulp.task('font', function() {
 gulp.task('watchdog', function () {
   watching = true; // used by `onError`
   gulp.watch(path.html.in, ['html']);
-  gulp.watch(path.mocks.in, ['mocks']);
+  //gulp.watch(path.mocks.in, ['mocks']);
   gulp.watch(path.script.in, ['script']);
   gulp.watch(path.style.in, ['sass']);
   gulp.watch(path.img.in, ['img']);
@@ -170,4 +170,4 @@ gulp.task('open', function () {
 
 gulp.task('watch', ['default', 'connect', 'watchdog']);
 gulp.task('watchopen', ['default', 'connect', 'watchdog', 'open']);
-gulp.task('default', ['html', 'lib', 'mocks', 'script', 'sass', 'img', 'font']);
+gulp.task('default', ['html', 'lib', 'script', 'sass', 'img', 'font']); // 'mocks', 

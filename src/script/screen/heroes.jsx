@@ -22,9 +22,6 @@ var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
 
     // EVENTS, LISTENERS, AND INITS
 
-    // Add class to HTML element to activate conditional CSS
-    document.documentElement.className += ' js-slider';
-
     // Activate all sliders
     Array.prototype.forEach.call(sliders, function (slider, index) {
 
@@ -65,6 +62,9 @@ var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
         btnPrev.addEventListener('click', handlePrevBtn, false);
       }
     });
+
+    // Add class to HTML element to activate conditional CSS
+    document.documentElement.className += ' js-slider';
   }
 };
 
@@ -266,11 +266,15 @@ var ChooseScreen = React.createClass({
     };
 
     return (
-      <div>
+      <div className="heroes">
         <div className="side-menu-siblings-wrapper">
           <header className="bar bar-nav">
             <a className="icon icon-bars pull-left" href="#sideMenu"></a>
           </header>
+
+          <div className="loadingOverlay">
+            <p><span className="icon ion-ios7-reloading"></span> Loading...</p>
+          </div>
 
           {userList}
 

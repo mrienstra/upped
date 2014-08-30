@@ -1059,6 +1059,21 @@ header.bar-nav {
   }
 }
 
+.heroes .loadingOverlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: white;
+  z-index: 2;
+  text-align: center;
+  padding-top: 4em;
+}
+.js-slider .heroes .loadingOverlay {
+  display: none;
+}
+
 /* --------- */
 /* Keyframes */
 /* --------- */
