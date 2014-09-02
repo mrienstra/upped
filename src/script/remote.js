@@ -8,7 +8,7 @@ var asyncToggle = require('./asyncToggle');
 
 var settings = {
   fb: {
-    appId: '637656759644763',
+    appId: '708399959213691',
     permissions: {
       initial: ['public_profile'],
       // Asking for publish_* permissions initially using fcp (at least in iOS Simulator) throws an error: "You can only ask for read permissions initially"
