@@ -17,8 +17,8 @@ var settings = {
     postFields: 'from.fields(name,picture),message,story,picture,link,application.id,likes,comments.fields(from.name,from.picture,attachment,message,like_count,user_likes)'
   },
   parse: {
-    appId: 'wiH0dm2K766KFaLdMBQ3DWFHuQExkXBmmsBh9NYF',
-    jsKey: 'npZirjJx5ofr7GQiqrl7lrf6gca6Ag5IUUWhJ3Jr'
+    appId: '1xx0YMHyA3nifUNazccdpUm78oOpFXzB3TjM1I7N',
+    jsKey: 'WDnOhDjlcrytzGKTVvhconbiG20RmBANvSI0yXq4'
   },
   points: {
     posts: 20,
