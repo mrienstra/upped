@@ -915,12 +915,8 @@ header.bar-nav {
   .statement {
     padding-left: .5rem;
     font-style: italic;
-    display:none;
   }
 
-  .statement::first {
-    display: block;
-  }
   .details {
 
     display: none;
