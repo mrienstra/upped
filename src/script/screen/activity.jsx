@@ -107,7 +107,7 @@ var MatchesScreen = React.createClass({
 
     return (
       <div>
-        <header className="bar bar-nav">
+        <header className="bar bar-nav solid">
           {leftNavButton}
           <h1 className="title">Matches</h1>
         </header>

@@ -143,6 +143,9 @@ header.bar-nav {
 .bar-nav ~ .content {
   padding-top: 0;
 }
+.bar-nav.solid ~ .content {
+  padding-top: 44px;
+}
 
 .bar-standard ~ .content {
   padding-top: 0;
@@ -974,7 +977,7 @@ header.bar-nav {
   }
 }
 
-.content .aMatch {
+.aMatch {
   position: absolute;
   top: 0;
   right: 0;
@@ -992,6 +995,7 @@ header.bar-nav {
     border: 3px solid rgba(255,255,255,0.9);
     margin: 0 auto;
     display: block;
+    width: 90%;
   }
   button {
     width: 90%;
@@ -1123,6 +1127,11 @@ header.bar-nav {
 }
 .js-slider .heroes .loadingOverlay {
   display: none;
+}
+
+.done {
+  margin-top: 5rem;
+  padding: 0 1rem;
 }
 
 /* --------- */

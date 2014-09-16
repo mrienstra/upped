@@ -78,11 +78,6 @@ var SideMenu = require('../component/sideMenu.jsx');
 var UserListItem = require('../component/userListItem.jsx');
 
 var UserList = React.createClass({
-  getInitialState: function(){
-    return {
-      match: void 0
-    };
-  },
   componentDidMount: function(){
     var that = this;
     swipeStackCallback = function (index, direction) {
@@ -97,9 +92,7 @@ var UserList = React.createClass({
       if (match) {
         console.log('UserList swipeStackCallback match', match);
 
-        that.setState({
-          match: match
-        });
+        pubSub.publish('heroes.showMatchOverlay', {match: match});
       }
 
       if (index + 1 === that.props.users.length) {
@@ -115,41 +108,13 @@ var UserList = React.createClass({
     var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
     sliderInit(window, document, btnNext, btnPrev);
   },
-  closeMatchOverlay: function (e) {
-    this.setState({
-      match: void 0
-    });
-
-    e && e.preventDefault();
-  },
-  showMatchesScreen: function (e) {
-    this.props.showMatchesScreen();
-    this.closeMatchOverlay();
-
-    e && e.preventDefault();
-  },
   render: function() {
-    var matchOverlay;
-    if (this.state.match) {
-      matchOverlay = (
-        <div className="aMatch">
-          <h1>A Match!</h1>
-          <p>You’ve matched with {this.state.match.name}!</p>
-          <img src={this.state.match.photoURL}/>
-          <button className="btn btn-block" onTouchEnd={this.showMatchesScreen}><span className="icon icon-search"></span> Show Matches</button>
-          <button className="btn btn-block" onTouchEnd={this.closeMatchOverlay}><span className="icon icon-person"></span> Keep Exploring</button>
-        </div>
-      );
-    }
-
     var userNodes = this.props.users.map(function (user, index) {
       return <UserListItem key={index} user={user}></UserListItem>;
     });
 
     return (
       <div className="content content-main">
-        {matchOverlay}
-
         <div className="subhead">
           <h3>{this.props.name}</h3>
         </div>
@@ -160,7 +125,7 @@ var UserList = React.createClass({
           </div>
         </div>
 
-        <div>
+        <div className="done">
           <h3>Galaxy Explored</h3>
           <p>You’ve seen all our hero profiles. We’ll reach out if you score any mutual matches.</p>
         </div>
@@ -175,7 +140,8 @@ var ChooseScreen = React.createClass({
       buttonsToTop: false,
       hideButtons: false,
       currentIndex: 0,
-      users: void 0
+      users: void 0,
+      match: void 0
     };
   },
   handlePromiseThen: function (users) {
@@ -235,6 +201,10 @@ var ChooseScreen = React.createClass({
     pubSub.unsubscribe('heroes.hideButtons', this.hideButtons);
     pubSub.subscribe('heroes.hideButtons', this.hideButtons);
   },
+  componentDidMount: function(){
+    pubSub.unsubscribe('heroes.showMatchOverlay', this.showMatchOverlay);
+    pubSub.subscribe('heroes.showMatchOverlay', this.showMatchOverlay);
+  },
   hideButtons: function(){
     this.setState({hideButtons: true});
   },
@@ -249,8 +219,39 @@ var ChooseScreen = React.createClass({
   updateCurrentIndex: function (channel, data) {
     this.setState({currentIndex: data.index});
   },
+  showMatchOverlay: function (channel, data) {
+    this.setState({
+      match: data.match
+    });
+  },
+  closeMatchOverlay: function (e) {
+    this.setState({
+      match: void 0
+    });
+
+    e && e.preventDefault();
+  },
+  showMatchesScreen: function (e) {
+    this.props.handleMatchesChange();
+    this.closeMatchOverlay();
+
+    e && e.preventDefault();
+  },
   render: function(){
     var that = this;
+
+    var matchOverlay;
+    if (this.state.match) {
+      matchOverlay = (
+        <div className="aMatch">
+          <h1>A Match!</h1>
+          <p>You’ve matched with {this.state.match.name}!</p>
+          <img src={this.state.match.photoURL}/>
+          <button className="btn btn-block" onTouchEnd={this.showMatchesScreen}><span className="icon icon-search"></span> Show Matches</button>
+          <button className="btn btn-block" onTouchEnd={this.closeMatchOverlay}><span className="icon icon-person"></span> Keep Exploring</button>
+        </div>
+      );
+    }
 
     var userList;
     if (this.state.users === void 0) {
@@ -260,7 +261,7 @@ var ChooseScreen = React.createClass({
         </div>
       );
     } else {
-      userList = <UserList users={this.state.users} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop} showMatchesScreen={this.props.handleMatchesChange}></UserList>
+      userList = <UserList users={this.state.users} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></UserList>
     }
 
     var handleToggleDetails = function(){
@@ -270,6 +271,8 @@ var ChooseScreen = React.createClass({
     return (
       <div className="heroes">
         <div className="side-menu-siblings-wrapper">
+          {matchOverlay}
+
           <header className="bar bar-nav">
             <a className="icon icon-bars pull-left" href="#sideMenu"></a>
           </header>
