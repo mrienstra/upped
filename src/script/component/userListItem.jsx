@@ -29,13 +29,13 @@ var UserListItem = React.createClass({
   render: function() {
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
-    var skills = this.props.user.skills.map(function (name) {
-      return <li>{name}</li>;
+    var skills = this.props.user.skills.map(function (name, i) {
+      return <li key={i}>{name}</li>;
     });
 
-    var nominations = this.props.user.nominations.map(function (nomination) {
+    var nominations = this.props.user.nominations.map(function (nomination, i) {
       return (
-        <li>
+        <li key={i}>
           <img/>
           <h5>{nomination.name}</h5>
           <span className="skill">{nomination.skill}</span>

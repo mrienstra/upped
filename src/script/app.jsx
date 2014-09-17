@@ -88,7 +88,17 @@ var handleProfileChange = function (userData, fromMenu) {
   var ProfileScreen = require('./screen/profile.jsx');
 
   app.screens.addScreen(
-    <ProfileScreen userData={userData} viewingSelf={viewingSelf} fromMenu={fromMenu} handleBack={handleBack}></ProfileScreen>
+    <ProfileScreen userData={userData} viewingSelf={viewingSelf} fromMenu={fromMenu} handleEdit={handleProfileEditChange} handleBack={handleBack}></ProfileScreen>
+  );
+};
+
+var handleProfileEditChange = function(){
+  console.log('handleProfileEditChange', arguments);
+
+  var ProfileEditScreen = require('./screen/profileEdit.jsx');
+
+  app.screens.addScreen(
+    <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleBack={handleBack}></ProfileEditScreen>
   );
 };
 

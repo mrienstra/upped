@@ -6,6 +6,9 @@ var openFB = require('../lib/openfb-32c04deef7-mod.js');
 
 var asyncToggle = require('./asyncToggle');
 
+// Modules
+var pubSub = require('./pubSub.js');
+
 var settings = {
   fb: {
     appId: '708399959213691',
@@ -1044,6 +1047,24 @@ var remote = {
         });
 
         return deferred.promise;
+      },
+      setCurrent: function (modifiedData) {
+        var parseUserData = remote.user.parse.get('data');
+        parseUserData
+          .save(modifiedData)
+          .then(
+            function(){
+              console.log('remote.parse.userData.setCurrent save success', this, arguments);
+              ga('send', 'event', 'person', 'userDataEdit', 'successfully submitted to Parse');
+            },
+            function(){
+              console.error('remote.parse.userData.setCurrent save failure', this, arguments);
+              ga('send', 'event', 'person', 'userDataEdit', 'unable to submit to Parse');
+            }
+          );
+
+        _.assign(remote.user.userData, modifiedData);
+        pubSub.publish('profileModified.self', {userData: remote.user.userData});
       }
     },
     userExists: function(){

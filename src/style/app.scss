@@ -901,7 +901,7 @@ header.bar-nav {
   }
   .location {
     margin-top: 1rem;
-    padding-left: 1rem;
+    padding: 0 1rem;
   }
 
   .nameAndSkillCount {
@@ -917,7 +917,7 @@ header.bar-nav {
   }
 
   .statement {
-    padding-left: .5rem;
+    padding: 0 .5rem;
     font-style: italic;
   }
 
@@ -948,6 +948,21 @@ header.bar-nav {
         margin: 0;
         padding: 0 1em;
 
+        li {
+          position: relative;
+        }
+
+        input {
+          padding-right: 2.25em;
+        }
+
+        .delete {
+          position: absolute;
+          right: 0em;
+          top: -0.01em;
+          padding: 0.25em;
+        }
+
         img {
           width: 2em;
           height: 2em;
@@ -974,6 +989,10 @@ header.bar-nav {
     .nominations h4 .icon {
       font-size: 14px; /* temp/todo: hack to match width of .skills icon */
     }
+  }
+
+  input, textarea, .delete {
+    color: #444;
   }
 }
 
