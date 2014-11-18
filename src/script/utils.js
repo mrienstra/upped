@@ -11,6 +11,17 @@ var utils = {
     }
 
     return formattedTime;
+  },
+  momentFormatIfTime: function (time) {
+    var formattedTime = moment(time);
+
+    if (formattedTime.isValid()) {
+      formattedTime = formattedTime.format('dddd, MMMM Do, YYYY, h:mma');
+    } else {
+      formattedTime = time;
+    }
+
+    return formattedTime;
   }
 };
 

@@ -5,70 +5,9 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 // Libs
 var _ = require('lodash');
-var swipeStack = require('../../lib/swipe-stack-0.1.js');
-var swipeStackCallback;
-var handlePause;
-var handleUnpause;
-var sliderInit = function (window, document, btnNext, btnPrev, undefined) {
-  'use strict';
 
-  // Feature Test
-  if ( 'querySelector' in document && 'addEventListener' in window && Array.prototype.forEach ) {
-
-    // SELECTORS
-    var sliders = document.querySelectorAll('[data-slider]');
-    var mySwipe = Array;
-
-
-    // EVENTS, LISTENERS, AND INITS
-
-    // Activate all sliders
-    Array.prototype.forEach.call(sliders, function (slider, index) {
-
-      // METHODS
-
-      // Handle next button
-      var handleNextBtn = function (event) {
-        event.preventDefault();
-        mySwipe[index].nextRight();
-      };
-
-      // Handle previous button
-      var handlePrevBtn = function (event) {
-        event.preventDefault();
-        mySwipe[index].nextLeft();
-      };
-
-      handlePause = function(){
-        mySwipe[index].pause();
-      };
-
-      handleUnpause = function(){
-        mySwipe[index].unpause();
-      };
-
-      // EVENTS, LISTENERS, AND INITS
-
-      // Activate Slider
-      mySwipe[index] = swipeStack(slider, {
-        callback: swipeStackCallback
-      });
-
-      // Toggle Previous & Next Buttons
-      if (btnNext) {
-        btnNext.addEventListener('click', handleNextBtn, false);
-      }
-      if (btnPrev) {
-        btnPrev.addEventListener('click', handlePrevBtn, false);
-      }
-    });
-
-    // Add class to HTML element to activate conditional CSS
-    window.setTimeout(function(){
-      document.documentElement.className += ' js-slider';
-    }, 10);
-  }
-};
+// Mixins
+var swipeStackSlider = require('../mixin/swipeStackSlider.js');
 
 // Modules
 var pubSub = require('../pubSub.js');
@@ -78,9 +17,10 @@ var SideMenu = require('../component/sideMenu.jsx');
 var UserListItem = require('../component/userListItem.jsx');
 
 var UserList = React.createClass({
+  mixins: [swipeStackSlider],
   componentDidMount: function(){
     var that = this;
-    swipeStackCallback = function (index, direction) {
+    this.swipeStackCallback = function (index, direction) {
       console.log('UserList swipeStackCallback', this, arguments, that, that.props.users);
 
       pubSub.publish('userlist.current', {index: index + 1});
@@ -99,14 +39,14 @@ var UserList = React.createClass({
         pubSub.publish('heroes.hideButtons');
       } else if (that.props.buttonsToTop) {
         pubSub.publish('heroes.toggleButtons', {expanded: false});
-        handleUnpause();
+        that.handleSliderUnpause();
       }
     };
 
     var el = this.getDOMNode();
     var btnNext = el.parentNode.querySelector('[data-slider-nav-next]');
     var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
-    sliderInit(window, document, btnNext, btnPrev);
+    this.sliderInit(window, document, btnNext, btnPrev);
   },
   render: function() {
     var userNodes = this.props.users.map(function (user, index) {
@@ -211,9 +151,9 @@ var ChooseScreen = React.createClass({
   toggleButtons: function (channel, data) {
     this.setState({buttonsToTop: data.expanded});
     if (data.expanded) {
-      handlePause();
+      this.handleSliderPause();
     } else {
-      handleUnpause();
+      this.handleSliderUnpause();
     }
   },
   updateCurrentIndex: function (channel, data) {
@@ -265,7 +205,7 @@ var ChooseScreen = React.createClass({
     }
 
     var handleToggleDetails = function(){
-      pubSub.publish('toggleDataUserListItem.' + that.state.currentIndex);
+      pubSub.publish('heroes.toggleStackListItem.' + that.state.currentIndex);
     };
 
     return (
@@ -290,7 +230,7 @@ var ChooseScreen = React.createClass({
           </div>
         </div>
 
-        <SideMenu id="sideMenu" handleMatchesChange={this.props.handleMatchesChange} handleMyProfileChange={this.props.handleMyProfileChange} handleLogOut={this.props.handleLogOut} />
+        <SideMenu id="sideMenu" handleMatchesChange={this.props.handleMatchesChange} handleMyProfileChange={this.props.handleMyProfileChange} handleGatheringsChange={this.props.handleGatheringsChange} handleLogOut={this.props.handleLogOut} />
 
       </div>
     );

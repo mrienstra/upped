@@ -2,30 +2,11 @@
 
 var React = require('react/addons');
 
-// Modules
-var pubSub = require('../pubSub.js');
+// Mixins
+var toggleStackListItem = require('../mixin/toggleStackListItem.js');
 
 var UserListItem = React.createClass({
-  getInitialState: function(){
-    return {
-      expanded: !!this.props.fromMenu
-    };
-  },
-  componentWillMount: function(){
-    pubSub.unsubscribe('toggleDataUserListItem.' + this.props.key, this.handleToggleDetails);
-    pubSub.subscribe('toggleDataUserListItem.' + this.props.key, this.handleToggleDetails);
-  },
-  handleToggleDetails: function(){
-    if (!this.props.fromMenu) {
-      console.log('pubsub.subscribe toggleDataUserListItem.' + this.props.key + ' handleToggleDetails', this.state.expanded);
-
-      pubSub.publish('heroes.toggleButtons', {expanded: !this.state.expanded});
-
-      this.setState({expanded: !this.state.expanded});
-    } else {
-      console.log('pubsub.subscribe toggleDataUserListItem.' + this.props.key + ' handleToggleDetails, ignoring because this.props.fromMenu', this.props.fromMenu);
-    }
-  },
+  mixins: [toggleStackListItem],
   render: function() {
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
@@ -45,7 +26,7 @@ var UserListItem = React.createClass({
     });
 
     return (
-      <div className="userListItem" onTouchEnd={this.handleToggleDetails}>
+      <div className="stackListItem userListItem" onTouchEnd={this.handleToggleDetails}>
         {img}
         <div className={'summary' + (this.state.expanded ? ' hide' : '')}>
           <div className="nameAndSkillCount">{this.props.user.name}</div>

@@ -57,7 +57,7 @@ var handleHeroesChange = function(){
   var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
 
   app.screens.addScreen(
-    <HeroesScreen remote={remote} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleLogOut={handleLogOut}></HeroesScreen>
+    <HeroesScreen remote={remote} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleGatheringsChange={handleGatheringsChange} handleLogOut={handleLogOut}></HeroesScreen>
   );
 };
 
@@ -72,6 +72,18 @@ var handleLocationChange = function (props) {
 
   app.screens.addScreen(
     <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handleProfileChange={handleProfileChange} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike} handleMatchesChange={handleMatchesChange} handleMyProfileChange={handleMyProfileChange} handleLogOut={handleLogOut}></PostsScreen>
+  );
+};
+
+var handleGatheringsChange = function(){
+  console.log('handleGatheringsChange', this, arguments);
+
+  var GatheringsScreen = require('./screen/gatherings.jsx');
+
+  var getGatherings = remote.parse.gatherings.getAll;
+
+  app.screens.addScreen(
+    <GatheringsScreen remote={remote} getGatherings={getGatherings} handleChoice={handleRSVP} handleBack={handleBack}></GatheringsScreen>
   );
 };
 
@@ -128,6 +140,12 @@ var handleChoice = function (chosenId, choice) {
   console.log('handleChoice', this, arguments, remote.parse.userData);
 
   return remote.parse.choice.set(chosenId, choice);
+};
+
+var handleRSVP = function (chosenId, choice) {
+  console.log('handleRSVP', this, arguments, remote.parse.userData);
+
+  return remote.parse.gatherings.rsvp(chosenId, choice);
 };
 
 var handleCreatePostOrComment = function (isPostsOrComments, msg, pictureDataURI, successCallback, failureCallback) {

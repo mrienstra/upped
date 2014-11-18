@@ -9,6 +9,7 @@ var SideMenu = React.createClass({
   propTypes: {
     handleMatchesChange: React.PropTypes.func.isRequired,
     handleBack: React.PropTypes.func, // Not required
+    handleGatheringsChange: React.PropTypes.func.isRequired,
     handleMyProfileChange: React.PropTypes.func.isRequired,
     handleLogOut: React.PropTypes.func.isRequired,
     id: React.PropTypes.string.isRequired
@@ -21,6 +22,11 @@ var SideMenu = React.createClass({
             <li className="table-view-cell">
               <a onTouchEnd={this.props.handleMyProfileChange}>
                 <h4><span className="icon ion-person"></span>Profile</h4>
+              </a>
+            </li>
+            <li className="table-view-cell">
+              <a onTouchEnd={this.props.handleGatheringsChange}>
+                <h4><span className="icon ion-search"></span>Gatherings</h4>
               </a>
             </li>
             <li className="table-view-cell">

@@ -403,7 +403,8 @@ var _remote = {
                 nominations: userData.get('nominations'),
                 photoURL: userData.get('photoURL'),
                 skills: userData.get('skills'),
-                statement: userData.get('statement')
+                statement: userData.get('statement'),
+                gatherings: userData.get('gatherings')
               };
             },
             error: function(){
@@ -964,6 +965,49 @@ var remote = {
           function(){ console.log('remote.parse.activity.log save success', this, arguments); },
           function(){ console.log('remote.parse.activity.log save failure', this, arguments); }
         );
+      }
+    },
+    gatherings: {
+      getAll: function(){
+        console.log('remote.parse.gatherings.getAll');
+
+        var deferred = when.defer();
+
+        var query = new Parse.Query(Parse.Object.extend('Gathering'));
+
+        query.find({
+          success: function (response) {
+            console.log('remote.parse.gatherings.getAll success', this, arguments);
+
+            if (response.length) {
+              var allGatherings = response.map(function (aGathering) {
+                return {
+                  id: aGathering.id,
+                  location: aGathering.get('location'),
+                  photoURL: aGathering.get('photoURL'),
+                  blurb: aGathering.get('blurb'),
+                  date: aGathering.get('date')
+                };
+              });
+              deferred.resolve(allGatherings);
+
+              remote.allGatherings = allGatherings;
+            } else {
+              deferred.resolve([]);
+            }
+          },
+          error: deferred.reject
+        });
+
+        return deferred.promise;
+      },
+      rsvp: function (chosenId, choiceId) {
+        console.log('remote.parse.gatherings.rsvp', this, arguments);
+
+        var gatherings = remote.user.userData.gatherings || {};
+        gatherings[chosenId] = choiceId;
+
+        remote.parse.userData.setCurrent({gatherings: gatherings});
       }
     },
     userData: {
