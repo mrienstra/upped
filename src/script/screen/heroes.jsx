@@ -39,7 +39,6 @@ var UserList = React.createClass({
         pubSub.publish('heroes.hideButtons');
       } else if (that.props.buttonsToTop) {
         pubSub.publish('heroes.toggleButtons', {expanded: false});
-        that.handleSliderUnpause();
       }
     };
 
@@ -150,11 +149,6 @@ var ChooseScreen = React.createClass({
   },
   toggleButtons: function (channel, data) {
     this.setState({buttonsToTop: data.expanded});
-    if (data.expanded) {
-      this.handleSliderPause();
-    } else {
-      this.handleSliderUnpause();
-    }
   },
   updateCurrentIndex: function (channel, data) {
     this.setState({currentIndex: data.index});

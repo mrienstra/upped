@@ -2,6 +2,13 @@
 var swipeStack = require('../../lib/swipe-stack-0.1.js');
 
 var SwipeStackSliderMixin = {
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.buttonsToTop && !this.props.buttonsToTop) {
+      this.handleSliderPause();
+    } else if (!nextProps.buttonsToTop && this.props.buttonsToTop) {
+      this.handleSliderUnpause();
+    }
+  },
   sliderInit: function (window, document, btnNext, btnPrev, undefined) {
     'use strict';
 

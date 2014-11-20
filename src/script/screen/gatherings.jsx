@@ -32,7 +32,6 @@ var GatheringList = React.createClass({
         pubSub.publish('gatherings.hideButtons');
       } else if (that.props.buttonsToTop) {
         pubSub.publish('gatherings.toggleButtons', {expanded: false});
-        that.handleSliderUnpause();
       }
     };
 
@@ -142,11 +141,6 @@ var GatheringsScreen = React.createClass({
   },
   toggleButtons: function (channel, data) {
     this.setState({buttonsToTop: data.expanded});
-    if (data.expanded) {
-      this.handleSliderPause();
-    } else {
-      this.handleSliderUnpause();
-    }
   },
   updateCurrentIndex: function (channel, data) {
     this.setState({currentIndex: data.index});
