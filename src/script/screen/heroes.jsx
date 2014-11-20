@@ -1,12 +1,12 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 // Libs
 var _ = require('lodash');
 
 // Mixins
+var ChooseScreenMixin = require('../mixin/chooseScreen.js');
 var SwipeStackSliderMixin = require('../mixin/swipeStackSlider.js');
 
 // Modules
@@ -23,7 +23,7 @@ var UserList = React.createClass({
     this.swipeStackCallback = function (index, direction) {
       console.log('UserList swipeStackCallback', this, arguments, that, that.props.users);
 
-      pubSub.publish('userlist.current', {index: index + 1});
+      pubSub.publish('heroes.currentIndex', {index: index + 1});
 
       var targetUser = that.props.users[index];
       var choice = direction === 'left' ? 0 : 1;
@@ -73,18 +73,10 @@ var UserList = React.createClass({
   }
 });
 
-var ChooseScreen = React.createClass({
-  getInitialState: function(){
-    return {
-      buttonsToTop: false,
-      hideButtons: false,
-      currentIndex: 0,
-      users: void 0,
-      match: void 0
-    };
-  },
+var HeroesScreen = React.createClass({
+  mixins: [ChooseScreenMixin],
   handlePromiseThen: function (users) {
-    console.log('ChooseScreen usersPromise success handlePromiseThen', users, this.props.remote.choices, this.pendingUsers);
+    console.log('HeroesScreen usersPromise success handlePromiseThen', users, this.props.remote.choices, this.pendingUsers);
 
     var choices = this.props.remote.choices;
 
@@ -92,7 +84,7 @@ var ChooseScreen = React.createClass({
     if (!choices) {
       this.pendingUsers = users;
       window.addEventListener('getParseChoicesSuccess', this.handlePromiseThen);
-      console.log('ChooseScreen.handlePromiseThen: Waiting for getParseChoicesSuccess...');
+      console.log('HeroesScreen.handlePromiseThen: Waiting for getParseChoicesSuccess...');
       return;
     } else if (users  instanceof window.Event) {
       users = this.pendingUsers;
@@ -110,66 +102,8 @@ var ChooseScreen = React.createClass({
     });
 
     this.setState({
-      users: users
+      items: users
     });
-  },
-  handlePromise: function (usersPromise) {
-    usersPromise.then(
-      this.handlePromiseThen,
-      function (response) {
-        alert('ChooseScreen usersPromise failed!');
-        console.warn('bad', response);
-      }
-    );
-  },
-  componentWillMount: function(){
-    console.log('ChooseScreen.componentWillMount', this, arguments);
-
-    var that = this;
-
-    var usersPromise = this.props.getUsers();
-
-    this.handlePromise(usersPromise);
-
-    pubSub.unsubscribe('userlist.current', this.updateCurrentIndex);
-    pubSub.subscribe('userlist.current', this.updateCurrentIndex);
-
-    pubSub.unsubscribe('heroes.toggleButtons', this.toggleButtons);
-    pubSub.subscribe('heroes.toggleButtons', this.toggleButtons);
-
-    pubSub.unsubscribe('heroes.hideButtons', this.hideButtons);
-    pubSub.subscribe('heroes.hideButtons', this.hideButtons);
-  },
-  componentDidMount: function(){
-    pubSub.unsubscribe('heroes.showMatchOverlay', this.showMatchOverlay);
-    pubSub.subscribe('heroes.showMatchOverlay', this.showMatchOverlay);
-  },
-  hideButtons: function(){
-    this.setState({hideButtons: true});
-  },
-  toggleButtons: function (channel, data) {
-    this.setState({buttonsToTop: data.expanded});
-  },
-  updateCurrentIndex: function (channel, data) {
-    this.setState({currentIndex: data.index});
-  },
-  showMatchOverlay: function (channel, data) {
-    this.setState({
-      match: data.match
-    });
-  },
-  closeMatchOverlay: function (e) {
-    this.setState({
-      match: void 0
-    });
-
-    e && e.preventDefault();
-  },
-  showMatchesScreen: function (e) {
-    this.props.handleMatchesChange();
-    this.closeMatchOverlay();
-
-    e && e.preventDefault();
   },
   render: function(){
     var that = this;
@@ -188,19 +122,15 @@ var ChooseScreen = React.createClass({
     }
 
     var userList;
-    if (this.state.users === void 0) {
+    if (this.state.items === void 0) {
       userList = (
         <div className="content content-main">
           <span className="icon ion-loading-d"></span>
         </div>
       );
     } else {
-      userList = <UserList users={this.state.users} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></UserList>
+      userList = <UserList users={this.state.items} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></UserList>
     }
-
-    var handleToggleDetails = function(){
-      pubSub.publish('heroes.toggleStackListItem.' + that.state.currentIndex);
-    };
 
     return (
       <div className="heroes">
@@ -219,7 +149,7 @@ var ChooseScreen = React.createClass({
 
           <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
             <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
-            <button onTouchEnd={handleToggleDetails} className="icon icon-button button-info"></button>
+            <button onTouchEnd={this.handleToggleDetails} className="icon icon-button button-info"></button>
             <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
           </div>
         </div>
@@ -231,4 +161,4 @@ var ChooseScreen = React.createClass({
   }
 });
 
-module.exports = ChooseScreen;
+module.exports = HeroesScreen;

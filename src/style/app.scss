@@ -288,6 +288,9 @@ header.bar-nav {
 
 .content {
   background-color: $page-bg-color;
+  > .ion-loading-d {
+    margin: 7rem 2.5rem;
+  }
   > div, > ul {
     background-color: $table-bg-color;
   }

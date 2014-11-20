@@ -57,7 +57,7 @@ var handleHeroesChange = function(){
   var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
 
   app.screens.addScreen(
-    <HeroesScreen remote={remote} getUsers={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleGatheringsChange={handleGatheringsChange} handleLogOut={handleLogOut}></HeroesScreen>
+    <HeroesScreen remote={remote} getItems={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleGatheringsChange={handleGatheringsChange} handleLogOut={handleLogOut}></HeroesScreen>
   );
 };
 
@@ -83,7 +83,7 @@ var handleGatheringsChange = function(){
   var getGatherings = remote.parse.gatherings.getAll;
 
   app.screens.addScreen(
-    <GatheringsScreen remote={remote} getGatherings={getGatherings} handleChoice={handleRSVP} handleBack={handleBack}></GatheringsScreen>
+    <GatheringsScreen remote={remote} getItems={getGatherings} handleChoice={handleRSVP} handleBack={handleBack}></GatheringsScreen>
   );
 };
 

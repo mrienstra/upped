@@ -1,12 +1,12 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 // Libs
 var _ = require('lodash');
 
 // Mixins
+var ChooseScreenMixin = require('../mixin/chooseScreen.js');
 var SwipeStackSliderMixin = require('../mixin/swipeStackSlider.js');
 
 // Modules
@@ -23,7 +23,7 @@ var GatheringList = React.createClass({
     this.swipeStackCallback = function (index, direction) {
       console.log('GatheringList swipeStackCallback', this, arguments, that, that.props.gatherings);
 
-      pubSub.publish('gatheringList.current', {index: index + 1});
+      pubSub.publish('gatherings.currentIndex', {index: index + 1});
 
       var targetGathering = that.props.gatherings[index];
       var gathering = direction === 'left' ? 0 : 1;
@@ -67,14 +67,7 @@ var GatheringList = React.createClass({
 });
 
 var GatheringsScreen = React.createClass({
-  getInitialState: function(){
-    return {
-      buttonsToTop: false,
-      hideButtons: false,
-      currentIndex: 0,
-      gatherings: void 0
-    };
-  },
+  mixins: [ChooseScreenMixin],
   handlePromiseThen: function (gatherings) {
     console.log('GatheringsScreen gatheringsPromise success handlePromiseThen', gatherings, this.props.remote.user.userData.gatherings, this.pendingGatherings);
 
@@ -106,62 +99,22 @@ var GatheringsScreen = React.createClass({
     */
 
     this.setState({
-      gatherings: gatherings
+      items: gatherings
     });
-  },
-  handlePromise: function (gatheringsPromise) {
-    gatheringsPromise.then(
-      this.handlePromiseThen,
-      function (response) {
-        alert('GatheringsScreen gatheringsPromise failed!');
-        console.warn('bad', response);
-      }
-    );
-  },
-  componentWillMount: function(){
-    console.log('GatheringsScreen.componentWillMount', this, arguments);
-
-    var that = this;
-
-    var gatheringsPromise = this.props.getGatherings();
-
-    this.handlePromise(gatheringsPromise);
-
-    pubSub.unsubscribe('gatheringList.current', this.updateCurrentIndex);
-    pubSub.subscribe('gatheringList.current', this.updateCurrentIndex);
-
-    pubSub.unsubscribe('gatherings.toggleButtons', this.toggleButtons);
-    pubSub.subscribe('gatherings.toggleButtons', this.toggleButtons);
-
-    pubSub.unsubscribe('gatherings.hideButtons', this.hideButtons);
-    pubSub.subscribe('gatherings.hideButtons', this.hideButtons);
-  },
-  hideButtons: function(){
-    this.setState({hideButtons: true});
-  },
-  toggleButtons: function (channel, data) {
-    this.setState({buttonsToTop: data.expanded});
-  },
-  updateCurrentIndex: function (channel, data) {
-    this.setState({currentIndex: data.index});
   },
   render: function(){
     var that = this;
 
     var gatheringList;
-    if (this.state.gatherings === void 0) {
+    if (this.state.items === void 0) {
       gatheringList = (
         <div className="content content-main">
           <span className="icon ion-loading-d"></span>
         </div>
       );
     } else {
-      gatheringList = <GatheringList gatherings={this.state.gatherings} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></GatheringList>
+      gatheringList = <GatheringList gatherings={this.state.items} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></GatheringList>
     }
-
-    var handleToggleDetails = function(){
-      pubSub.publish('gatherings.toggleStackListItem.' + that.state.currentIndex);
-    };
 
     return (
       <div>
@@ -174,7 +127,7 @@ var GatheringsScreen = React.createClass({
 
         <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
           <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
-          <button onTouchEnd={handleToggleDetails} className="icon icon-button button-info"></button>
+          <button onTouchEnd={this.handleToggleDetails} className="icon icon-button button-info"></button>
           <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
         </div>
       </div>
