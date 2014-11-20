@@ -3,13 +3,13 @@
 var React = require('react/addons');
 
 // Mixins
-var toggleStackListItem = require('../mixin/toggleStackListItem.js');
+var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');
 
 // Modules
 var utils = require('../utils');
 
 var GatheringListItem = React.createClass({
-  mixins: [toggleStackListItem],
+  mixins: [ToggleStackListItemMixin],
   render: function() {
     var img = this.props.gathering.photoURL ? <img src={this.props.gathering.photoURL}/> : '';
 

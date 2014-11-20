@@ -1,7 +1,7 @@
 // Modules
 var pubSub = require('../pubSub.js');
 
-var badgeMixin = {
+var BadgeMixin = {
   getInitialState: function(){
     return {
       newCount: void 0
@@ -20,4 +20,4 @@ var badgeMixin = {
   }
 };
 
-module.exports = badgeMixin;
+module.exports = BadgeMixin;

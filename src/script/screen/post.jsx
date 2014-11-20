@@ -6,14 +6,14 @@ var React = require('react/addons');
 var utils = require('../utils');
 
 // Mixins
-var likeMixin = require('../mixin/like.js');
-var postOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
+var LikeMixin = require('../mixin/like.js');
+var PostOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
 
 // Components
 var PostOrCommentToolbar = require('../component/postOrCommentToolbar.jsx');
 
 var CommentListItem = React.createClass({
-  mixins: [likeMixin],
+  mixins: [LikeMixin],
   render: function() {
     var likeClasses  = this.calculateLikeClasses();
 
@@ -43,7 +43,7 @@ var CommentListItem = React.createClass({
 });
 
 var PostSingle = React.createClass({
-  mixins: [likeMixin],
+  mixins: [LikeMixin],
   render: function(){
     var that = this;
     var post = this.props.post;
@@ -90,7 +90,7 @@ var PostSingle = React.createClass({
 
 var PostScreen = React.createClass({
   // Todo: move methods `getInitialState`, `handlePromise` & `refresh` into a mixin (since they are virtually identical to methods in `PostsScreen`)
-  mixins: [postOrCommentSubmitMixin],
+  mixins: [PostOrCommentSubmitMixin],
   getInitialState: function(){
     return {
       post: void 0,

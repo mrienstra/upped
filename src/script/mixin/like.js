@@ -1,4 +1,4 @@
-var likeMixin = {
+var LikeMixin = {
   getInitialState: function(){
     return {
       likeCount: this.props.likeCount,
@@ -76,4 +76,4 @@ var likeMixin = {
   }
 };
 
-module.exports = likeMixin;
+module.exports = LikeMixin;

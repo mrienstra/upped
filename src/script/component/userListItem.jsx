@@ -3,10 +3,10 @@
 var React = require('react/addons');
 
 // Mixins
-var toggleStackListItem = require('../mixin/toggleStackListItem.js');
+var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');
 
 var UserListItem = React.createClass({
-  mixins: [toggleStackListItem],
+  mixins: [ToggleStackListItemMixin],
   render: function() {
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 

@@ -1,4 +1,4 @@
-var postOrCommentSubmitMixin = {
+var PostOrCommentSubmitMixin = {
   propTypes: {
     user: React.PropTypes.object.isRequired,
     handleCreatePostOrComment: React.PropTypes.func.isRequired
@@ -140,4 +140,4 @@ var postOrCommentSubmitMixin = {
   }
 };
 
-module.exports = postOrCommentSubmitMixin;
+module.exports = PostOrCommentSubmitMixin;

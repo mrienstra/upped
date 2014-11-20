@@ -7,16 +7,16 @@ var utils = require('../utils.js');
 var pubSub = require('../pubSub.js');
 
 // Mixins
-var badgeMixin = require('../mixin/badge.js');
-var likeMixin = require('../mixin/like.js');
-var postOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
+var BadgeMixin = require('../mixin/badge.js');
+var LikeMixin = require('../mixin/like.js');
+var PostOrCommentSubmitMixin = require('../mixin/postOrCommentSubmit.js');
 
 // Components
 var PostOrCommentToolbar = require('../component/postOrCommentToolbar.jsx');
 var SideMenu = require('../component/sideMenu.jsx');
 
 var PostsListItem = React.createClass({
-  mixins: [likeMixin],
+  mixins: [LikeMixin],
   handleProfileChange: function (e) {
     e.stopPropagation();
     
@@ -89,7 +89,7 @@ var PostsList = React.createClass({
 });
 
 var PostsScreen = React.createClass({
-  mixins: [badgeMixin, postOrCommentSubmitMixin],
+  mixins: [BadgeMixin, PostOrCommentSubmitMixin],
   getInitialState: function(){
     return {
       checkinCount: this.props.checkin.count,

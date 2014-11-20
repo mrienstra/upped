@@ -1,7 +1,7 @@
 // Modules
 var pubSub = require('../pubSub.js');
 
-var ToggleStackListItem = {
+var ToggleStackListItemMixin = {
   getInitialState: function(){
     var pubSubDomain;
     if (this.props.user) pubSubDomain = 'heroes';
@@ -29,4 +29,4 @@ var ToggleStackListItem = {
   }
 };
 
-module.exports = ToggleStackListItem;
+module.exports = ToggleStackListItemMixin;

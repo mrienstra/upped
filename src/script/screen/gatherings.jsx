@@ -7,7 +7,7 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var _ = require('lodash');
 
 // Mixins
-var swipeStackSlider = require('../mixin/swipeStackSlider.js');
+var SwipeStackSliderMixin = require('../mixin/swipeStackSlider.js');
 
 // Modules
 var pubSub = require('../pubSub.js');
@@ -17,7 +17,7 @@ var SideMenu = require('../component/sideMenu.jsx');
 var GatheringListItem = require('../component/gatheringListItem.jsx');
 
 var GatheringList = React.createClass({
-  mixins: [swipeStackSlider],
+  mixins: [SwipeStackSliderMixin],
   componentDidMount: function(){
     var that = this;
     this.swipeStackCallback = function (index, direction) {

@@ -1,7 +1,7 @@
 // Libs
 var swipeStack = require('../../lib/swipe-stack-0.1.js');
 
-var swipeStackSlider = {
+var SwipeStackSliderMixin = {
   sliderInit: function (window, document, btnNext, btnPrev, undefined) {
     'use strict';
 
@@ -66,4 +66,4 @@ var swipeStackSlider = {
   }
 };
 
-module.exports = swipeStackSlider;
+module.exports = SwipeStackSliderMixin;
