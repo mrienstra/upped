@@ -11,7 +11,7 @@ var pubSub = require('../pubSub.js');
 var ChooseScreenMixin = {
   getInitialState: function(){
     var pubSubDomain;
-    if (this.props.handleMatchesChange) pubSubDomain = 'heroes';
+    if (this.props.handleGatheringsChange) pubSubDomain = 'heroes';
     else pubSubDomain = 'gatherings';
 
     return {

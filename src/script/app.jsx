@@ -83,7 +83,7 @@ var handleGatheringsChange = function(){
   var getGatherings = remote.parse.gatherings.getAll;
 
   app.screens.addScreen(
-    <GatheringsScreen remote={remote} getItems={getGatherings} handleChoice={handleRSVP} handleBack={handleBack}></GatheringsScreen>
+    <GatheringsScreen remote={remote} getItems={getGatherings} handleChoice={handleRSVP} handleBack={handleBack} handleMatchesChange={handleMatchesChange}></GatheringsScreen>
   );
 };
 

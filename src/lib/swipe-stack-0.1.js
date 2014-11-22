@@ -56,7 +56,6 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
     options = options || {};
     var index = parseInt(options.startSlide - 1, 10) || 0;
     var speed = options.speed !== undefined ? options.speed : 300;
-    options.continuous = options.continuous !== undefined ? options.continuous : true;
     var paused = false;
 
     var setup = function () {
@@ -64,9 +63,6 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
       // cache slides
       slides = element.children;
       length = slides.length;
-
-      // set continuous to false if only one slide
-      if (slides.length < 2) options.continuous = false;
 
       // create an array to store current positions of each slide
       slidePos = new Array(slides.length);
@@ -98,7 +94,7 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
       }
 
       // reposition elements before and after index
-      if (options.continuous && browser.transitions) {
+      if (browser.transitions) {
         move(circle(index-1), 0, 0); // don't arrange in a row, leave in a stack
         move(circle(index+1), 0, 0); // don't arrange in a row, leave in a stack
       }
@@ -113,15 +109,13 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
     var prev = function () {
 
-      if (options.continuous) slide(index-1);
-      else if (index) slide(index-1);
+      slide(index-1);
 
     };
 
     var next = function () {
 
-      if (options.continuous) slide(index+1);
-      else if (index < slides.length - 1) slide(index+1);
+      slide(index+1);
 
     };
 
@@ -175,15 +169,12 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
         var direction = Math.abs(index-to) / (index-to); // 1: backward, -1: forward
 
         // get the actual position of the slide
-        if (options.continuous) {
-          var natural_direction = direction;
-          direction = -slidePos[circle(to)] / width;
+        var natural_direction = direction;
+        direction = -slidePos[circle(to)] / width;
 
-          // if going forward but to < index, use to = slides.length + to
-          // if going backward but to > index, use to = -slides.length + to
-          if (direction !== natural_direction) to =  -direction * slides.length + to;
-
-        }
+        // if going forward but to < index, use to = slides.length + to
+        // if going backward but to > index, use to = -slides.length + to
+        if (direction !== natural_direction) to =  -direction * slides.length + to;
 
         var diff = Math.abs(index-to) - 1;
 
@@ -195,7 +186,7 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
         move(index, width * direction, slideSpeed || speed);
         move(to, 0, slideSpeed || speed);
 
-        if (options.continuous) move(circle(to - direction), -(width * direction), 0); // we need to get the next in place
+        move(circle(to - direction), -(width * direction), 0); // we need to get the next in place
 
       } else {
 
@@ -408,29 +399,9 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
           // stop slideshow
           stop();
 
-          // increase resistance if first or last slide
-          if (options.continuous) { // we don't add resistance at the end
-
-            // deleted line: don't move other slides
-            translate(index, delta.x + slidePos[index], 0);
-            // deleted line: don't move other slides
-
-          } else {
-
-            delta.x =
-              delta.x /
-                ( (!index && delta.x > 0               // if first slide and sliding left
-                || index == slides.length - 1        // or if last slide and sliding right
-                && delta.x < 0                       // and if sliding at all
-                ) ?
-                ( Math.abs(delta.x) / width + 1 )      // determine resistance level
-                : 1 );                                 // no resistance if false
-
-            // translate 1:1
-            // deleted line: don't move other slides
-            translate(index, delta.x + slidePos[index], 0);
-            // deleted line: don't move other slides
-          }
+          // deleted line: don't move other slides
+          translate(index, delta.x + slidePos[index], 0);
+          // deleted line: don't move other slides
 
         }
 
@@ -446,20 +417,13 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
               && Math.abs(delta.x) > 20            // and if slide amt is greater than 20px
               || Math.abs(delta.x) > width/2;      // or if slide amt is greater than half the width
 
-        // determine if slide attempt is past start and end
-        var isPastBounds =
-              !index && delta.x > 0                            // if first slide and slide amt is greater than 0
-              || index == slides.length - 1 && delta.x < 0;    // or if last slide and slide amt is less than 0
-
-        if (options.continuous) isPastBounds = false;
-
         // determine direction of swipe (true:right, false:left)
         var direction = delta.x < 0;
 
         // if not scrolling vertically
         if (!isScrolling) {
 
-          if (isValidSlide && !isPastBounds) {
+          if (isValidSlide) {
 
             if (direction) { // direction: forward
 
@@ -486,18 +450,9 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
 
           } else { // return to previous position
 
-            if (options.continuous) {
-
-              // deleted line: don't move other slides
-              move(index, 0, speed);
-              // deleted line: don't move other slides
-
-            } else {
-
-              // deleted line: don't move other slides
-              move(index, 0, speed);
-              // deleted line: don't move other slides
-            }
+            // deleted line: don't move other slides
+            move(index, 0, speed);
+            // deleted line: don't move other slides
 
           }
 

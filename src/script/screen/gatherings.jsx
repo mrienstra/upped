@@ -26,7 +26,11 @@ var GatheringList = React.createClass({
       pubSub.publish('gatherings.currentIndex', {index: index + 1});
 
       var targetGathering = that.props.gatherings[index];
-      var gathering = direction === 'left' ? 0 : 1;
+      var choice = direction === 'left' ? 0 : 1;
+
+      if (choice) { // in the future, the user could instead sometimes be waitlisted / etc., if the event is already full or if the organizer wants to hand-pick attendees
+        pubSub.publish('gatherings.showMatchOverlay', {match: targetGathering});
+      }
 
       if (index + 1 === that.props.gatherings.length) {
         pubSub.publish('gatherings.hideButtons');
@@ -36,9 +40,10 @@ var GatheringList = React.createClass({
     };
 
     var el = this.getDOMNode();
+    var slider = el.parentNode.querySelector('[data-slider]')
     var btnNext = el.parentNode.querySelector('[data-slider-nav-next]');
     var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
-    this.sliderInit(window, document, btnNext, btnPrev);
+    this.sliderInit(window, document, slider, btnNext, btnPrev);
   },
   render: function() {
     var gatheringNodes = this.props.gatherings.map(function (gathering, index) {
@@ -105,6 +110,19 @@ var GatheringsScreen = React.createClass({
   render: function(){
     var that = this;
 
+    var matchOverlay;
+    if (this.state.match) {
+      matchOverlay = (
+        <div className="aMatch">
+          <h1>Huzzah!</h1>
+          <p>You’re RSVPed!</p>
+          <img src={this.state.match.photoURL}/>
+          <button className="btn btn-block" onTouchEnd={this.showMatchesScreen}><span className="icon icon-search"></span> Invite</button>
+          <button className="btn btn-block" onTouchEnd={this.closeMatchOverlay}><span className="icon icon-person"></span> Keep Exploring</button>
+        </div>
+      );
+    }
+
     var gatheringList;
     if (this.state.items === void 0) {
       gatheringList = (
@@ -113,11 +131,13 @@ var GatheringsScreen = React.createClass({
         </div>
       );
     } else {
-      gatheringList = <GatheringList gatherings={this.state.items} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></GatheringList>
+      gatheringList = <GatheringList gatherings={this.state.items} buttonsToTop={this.state.buttonsToTop}></GatheringList>
     }
 
     return (
       <div>
+        {matchOverlay}
+
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>
           <h1 className="title">Gatherings</h1>

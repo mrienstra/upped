@@ -43,9 +43,10 @@ var UserList = React.createClass({
     };
 
     var el = this.getDOMNode();
+    var slider = el.parentNode.querySelector('[data-slider]')
     var btnNext = el.parentNode.querySelector('[data-slider-nav-next]');
     var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
-    this.sliderInit(window, document, btnNext, btnPrev);
+    this.sliderInit(window, document, slider, btnNext, btnPrev);
   },
   render: function() {
     var userNodes = this.props.users.map(function (user, index) {
