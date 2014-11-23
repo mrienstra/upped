@@ -1163,6 +1163,10 @@ header.bar-nav {
   padding: 0 1rem;
 }
 
+button[disabled] {
+  opacity: 0.5;
+}
+
 /* --------- */
 /* Keyframes */
 /* --------- */

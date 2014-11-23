@@ -27,6 +27,7 @@ var GatheringList = React.createClass({
 
       var targetGathering = that.props.gatherings[index];
       var choice = direction === 'left' ? 0 : 1;
+      that.props.handleChoice(targetGathering.id, choice);
 
       if (choice) { // in the future, the user could instead sometimes be waitlisted / etc., if the event is already full or if the organizer wants to hand-pick attendees
         pubSub.publish('gatherings.showMatchOverlay', {match: targetGathering});
@@ -131,7 +132,7 @@ var GatheringsScreen = React.createClass({
         </div>
       );
     } else {
-      gatheringList = <GatheringList gatherings={this.state.items} buttonsToTop={this.state.buttonsToTop}></GatheringList>
+      gatheringList = <GatheringList gatherings={this.state.items} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></GatheringList>
     }
 
     return (

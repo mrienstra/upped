@@ -83,7 +83,7 @@ var handleGatheringsChange = function(){
   var getGatherings = remote.parse.gatherings.getAll;
 
   app.screens.addScreen(
-    <GatheringsScreen remote={remote} getItems={getGatherings} handleChoice={handleRSVP} handleBack={handleBack} handleMatchesChange={handleMatchesChange}></GatheringsScreen>
+    <GatheringsScreen remote={remote} getItems={getGatherings} handleChoice={handleRSVP} handleBack={handleBack} handleMatchesChange={handleInviteChange}></GatheringsScreen>
   );
 };
 
@@ -111,6 +111,16 @@ var handleProfileEditChange = function(){
 
   app.screens.addScreen(
     <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleBack={handleBack}></ProfileEditScreen>
+  );
+};
+
+var handleInviteChange = function (gathering) {
+  console.log('handleInviteChange', arguments);
+
+  var InviteScreen = require('./screen/invite.jsx');
+
+  app.screens.addScreen(
+    <InviteScreen gathering={gathering} handleBack={handleBack}></InviteScreen>
   );
 };
 
