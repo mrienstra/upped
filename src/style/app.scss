@@ -1167,6 +1167,35 @@ button[disabled] {
   opacity: 0.5;
 }
 
+ul.categories {
+  background: #000;
+  color: #fff;
+  list-style: none;
+  padding: 2.75rem 0 0 0;
+  text-align: justify;
+  line-height: 3rem;
+  li {
+    display: inline;
+    span:first-child {
+      padding: 0.2rem 0.4rem;
+      &.selected {
+        &:before {
+         content:  "\2713";
+        }
+        color: #ccf;
+      }
+    }
+    &:nth-child(odd) span:first-child {
+      background: #333;
+      &.selected { background: #445; }
+    }
+    &:nth-child(even) span:first-child {
+      background: #222;
+      &.selected { background: #445; }
+    }
+  }
+}
+
 /* --------- */
 /* Keyframes */
 /* --------- */

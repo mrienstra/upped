@@ -2,6 +2,12 @@
 
 var React = require('react/addons');
 
+// Data
+var categories = require('../data/categories.js');
+
+// Libs
+var _ = require('lodash');
+
 var ProfileEditScreen = React.createClass({
   editableProperties: ['name', 'statement', 'location', 'skills'],
   getInitialState: function() {
@@ -11,6 +17,9 @@ var ProfileEditScreen = React.createClass({
       initialState[prop] = that.props.userData[prop];
     });
     return initialState;
+  },
+  updateUserDataSkills: function (userDataSkills) {
+    this.setState({skills: userDataSkills});
   },
   handleDone: function (e) {
     var that = this;
@@ -62,9 +71,10 @@ var ProfileEditScreen = React.createClass({
   },
   addSkill: function(){
     console.log('addSkill');
-    var editedSkills = this.state.skills.concat();
+    this.props.handleSelectSkillsChange(this.state.skills, this.updateUserDataSkills);
+    /*var editedSkills = this.state.skills.concat();
     editedSkills.push('');
-    this.setState({skills: editedSkills});
+    this.setState({skills: editedSkills});*/
   },
   render: function(){
     console.log('ProfileEditScreen.render', this);
@@ -73,6 +83,11 @@ var ProfileEditScreen = React.createClass({
     var img = this.props.userData.photoURL ? <img src={this.props.userData.photoURL}/> : '';
 
     var skills = this.state.skills.map(function (name, i) {
+      var category;
+      if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
+        name = category.name;
+      }
+
       var deleteButton;
       if (that.state.skills.length > 1) {
         deleteButton = <span className="delete icon icon-close" onTouchEnd={that.deleteSkill}/>;

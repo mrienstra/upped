@@ -2,6 +2,12 @@
 
 var React = require('react/addons');
 
+// Data
+var categories = require('../data/categories.js');
+
+// Libs
+var _ = require('lodash');
+
 // Mixins
 var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');
 
@@ -11,6 +17,10 @@ var UserListItem = React.createClass({
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
     var skills = this.props.user.skills.map(function (name, i) {
+      var category;
+      if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
+        name = category.name;
+      }
       return <li key={i}>{name}</li>;
     });
 

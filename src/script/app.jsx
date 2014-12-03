@@ -110,7 +110,17 @@ var handleProfileEditChange = function(){
   var ProfileEditScreen = require('./screen/profileEdit.jsx');
 
   app.screens.addScreen(
-    <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleBack={handleBack}></ProfileEditScreen>
+    <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleSelectSkillsChange={handleSelectCategoriesChange} handleBack={handleBack}></ProfileEditScreen>
+  );
+};
+
+var handleSelectCategoriesChange = function (userDataSkills, propogateChanges) {
+  console.log('handleSelectCategoriesChange', arguments);
+
+  var SelectCategoriesScreen = require('./screen/selectCategories.jsx');
+
+  app.screens.addScreen(
+    <SelectCategoriesScreen skills={userDataSkills} propogateChanges={propogateChanges} handleBack={handleBack}></SelectCategoriesScreen>
   );
 };
 
