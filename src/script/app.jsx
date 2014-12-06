@@ -87,7 +87,7 @@ var handleGatheringsChange = function(){
   );
 };
 
-var handleProfileChange = function (userData, fromMenu) {
+var handleProfileChange = function (userData, fromMenu, matched) {
   console.log('handleProfileChange', arguments, remote.user);
 
   var viewingSelf = false;
@@ -100,7 +100,7 @@ var handleProfileChange = function (userData, fromMenu) {
   var ProfileScreen = require('./screen/profile.jsx');
 
   app.screens.addScreen(
-    <ProfileScreen userData={userData} viewingSelf={viewingSelf} fromMenu={fromMenu} handleEdit={handleProfileEditChange} handleBack={handleBack}></ProfileScreen>
+    <ProfileScreen userData={userData} viewingSelf={viewingSelf} fromMenu={fromMenu} matched={matched} handleEdit={handleProfileEditChange} handleChatChange={handleChatChange} handleBack={handleBack}></ProfileScreen>
   );
 };
 
@@ -111,6 +111,16 @@ var handleProfileEditChange = function(){
 
   app.screens.addScreen(
     <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleSelectSkillsChange={handleSelectCategoriesChange} handleBack={handleBack}></ProfileEditScreen>
+  );
+};
+
+var handleChatChange = function (otherUserData) {
+  console.log('handleChatChange', arguments);
+
+  var ChatScreen = require('./screen/chat.jsx');
+
+  app.screens.addScreen(
+    <ChatScreen selfUserData={remote.user.userData} otherUserData={otherUserData} handleBack={handleBack}></ChatScreen>
   );
 };
 

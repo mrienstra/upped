@@ -1196,6 +1196,130 @@ ul.categories {
   }
 }
 
+ol.messages {
+  list-style: none;
+  padding: 0;
+  margin: 5rem 0 4rem 0;
+  li {
+    clear: both;
+    &.time {
+      font-size: 1rem;
+      text-align: center;
+      color: #999;
+      padding: 1rem 0 0.25rem 0;
+      &:first-child {
+        padding-top: 0;
+      }
+    }
+    &.you, &.they {
+      position: relative;
+      padding: 0.5rem 0.75rem;
+      background: #fff;
+      border-radius: 1rem;
+      max-width: 90%;
+      &:after {
+        content: '';
+        position: absolute;
+        border-style: solid;
+        border-color: transparent #fff;
+        display: block;
+        width: 0;
+        z-index: 1;
+        margin-top: -0.75rem;
+        top: 50%;
+      }
+    }
+    &.you {
+      margin: 0 1rem 0.25rem 0;
+      float: right;
+      &:after {
+        border-width: 0.75rem 0 0.75rem 0.75rem;
+        right: -0.6rem;
+      }
+    }
+    &.they {
+      margin: 0 0 0.25rem 1rem;
+      float: left;
+      &:after {
+        border-width: 0.75rem 0.75rem 0.75rem 0;
+        left: -0.6rem;
+      }
+    }
+  }
+}
+
+.bar-footer {
+  border: 0;
+  height: auto;
+  background-color: #222;
+  color: $primary-color;
+  .left, .right { 
+    position: absolute;
+    bottom: 0;
+    width: 5rem;
+    text-align: center;
+    a {
+      color: $primary-color;
+      margin-right: 0;
+      margin-left: 0;
+    }
+  }
+  .left {
+    left: 0;
+    a {
+      float: right;
+      line-height: 2rem;
+      padding-right: 1rem;
+      padding-left: 1rem;
+    }
+    .picturePreview {
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 53px;
+      height: 53px;
+      float: right;
+    }
+  }
+  .right {
+    right: 0;
+    a {
+      float: left;
+      line-height: 4rem;
+      text-transform: uppercase;
+    }
+  }
+  .center {
+    margin: 0 5rem;
+    &.textarea-container {
+      position: relative;
+      margin-top: .5rem;
+      margin-bottom: .4rem;
+      textarea, .textarea-size {
+        height: 100%;
+        min-height: 3rem;
+        padding: .4rem;
+        overflow: hidden;
+        border-radius: 0;
+        color: $text-copy-color;
+        @include border-radius(0);
+      }
+      textarea {
+        position: absolute;
+        left: 0;
+        resize: none;
+        white-space: normal;
+      }
+      .textarea-size {
+        visibility: hidden;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+    }
+  }
+}
+
 /* --------- */
 /* Keyframes */
 /* --------- */

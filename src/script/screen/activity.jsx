@@ -24,7 +24,7 @@ var MatchesList = React.createClass({
       );
     } else {
       matchesNodes = this.props.matches.map(function (match, index) {
-        return <UserListItemCompact key={index} user={match} handleProfileChange={props.handleProfileChange} />;
+        return <UserListItemCompact key={index} user={match} handleProfileChange={props.handleProfileChange} matched={true} />;
       });
     }
     return (

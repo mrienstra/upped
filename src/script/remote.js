@@ -816,9 +816,11 @@ var remote = {
         var userDataPointer = new (Parse.Object.extend('UserData'))({id: userDataId});
 
         var chooserQuery = new Parse.Query(Parse.Object.extend('Choice'));
+        chooserQuery.equalTo('choice', 1);
         chooserQuery.equalTo('chooser', userDataPointer);
 
         var chosenQuery = new Parse.Query(Parse.Object.extend('Choice'));
+        chosenQuery.equalTo('choice', 1);
         chosenQuery.equalTo('chosen', userDataPointer);
 
         var orQuery = Parse.Query.or(chooserQuery, chosenQuery);
