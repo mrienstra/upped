@@ -6,7 +6,6 @@ var React = require('react/addons');
 window.Firebase = require('firebase');
 window.ReactFireMixin = require('reactfire');
 
-
 // Modules
 var camera = require('../camera.js');
 var utils = require('../utils');
@@ -104,9 +103,22 @@ var ChatScreen = React.createClass({
     this.contentNode = this.getDOMNode().getElementsByClassName('content')[0];
 
     this.scrollToBottom();
+
+    // Keep `utils.momentFromNowIfTime` times fresh
+    var that = this;
+    window.setInterval(function(){
+      if (Date.now() - that.lastRender > 29 * 1000) {
+        that.forcedUpdate = true;
+        that.forceUpdate(function(){
+          that.forcedUpdate = false;
+        });
+      }
+    }, 30 * 1000);
   },
   componentDidUpdate: function(){
-    this.scrollToBottom();
+    if (!this.forcedUpdate) {
+      this.scrollToBottom();
+    }
   },
   scrollToBottom: function(){
     this.contentNode.scrollTop = this.contentNode.scrollHeight;
@@ -125,6 +137,8 @@ var ChatScreen = React.createClass({
   },
   render: function(){
     console.log('ChatScreen.render', this);
+
+    this.lastRender = Date.now();
 
     var that = this;
 
