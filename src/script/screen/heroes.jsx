@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react/addons');
 
 // Libs
@@ -50,7 +48,7 @@ var UserList = React.createClass({
   },
   render: function() {
     var userNodes = this.props.users.map(function (user, index) {
-      return <UserListItem key={index} user={user}></UserListItem>;
+      return <UserListItem key={index} index={index} user={user}></UserListItem>;
     });
 
     return (

@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react/addons');
 
 var ReactTransitionEvents = require('react/lib/ReactTransitionEvents');
@@ -169,7 +167,7 @@ var ReactScreens = function (container) {
     },
     render: function () {
       if (noisy) console.log('ReactScreens render', this, arguments);
-      React.renderComponent(
+      React.render(
         <Screens positions={state.positions} transition={state.transition} handleTransitionEnd={reactScreens.handleTransitionEnd}>
           {screens}
         </Screens>

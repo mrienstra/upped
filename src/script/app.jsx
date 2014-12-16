@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var remote = require('./remote.js');
 
 var reactDomRoot = document.querySelector('.container');
@@ -58,20 +56,6 @@ var handleHeroesChange = function(){
 
   app.screens.addScreen(
     <HeroesScreen remote={remote} getItems={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleGatheringsChange={handleGatheringsChange} handleLogOut={handleLogOut}></HeroesScreen>
-  );
-};
-
-var handleLocationChange = function (props) {
-  console.log('handleLocationChange', this, arguments);
-
-  var getPosts = remote.fb.getPosts.bind(remote.fb, props.fbId);
-
-  var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
-
-  var PostsScreen = require('./screen/posts.jsx');
-
-  app.screens.addScreen(
-    <PostsScreen photoURL={props.photoURL} name={props.name} checkin={props.checkin} distance={props.distance} address1={props.address1} address2={props.address2} promotion={props.promotion} posts={props.posts} fbId={props.fbId} handleBack={handleBack} user={remote.user} handleCheckInOut={handleCheckInOut} handleCreatePostOrComment={handleCreatePostOrComment} handleProfileChange={handleProfileChange} handlePostChange={handlePostChange} getPosts={getPosts} handleLike={handleLike} handleMatchesChange={handleMatchesChange} handleMyProfileChange={handleMyProfileChange} handleLogOut={handleLogOut}></PostsScreen>
   );
 };
 
@@ -144,26 +128,6 @@ var handleInviteChange = function (gathering) {
   );
 };
 
-var handlePostChange = function (props) {
-  console.log('handlePostChange', this, arguments);
-
-  var getPost = remote.fb.getPost.bind(remote.fb, props.id);
-
-  var post = {
-    from: props.from,
-    id: props.id,
-    likes: props.likes,
-    post: props.post,
-    time: props.time
-  };
-
-  var PostScreen = require('./screen/post.jsx');
-
-  app.screens.addScreen(
-    <PostScreen location={props.location} post={post} comments={props.comments} user={remote.user} refreshPosts={props.refresh} getPost={getPost} handleBack={handleBack} handleProfileChange={handleProfileChange} handleLike={handleLike} handleCreatePostOrComment={handleCreatePostOrComment}></PostScreen>
-  );
-};
-
 
 
 var handleChoice = function (chosenId, choice) {
@@ -176,37 +140,6 @@ var handleRSVP = function (chosenId, choice) {
   console.log('handleRSVP', this, arguments, remote.parse.userData);
 
   return remote.parse.gatherings.rsvp(chosenId, choice);
-};
-
-var handleCreatePostOrComment = function (isPostsOrComments, msg, pictureDataURI, successCallback, failureCallback) {
-  console.log('handleCreatePostOrComment', this, isPostsOrComments, msg, typeof pictureDataURI, successCallback, failureCallback, Date.now());
-
-  var postOrComment = {
-    subjectFbId: this.fbId || this.post.id,
-    message: msg,
-    pictureDataURI: pictureDataURI,
-    subjectName: this.name || this.post.from.name
-  };
-
-  remote.fb.createPostOrComment(
-    isPostsOrComments,
-    postOrComment,
-    successCallback,
-    failureCallback
-  );
-};
-
-var handleLike = function (id, postOrComment, name, userLikes, successCallback, failureCallback) {
-  console.log('handleLike', this, arguments);
-
-  remote.fb.like(
-    id,
-    postOrComment,
-    name,
-    userLikes,
-    successCallback,
-    failureCallback
-  );
 };
 
 
@@ -277,7 +210,7 @@ var showWelcomeScreen = function (e, afterLogOut) {
     }
   };
 
-  React.renderComponent(
+  React.render(
     <WelcomeScreen handleLoginButton={handleLoginButton}></WelcomeScreen>
     ,
     reactDomRoot

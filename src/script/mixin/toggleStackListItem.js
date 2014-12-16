@@ -13,18 +13,18 @@ var ToggleStackListItemMixin = {
     };
   },
   componentWillMount: function(){
-    pubSub.unsubscribe(this.state.pubSubDomain + '.toggleStackListItem.' + this.props.key, this.handleToggleDetails);
-    pubSub.subscribe(this.state.pubSubDomain + '.toggleStackListItem.' + this.props.key, this.handleToggleDetails);
+    pubSub.unsubscribe(this.state.pubSubDomain + '.toggleStackListItem.' + this.props.index, this.handleToggleDetails);
+    pubSub.subscribe(this.state.pubSubDomain + '.toggleStackListItem.' + this.props.index, this.handleToggleDetails);
   },
   handleToggleDetails: function(){
     if (!this.props.fromMenu) {
-      console.log('pubsub.subscribe toggleStackListItem.' + this.props.key + ' handleToggleDetails', this.state.expanded);
+      console.log('pubsub.subscribe toggleStackListItem.' + this.props.index + ' handleToggleDetails', this.state.expanded);
 
       pubSub.publish(this.state.pubSubDomain + '.toggleButtons', {expanded: !this.state.expanded});
 
       this.setState({expanded: !this.state.expanded});
     } else {
-      console.log('pubsub.subscribe toggleStackListItem.' + this.props.key + ' handleToggleDetails, ignoring because this.props.fromMenu', this.props.fromMenu);
+      console.log('pubsub.subscribe toggleStackListItem.' + this.props.index + ' handleToggleDetails, ignoring because this.props.fromMenu', this.props.fromMenu);
     }
   }
 };
