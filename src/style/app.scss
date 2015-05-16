@@ -626,7 +626,42 @@ header.bar-nav {
     color: $primary-color;
     border-color: $primary-color;
   }
-} 
+}
+
+.screens {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+
+  box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+  -webkit-transition: -webkit-transform .4s;
+     -moz-transition:    -moz-transform .4s;
+          transition:         transform .4s;
+  -webkit-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+
+  & > * {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+  }
+}
+
+.sideMenuVisible .screens {
+  -webkit-transform: translate3d(80%, 0, 0);
+  -ms-transform: translate3d(80%, 0, 0);
+  transform: translate3d(80%, 0, 0);
+}
+
+.sideMenuBlockerCloser {
+  display: none;
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 80%;
+  z-index: 999999;
+  background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==) transparent;
+}
+.sideMenuVisible .sideMenuBlockerCloser {
+  display: block;
+}
 
 /* === PAGES === */
 .splash {

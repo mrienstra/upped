@@ -7,7 +7,7 @@ var UserListItemCompact = React.createClass({
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
     var  handleProfileChange = function(){
-      that.props.handleProfileChange(that.props.user, false, that.props.matched);
+      that.props.handleProfileChange({state: {fromMenu: false, matched: that.props.matched, userData: that.props.user, viewingSelf: false}});
     };
 
     return (

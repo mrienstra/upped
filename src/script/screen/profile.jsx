@@ -3,39 +3,41 @@ var React = require('react/addons');
 // Components
 var UserListItem = require('../component/userListItem.jsx');
 
-// Modules
-var pubSub = require('../pubSub.js');
-
 var ProfileScreen = React.createClass({
   getInitialState: function(){
     return {
-      userData: this.props.userData
-    }
+      userData: this.props.viewingSelf ? this.props.selfUserData : this.props.userData
+    };
   },
-  componentDidMount: function(){
-    pubSub.unsubscribe('profileModified.self', this.updateUserData);
-    pubSub.subscribe('profileModified.self', this.updateUserData);
-  },
-  updateUserData: function (channel, data) {
-    console.log('ProfileScreen.updateUserData', data.userData);
-    this.setState({userData: data.userData});
+  componentWillReceiveProps: function(nextProps) {
+    var userData = nextProps.viewingSelf ? nextProps.selfUserData : nextProps.userData;
+    this.setState({userData: userData});
   },
   render: function(){
     console.log('ProfileScreen.render', this);
 
+    if (!this.state.userData) {
+      return (
+        <div className={this.props.visible ? '' : 'hide'}>
+          <span className="icon ion-loading-d"></span>
+        </div>
+      );
+    }
+
     var leftNavButton;
     if (this.props.fromMenu) {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>;
+      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.showSideMenu}><span className="icon icon-bars"></span></a>;
     } else {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>;
+      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>;
     }
 
     var rightNavButton;
     if (this.props.viewingSelf) {
       rightNavButton = <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.props.handleEdit}>Edit</a>;
     } else if (this.props.matched) {
-      rightNavButton = <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.props.handleChatChange.bind(null, this.state.userData)}><span className="icon ion-chatbubbles"></span> Chat</a>;
+      rightNavButton = <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.props.handleChatChange.bind(null, {state: {otherUserData: this.state.userData}})}><span className="icon ion-chatbubbles"></span> Chat</a>;
     }
+    console.log('rightNavButton', rightNavButton);
 
     var title;
     if (this.props.viewingSelf) {
@@ -47,7 +49,7 @@ var ProfileScreen = React.createClass({
     }
 
     return (
-      <div>
+      <div className={this.props.visible ? '' : 'hide'}>
         <header className="bar bar-nav">
           {leftNavButton}
           {rightNavButton}

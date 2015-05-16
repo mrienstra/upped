@@ -71,7 +71,8 @@ if ( 'querySelector' in document && 'addEventListener' in window ) {
       /* container.style.width = '';
       sliderSideMargin = container.getBoundingClientRect().left || 0;
       width = (container.getBoundingClientRect().width || container.offsetWidth) - sliderSideMargin * 2; */
-      width = container.getBoundingClientRect().width || container.offsetWidth;
+      //width = container.getBoundingClientRect().width || container.offsetWidth;
+      width = window.innerWidth;
 
       container.style.width = width + 'px';
       element.style.width = width + 'px';

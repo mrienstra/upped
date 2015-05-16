@@ -8,17 +8,12 @@ var pubSub = require('../pubSub.js');
 
 var ChooseScreenMixin = {
   getInitialState: function(){
-    var pubSubDomain;
-    if (this.props.handleGatheringsChange) pubSubDomain = 'heroes';
-    else pubSubDomain = 'gatherings';
-
     return {
       buttonsToTop: false,
       hideButtons: false,
       currentIndex: 0,
       items: void 0,
-      match: void 0,
-      pubSubDomain: pubSubDomain
+      match: void 0
     };
   },
   handlePromise: function (itemsPromise) {
@@ -37,19 +32,19 @@ var ChooseScreenMixin = {
 
     this.handlePromise(itemsPromise);
 
-    pubSub.unsubscribe(this.state.pubSubDomain + '.currentIndex', this.updateCurrentIndex);
-    pubSub.subscribe(this.state.pubSubDomain + '.currentIndex', this.updateCurrentIndex);
+    pubSub.unsubscribe(this.props.pubSubDomain + '.currentIndex', this.updateCurrentIndex);
+    pubSub.subscribe(this.props.pubSubDomain + '.currentIndex', this.updateCurrentIndex);
 
-    console.log(this.state.pubSubDomain + '.toggleButtons', this.toggleButtons);
-    pubSub.unsubscribe(this.state.pubSubDomain + '.toggleButtons', this.toggleButtons);
-    pubSub.subscribe(this.state.pubSubDomain + '.toggleButtons', this.toggleButtons);
+    console.log(this.props.pubSubDomain + '.toggleButtons', this.toggleButtons);
+    pubSub.unsubscribe(this.props.pubSubDomain + '.toggleButtons', this.toggleButtons);
+    pubSub.subscribe(this.props.pubSubDomain + '.toggleButtons', this.toggleButtons);
 
-    pubSub.unsubscribe(this.state.pubSubDomain + '.hideButtons', this.hideButtons);
-    pubSub.subscribe(this.state.pubSubDomain + '.hideButtons', this.hideButtons);
+    pubSub.unsubscribe(this.props.pubSubDomain + '.hideButtons', this.hideButtons);
+    pubSub.subscribe(this.props.pubSubDomain + '.hideButtons', this.hideButtons);
   },
   componentDidMount: function(){
-    pubSub.unsubscribe(this.state.pubSubDomain + '.showMatchOverlay', this.showMatchOverlay);
-    pubSub.subscribe(this.state.pubSubDomain + '.showMatchOverlay', this.showMatchOverlay);
+    pubSub.unsubscribe(this.props.pubSubDomain + '.showMatchOverlay', this.showMatchOverlay);
+    pubSub.subscribe(this.props.pubSubDomain + '.showMatchOverlay', this.showMatchOverlay);
   },
   hideButtons: function(){
     this.setState({hideButtons: true});
@@ -58,7 +53,7 @@ var ChooseScreenMixin = {
     this.setState({buttonsToTop: data.expanded});
   },
   handleToggleDetails: function(){
-    pubSub.publish(this.state.pubSubDomain + '.toggleStackListItem.' + this.state.currentIndex);
+    pubSub.publish(this.props.pubSubDomain + '.toggleStackListItem.' + this.state.currentIndex);
   },
   updateCurrentIndex: function (channel, data) {
     this.setState({currentIndex: data.index});

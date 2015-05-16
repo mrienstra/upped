@@ -11,7 +11,6 @@ var SwipeStackSliderMixin = require('../mixin/swipeStackSlider.js');
 var pubSub = require('../pubSub.js');
 
 // Components
-var SideMenu = require('../component/sideMenu.jsx');
 var UserListItem = require('../component/userListItem.jsx');
 
 var UserList = React.createClass({
@@ -74,6 +73,14 @@ var UserList = React.createClass({
 
 var HeroesScreen = React.createClass({
   mixins: [ChooseScreenMixin],
+  propTypes: {
+    remote: React.PropTypes.object.isRequired,
+    getItems: React.PropTypes.func.isRequired, // for mixin
+    handleChoice: React.PropTypes.func.isRequired, // passed into `UserList`
+    handleMatchesChange: React.PropTypes.func.isRequired, // for mixin
+    showSideMenu: React.PropTypes.func.isRequired,
+    visible: React.PropTypes.bool.isRequired
+  },
   handlePromiseThen: function (users) {
     console.log('HeroesScreen usersPromise success handlePromiseThen', users, this.props.remote.choices, this.pendingUsers);
 
@@ -132,29 +139,24 @@ var HeroesScreen = React.createClass({
     }
 
     return (
-      <div className="heroes">
-        <div className="side-menu-siblings-wrapper">
-          {matchOverlay}
+      <div className={'heroes' + (this.props.visible ? '' : ' hide')}>
+        {matchOverlay}
 
-          <header className="bar bar-nav">
-            <a className="icon icon-bars pull-left" href="#sideMenu"></a>
-          </header>
+        <header className="bar bar-nav">
+          <a className="icon icon-bars pull-left" onTouchEnd={this.props.showSideMenu}></a>
+        </header>
 
-          <div className="loadingOverlay">
-            <p><span className="icon ion-ios7-reloading"></span></p>
-          </div>
-
-          {userList}
-
-          <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
-            <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
-            <button onTouchEnd={this.handleToggleDetails} className="icon icon-button button-info"></button>
-            <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
-          </div>
+        <div className="loadingOverlay">
+          <p><span className="icon ion-ios7-reloading"></span></p>
         </div>
 
-        <SideMenu id="sideMenu" handleMatchesChange={this.props.handleMatchesChange} handleMyProfileChange={this.props.handleMyProfileChange} handleGatheringsChange={this.props.handleGatheringsChange} handleLogOut={this.props.handleLogOut} />
+        {userList}
 
+        <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
+          <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
+          <button onTouchEnd={this.handleToggleDetails} className="icon icon-button button-info"></button>
+          <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
+        </div>
       </div>
     );
   }

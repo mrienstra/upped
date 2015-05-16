@@ -5,40 +5,51 @@ var pubSub = require('../pubSub.js');
 
 var SideMenu = React.createClass({
   propTypes: {
-    handleMatchesChange: React.PropTypes.func.isRequired,
-    handleBack: React.PropTypes.func, // Not required
-    handleGatheringsChange: React.PropTypes.func.isRequired,
-    handleMyProfileChange: React.PropTypes.func.isRequired,
-    handleLogOut: React.PropTypes.func.isRequired,
-    id: React.PropTypes.string.isRequired
+    changeScreen: React.PropTypes.func.isRequired
   },
   render: function(){
+    var menuOptions = [
+      {
+        screen: 'myProfileScreen',
+        text: 'Profile',
+        icon: 'ion-person'
+      },
+      {
+        screen: 'gatheringsScreen',
+        text: 'Gatherings',
+        icon: 'ion-search'
+      },
+      {
+        screen: 'heroesScreen',
+        text: 'Heroes',
+        icon: 'ion-search'
+      },
+      {
+        screen: 'matchesScreen',
+        text: 'Matches',
+        icon: 'icon-star-filled'
+      }
+    ];
+
+    var that = this;
+
+    var LIs = menuOptions.map(function (option, i) {
+      return (
+        <li key={i} className="table-view-cell">
+          <a onTouchEnd={that.props.changeScreen.bind(null, option.screen, {state: {fromMenu: true}})}>
+            <h4><span className={'icon ' + option.icon}></span>{option.text}</h4>
+          </a>
+        </li>
+      );
+    });
+
     return (
-      <div id={this.props.id} className="side-menu">
+      <div id="sideMenu" className="side-menu">
         <div className="content">
           <ul className="table-view">
+            {LIs}
             <li className="table-view-cell">
-              <a onTouchEnd={this.props.handleMyProfileChange}>
-                <h4><span className="icon ion-person"></span>Profile</h4>
-              </a>
-            </li>
-            <li className="table-view-cell">
-              <a onTouchEnd={this.props.handleGatheringsChange}>
-                <h4><span className="icon ion-search"></span>Gatherings</h4>
-              </a>
-            </li>
-            <li className="table-view-cell">
-              <a href={'#' + this.props.id} onTouchEnd={this.props.handleBack}>
-                <h4><span className="icon ion-search"></span>Heroes</h4>
-              </a>
-            </li>
-            <li className="table-view-cell">
-              <a className="activity" onTouchEnd={this.props.handleMatchesChange.bind(null, true)}>
-                <h4><span className="icon icon-star-filled"></span>Matches</h4>
-              </a>
-            </li>
-            <li className="table-view-cell">
-              <a onTouchEnd={this.props.handleLogOut}>
+              <a onTouchEnd={function(){ alert('todo!'); }}>
                 <h4><span className="icon ion-log-out"></span>Log Out</h4>
               </a>
             </li>

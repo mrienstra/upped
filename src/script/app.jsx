@@ -2,14 +2,168 @@ var remote = require('./remote.js');
 
 var reactDomRoot = document.querySelector('.container');
 
+// Libs
+var _ = require('lodash');
+
 var app = {
   init: function () {
-    var ReactScreens = require('../lib/react-screens/react-screens.jsx');
+    var SideMenu = require('./component/sideMenu.jsx');
 
-    this.screens = new ReactScreens(reactDomRoot);
+    var HeroesScreen = require('./screen/heroes.jsx');
+
+    var ProfileScreen = require('./screen/profile.jsx');
+
+      var ProfileEditScreen = require('./screen/profileEdit.jsx');
+
+    var GatheringsScreen = require('./screen/gatherings.jsx');
+
+      var InviteScreen = require('./screen/invite.jsx');
+
+    var MatchesScreen = require('./screen/activity.jsx');
+
+      var ChatScreen = require('./screen/chat.jsx');
+
+    var App = React.createClass({
+      getInitialState: function(){
+        return {
+          screens: {
+            stack: ['heroesScreen'],
+            i: 0,
+          },
+          sideMenuVisible: false,
+          heroesScreen: {
+            visible: true
+          },
+          profileScreen: {
+            visible: false,
+            userData: void 0,
+            viewingSelf: void 0,
+            fromMenu: void 0,
+            matched: void 0
+          },
+          profileEditScreen: {
+            visible: false
+          },
+          gatheringsScreen: {
+            visible: false
+          },
+          inviteScreen: {
+            visible: false,
+            gathering: void 0
+          },
+          matchesScreen: {
+            visible: false,
+            fromMenu: void 0,
+          },
+          chatScreen: {
+            visible: false,
+            otherUserData: void 0
+          }
+        }
+      },
+      changeScreen: function (newScreen, options) {
+        console.log('App.changeScreen', this, arguments);
+
+        var back = !!(options && options.back);
+
+        if (back) {
+          newScreen = this.state.screens.stack[this.state.screens.i - 1];
+        } else if (newScreen === 'myProfileScreen') {
+          newScreen = 'profileScreen';
+          options = {state: {fromMenu: true, matched: false, userData: void 0, viewingSelf: true}};
+        }
+
+        var modifiedState = {};
+        var previousScreen = this.state.screens.stack[this.state.screens.i];
+
+        modifiedState[previousScreen] = this.state[previousScreen];
+        modifiedState[previousScreen].visible = false;
+
+        modifiedState[newScreen] = this.state[newScreen];
+        modifiedState[newScreen].visible = true;
+        if (options && options.state)
+          _.merge(modifiedState[newScreen], options.state);
+
+        if (back) {
+          // Simple "back"
+          modifiedState.screens = {
+            stack: this.state.screens.stack,
+            i: this.state.screens.i - 1
+          };
+        } else if (options && options.state && options.state.fromMenu) {
+          // Clear stack
+          modifiedState.screens = {
+            stack: [newScreen],
+            i: 0
+          };
+        } else if (this.state.screens.stack.length > this.state.screens.i + 1) {
+          // Discard "forward" stack
+          modifiedState.screens = {
+            stack: this.state.screens.stack.concat().splice(0, this.state.screens.i + 1).concat(newScreen),
+            i: this.state.screens.i + 1
+          };
+        } else {
+          // Simple "forward"
+          modifiedState.screens = {
+            stack: this.state.screens.stack.concat(newScreen),
+            i: this.state.screens.i + 1
+          };
+        }
+
+        if (this.state.sideMenuVisible)
+          modifiedState.sideMenuVisible = false;
+
+        console.log('App.changeScreen modifiedState:', modifiedState);
+        this.setState(modifiedState);
+      },
+      backToPreviousScreen: function(){
+        console.log('backToPreviousScreen');
+        this.changeScreen(void 0, {back: true});
+      },
+      showSideMenu: function(){
+        this.setState({sideMenuVisible: true});
+      },
+      hideSideMenu: function(){
+        this.setState({sideMenuVisible: false});
+      },
+      render: function(){
+        /*window.t = this;
+        window.remote = remote;*/
+
+        console.log('App.render', this, this.state.screens);
+
+        return (
+          <div className={this.state.sideMenuVisible ? ' sideMenuVisible' : ''}>
+            <SideMenu changeScreen={this.changeScreen}/>
+
+            <div className="screens">
+              <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.parse.userData.getAll.bind(remote.parse.userData)} handleChoice={handleChoice} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
+
+              <ProfileScreen handleEdit={this.changeScreen.bind(null, 'profileEditScreen')} handleChatChange={this.changeScreen.bind(null, 'chatScreen')} selfUserData={remote.user.userData} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
+
+                <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleSelectSkillsChange={handleSelectCategoriesChange} handleBack={this.backToPreviousScreen} {...this.state.profileEditScreen}/>
+
+              <GatheringsScreen pubSubDomain="gatherings" remote={remote} getItems={remote.parse.gatherings.getAll} handleChoice={handleRSVP} handleMatchesChange={this.changeScreen.bind(null, 'inviteScreen')} showSideMenu={this.showSideMenu} {...this.state.gatheringsScreen}/>
+
+              <InviteScreen handleBack={this.backToPreviousScreen} {...this.state.inviteScreen}/>
+
+              <MatchesScreen getMatches={remote.parse.choice.getMatchesByUserDataId.bind(remote.parse.choice, remote.user.userData.id)} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} udid={remote.user.matchesScreen} {...this.state.matchesScreen}/>
+
+                <ChatScreen selfUserData={remote.user.userData} handleBack={this.backToPreviousScreen} {...this.state.chatScreen}/>
+            </div>
+
+            <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>
+          </div>
+        );
+      }
+    });
 
     if (remote.user.parse.get('hasBegun')) {
-      handleHeroesChange();
+      React.render(
+        <App/>
+        ,
+        reactDomRoot
+      );
     } else {
       handleWelcome2Change();
     }

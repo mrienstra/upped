@@ -9,12 +9,25 @@ var _ = require('lodash');
 var ProfileEditScreen = React.createClass({
   editableProperties: ['name', 'statement', 'location', 'skills'],
   getInitialState: function() {
+    if (this.props.userData) {
+      return this.transferEditablePropsToStateObj(this.props.userData);
+    } else {
+      return {};
+    }
+  },
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.userData) {
+      this.setState(this.transferEditablePropsToStateObj(nextProps.userData));
+    }
+  },
+  transferEditablePropsToStateObj: function (props) {
     var that = this;
-    var initialState = {};
+    var stateObj = {};
     this.editableProperties.forEach(function (prop) {
-      initialState[prop] = that.props.userData[prop];
+      stateObj[prop] = props[prop];
     });
-    return initialState;
+
+    return stateObj;
   },
   updateUserDataSkills: function (userDataSkills) {
     this.setState({skills: userDataSkills});
@@ -78,28 +91,40 @@ var ProfileEditScreen = React.createClass({
     console.log('ProfileEditScreen.render', this);
     var that = this;
 
-    var img = this.props.userData.photoURL ? <img src={this.props.userData.photoURL}/> : '';
-
-    var skills = this.state.skills.map(function (name, i) {
-      var category;
-      if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
-        name = category.name;
-      }
-
-      var deleteButton;
-      if (that.state.skills.length > 1) {
-        deleteButton = <span className="delete icon icon-close" onTouchEnd={that.deleteSkill}/>;
-      }
-      return <li key={i}><input type="text" value={name} onChange={that.onChange}/>{deleteButton}</li>;
-    });
-    if (skills.length < 5) {
-      skills.push(
-        <li key={skills.length} onTouchEnd={that.addSkill}><span className="icon icon-plus"></span> Add</li>
+    if (!this.props.userData) {
+      return (
+        <div className={this.props.visible ? '' : 'hide'}>
+          <span className="icon ion-loading-d"></span>
+        </div>
       );
     }
 
+    var img = this.props.userData.photoURL ? <img src={this.props.userData.photoURL}/> : '';
+
+    var skills;
+    if (this.state.skills && this.state.skills.length) {
+      skills = this.state.skills.map(function (name, i) {
+        var category;
+        if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
+          name = category.name;
+        }
+
+        var deleteButton;
+        if (that.state.skills.length > 1) {
+          deleteButton = <span className="delete icon icon-close" onTouchEnd={that.deleteSkill}/>;
+        }
+        return <li key={i}><input type="text" value={name} onChange={that.onChange}/>{deleteButton}</li>;
+      });
+
+      if (skills.length < 5) {
+        skills.push(
+          <li key={skills.length} onTouchEnd={that.addSkill}><span className="icon icon-plus"></span> Add</li>
+        );
+      }
+    }
+
     return (
-      <div>
+      <div className={this.props.visible ? '' : 'hide'}>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleDone}>Done</a>
           <h1 className="title">Edit Profile</h1>

@@ -92,10 +92,20 @@ var ChatScreen = React.createClass({
       messages: []
     };
   },
-  componentWillMount: function() {
-    var id = [this.props.selfUserData.id, this.props.otherUserData.id].sort().join('-');
-    this.messagesRef = new Firebase('https://fiery-heat-8100.firebaseio.com/' + id);
-    this.bindAsArray(this.messagesRef, 'messages');
+  initFirebase: function (props) {
+    if (props.otherUserData) {
+      var id = [props.selfUserData.id, props.otherUserData.id].sort().join('-');
+      this.messagesRef = new Firebase('https://fiery-heat-8100.firebaseio.com/' + id);
+      this.bindAsArray(this.messagesRef, 'messages');
+    }
+  },
+  componentWillMount: function(){
+    console.log('ChatScreen.componentWillMount', this, arguments);
+    this.initFirebase(this.props);
+  },
+  componentWillReceiveProps: function (nextProps) {
+    console.log('ChatScreen.componentWillReceiveProps', this, arguments);
+    this.initFirebase(nextProps);
   },
   componentDidMount: function(){
     this.contentNode = this.getDOMNode().getElementsByClassName('content')[0];
@@ -136,6 +146,21 @@ var ChatScreen = React.createClass({
   render: function(){
     console.log('ChatScreen.render', this);
 
+    if (!this.props.otherUserData) {
+      return (
+        <div className={this.props.visible ? '' : 'hide'}>
+          <header className="bar bar-nav">
+            <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>
+            <h1 className="title">Loading...</h1>
+          </header>
+
+          <div className="content">
+            <span className="icon ion-loading-d"></span>
+          </div>
+        </div>
+      );
+    }
+
     this.lastRender = Date.now();
 
     var that = this;
@@ -158,9 +183,9 @@ var ChatScreen = React.createClass({
     });
 
     return (
-      <div>
+      <div className={this.props.visible ? '' : 'hide'}>
         <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>
+          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>
           <h1 className="title">Chat with {this.props.otherUserData.name}</h1>
         </header>
 

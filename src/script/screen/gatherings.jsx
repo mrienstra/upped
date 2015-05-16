@@ -72,6 +72,14 @@ var GatheringList = React.createClass({
 
 var GatheringsScreen = React.createClass({
   mixins: [ChooseScreenMixin],
+  propTypes: {
+    remote: React.PropTypes.object.isRequired,
+    getItems: React.PropTypes.func.isRequired, // for mixin
+    handleChoice: React.PropTypes.func.isRequired, // passed into `UserList`
+    handleMatchesChange: React.PropTypes.func.isRequired, // for mixin
+    showSideMenu: React.PropTypes.func.isRequired,
+    visible: React.PropTypes.bool.isRequired
+  },
   handlePromiseThen: function (gatherings) {
     console.log('GatheringsScreen gatheringsPromise success handlePromiseThen', gatherings, this.props.remote.user.userData.gatherings, this.pendingGatherings);
 
@@ -134,11 +142,11 @@ var GatheringsScreen = React.createClass({
     }
 
     return (
-      <div>
+      <div className={this.props.visible ? '' : 'hide'}>
         {matchOverlay}
 
         <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>
+          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.showSideMenu}><span className="icon icon-bars"></span></a>
           <h1 className="title">Gatherings</h1>
         </header>
 

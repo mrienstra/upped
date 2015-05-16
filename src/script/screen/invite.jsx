@@ -47,9 +47,9 @@ var InviteScreen = React.createClass({
     };
 
     return (
-      <div>
+      <div className={this.props.visible ? '' : 'hide'}>
         <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Done</a>
+          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Done</a>
           <h1 className="title">Invite</h1>
         </header>
 

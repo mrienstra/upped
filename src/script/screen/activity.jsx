@@ -98,13 +98,13 @@ var MatchesScreen = React.createClass({
 
     var leftNavButton;
     if (this.props.fromMenu) {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-bars"></span></a>;
+      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.showSideMenu}><span className="icon icon-bars"></span></a>;
     } else {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack} data-transition="slide-out"><span className="icon icon-left-nav"></span> Back</a>;
+      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>;
     }
 
     return (
-      <div>
+      <div className={this.props.visible ? '' : 'hide'}>
         <header className="bar bar-nav solid">
           {leftNavButton}
           <h1 className="title">Matches</h1>

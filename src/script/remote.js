@@ -442,29 +442,36 @@ var remote = {
         chosenQuery.equalTo('choice', 1);
         chosenQuery.equalTo('chosen', userDataPointer);
 
+        var onSuccess = function (response) {
+          console.log('remote.parse.choice.getMatchesByUserDataId success', this, arguments);
+
+          if (!remote.allUserData) {
+            when(remote.parse.userData.getAllPromise, onSuccess.bind(null, response));
+            return;
+          }
+
+          var chosenOnes = [];
+          var chosenBy = [];
+          response.forEach(function (aChoice) {
+            var chooserId = aChoice.get('chooser').id;
+            var chosenId = aChoice.get('chosen').id;
+            if (chooserId === userDataId) {
+              chosenOnes.push(chosenId);
+            } else {
+              chosenBy.push(chooserId);
+            }
+          });
+          var matches = _.intersection(chosenOnes, chosenBy);
+          matches = matches.map(function (match) {
+            return _.find(remote.allUserData, {'id': match});
+          });
+
+          deferred.resolve(matches);
+        };
+
         var orQuery = Parse.Query.or(chooserQuery, chosenQuery);
         orQuery.find({
-          success: function (response) {
-            console.log('remote.parse.choice.getMatchesByUserDataId success', this, arguments);
-
-            var chosenOnes = [];
-            var chosenBy = [];
-            response.forEach(function (aChoice) {
-              var chooserId = aChoice.get('chooser').id;
-              var chosenId = aChoice.get('chosen').id;
-              if (chooserId === userDataId) {
-                chosenOnes.push(chosenId);
-              } else {
-                chosenBy.push(chooserId);
-              }
-            });
-            var matches = _.intersection(chosenOnes, chosenBy);
-            matches = matches.map(function (match) {
-              return _.find(remote.allUserData, {'id': match});
-            });
-
-            deferred.resolve(matches);
-          },
+          success: onSuccess,
           error: deferred.reject
         });
 
@@ -472,12 +479,6 @@ var remote = {
       },
       isMatch: function (chosenUdid) {
         return _.contains(remote.choices.chosenBy, chosenUdid);
-      },
-      getMatches: function(){
-        var matches = _.intersection(remote.choices.chosenOnes, remote.choices.chosenBy);
-        return matches.map(function (match) {
-          return _.find(remote.allUserData, {'id': match});
-        });
       }
     },
     getUser: function(){
@@ -635,7 +636,12 @@ var remote = {
       getAll: function(){
         console.log('remote.parse.userData.getAll', this, arguments, remote.parse.userData.id);
 
+        if (this.getAllPromise && this.getAllPromise.inspect().state === 'pending') {
+          return this.getAllPromise;
+        }
+
         var deferred = when.defer();
+        this.getAllPromise = deferred.promise;
 
         var query = new Parse.Query(Parse.Object.extend('UserData'));
         //query.notEqualTo('id', remote.user.userData.id);
