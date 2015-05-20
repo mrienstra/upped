@@ -5,6 +5,7 @@ var _ = require('lodash');
 
 // Mixins
 var ChooseScreenMixin = require('../mixin/chooseScreen.js');
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 var SwipeStackSliderMixin = require('../mixin/swipeStackSlider.js');
 
 // Modules
@@ -71,7 +72,7 @@ var GatheringList = React.createClass({
 });
 
 var GatheringsScreen = React.createClass({
-  mixins: [ChooseScreenMixin],
+  mixins: [ChooseScreenMixin, ScreenTransitionMixin],
   propTypes: {
     remote: React.PropTypes.object.isRequired,
     getItems: React.PropTypes.func.isRequired, // for mixin
@@ -142,7 +143,7 @@ var GatheringsScreen = React.createClass({
     }
 
     return (
-      <div className={this.props.visible ? '' : 'hide'}>
+      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
         {matchOverlay}
 
         <header className="bar bar-nav">

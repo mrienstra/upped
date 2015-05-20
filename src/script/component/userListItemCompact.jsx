@@ -12,7 +12,7 @@ var UserListItemCompact = React.createClass({
 
     return (
       <li className="table-view-cell">
-        <a className="navigate-right" onTouchEnd={handleProfileChange}>
+        <a onTouchEnd={handleProfileChange}>
           {img}
           <h4>{this.props.user.name}</h4>
           <p>{this.props.user.skills[0]}</p>

@@ -9,7 +9,8 @@
  * ============================================================= */
 /*  When HTML5 JS features supported, hide slider */
 .js-slider .slider {
-  position: relative;
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
   overflow: hidden;
   visibility: hidden;
   /* required for windows phone: */
@@ -21,6 +22,8 @@
 .js-slider .slides {
   overflow: hidden;
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 /*  Add a margin-bottom to each slide */
@@ -31,9 +34,8 @@
 /*  When HTML5 JS features supported, set width to 100%
  *  and float slides to the left. */
 .js-slider .slides > div {
-  width: 100%;
-  float: left;
-  position: relative;
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
 }
 
 /*  Make slider images and videos fluid */

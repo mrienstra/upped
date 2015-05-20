@@ -14,6 +14,9 @@ var settings = {
       initial: ['public_profile']
     }
   },
+  firebase: {
+    name: 'glaring-torch-1823'
+  },
   parse: {
     appId: '1xx0YMHyA3nifUNazccdpUm78oOpFXzB3TjM1I7N',
     jsKey: 'WDnOhDjlcrytzGKTVvhconbiG20RmBANvSI0yXq4'
@@ -340,6 +343,20 @@ var remote = {
 
     Parse.User.logOut();
     remote.resetUser();
+  },
+  firebase: {
+    balance: {
+      getBalancesByUserDataId: function (userDataId) {
+        console.log('remote.firebase.balance.getBalancesByUserDataId', this, arguments);
+
+        var ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances');
+
+        return {
+          'providerRef': ref.orderByChild('provider').equalTo(userDataId),
+          'receiverRef': ref.orderByChild('receiver').equalTo(userDataId),
+        };
+      }
+    }
   },
   parse: {
     choice: {

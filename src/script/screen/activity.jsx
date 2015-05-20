@@ -1,11 +1,14 @@
 var React = require('react/addons');
 
+// Components
+var UserListItemCompact = require('../component/userListItemCompact.jsx');
+
+// Mixins
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
+
 // Modules
 var pubSub = require('../pubSub.js');
 var utils = require('../utils.js');
-
-// Components
-var UserListItemCompact = require('../component/userListItemCompact.jsx');
 
 var MatchesList = React.createClass({
   render: function(){
@@ -34,6 +37,7 @@ var MatchesList = React.createClass({
 });
 
 var MatchesScreen = React.createClass({
+  mixins: [ScreenTransitionMixin],
   getInitialState: function(){
     return {
       status: 'loading',
@@ -72,13 +76,6 @@ var MatchesScreen = React.createClass({
       }
     );
   },
-  refresh: function(){
-    console.log('MatchesScreen.refresh()', this, arguments);
-
-    var matchesPromise = this.props.getMatches();
-
-    this.handlePromise(matchesPromise, {quietStart: true});
-  },
   componentWillMount: function(){
     console.log('MatchesScreen.componentWillMount()', this, arguments);
 
@@ -91,7 +88,7 @@ var MatchesScreen = React.createClass({
 
     var matchesPromise = nextProps.getMatches();
 
-    this.handlePromise(matchesPromise);
+    this.handlePromise(matchesPromise, {quietStart: true});
   },
   render: function(){
     console.log('MatchesScreen.render()', this, arguments);
@@ -104,7 +101,7 @@ var MatchesScreen = React.createClass({
     }
 
     return (
-      <div className={this.props.visible ? '' : 'hide'}>
+      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
         <header className="bar bar-nav solid">
           {leftNavButton}
           <h1 className="title">Matches</h1>

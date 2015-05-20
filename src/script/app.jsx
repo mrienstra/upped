@@ -23,6 +23,8 @@ var app = {
 
       var ChatScreen = require('./screen/chat.jsx');
 
+    var BalancesScreen = require('./screen/balances.jsx');
+
     var App = React.createClass({
       getInitialState: function(){
         return {
@@ -58,13 +60,25 @@ var app = {
           chatScreen: {
             visible: false,
             otherUserData: void 0
-          }
+          },
+          balancesScreen: {
+            visible: false,
+            fromMenu: void 0,
+          },
         }
       },
       changeScreen: function (newScreen, options) {
         console.log('App.changeScreen', this, arguments);
 
         var back = !!(options && options.back);
+
+        var previousScreen = this.state.screens.stack[this.state.screens.i];
+
+        var modifiedState = {};
+
+        var transition = false;
+
+        var that = this;
 
         if (back) {
           newScreen = this.state.screens.stack[this.state.screens.i - 1];
@@ -73,11 +87,18 @@ var app = {
           options = {state: {fromMenu: true, matched: false, userData: void 0, viewingSelf: true}};
         }
 
-        var modifiedState = {};
-        var previousScreen = this.state.screens.stack[this.state.screens.i];
+        if (newScreen === previousScreen) {
+          // No need to change screens...
+          if (this.state.sideMenuVisible) {
+            // ... but hide the sideMenu if it's visible
+            modifiedState.sideMenuVisible = false;
+            this.setState(modifiedState);
+          }
+
+          return;
+        }
 
         modifiedState[previousScreen] = this.state[previousScreen];
-        modifiedState[previousScreen].visible = false;
 
         modifiedState[newScreen] = this.state[newScreen];
         modifiedState[newScreen].visible = true;
@@ -90,24 +111,38 @@ var app = {
             stack: this.state.screens.stack,
             i: this.state.screens.i - 1
           };
+
+          modifiedState[previousScreen].transition = {type: 'depart', direction: 'right'};
+          modifiedState[newScreen].transition = {type: 'arrive', direction: 'left'};
+          transition = true;
         } else if (options && options.state && options.state.fromMenu) {
           // Clear stack
           modifiedState.screens = {
             stack: [newScreen],
             i: 0
           };
+
+          modifiedState[previousScreen].visible = false;
         } else if (this.state.screens.stack.length > this.state.screens.i + 1) {
           // Discard "forward" stack
           modifiedState.screens = {
             stack: this.state.screens.stack.concat().splice(0, this.state.screens.i + 1).concat(newScreen),
             i: this.state.screens.i + 1
           };
+
+          modifiedState[previousScreen].transition = {type: 'depart', direction: 'left'};
+          modifiedState[newScreen].transition = {type: 'arrive', direction: 'right'};
+          transition = true;
         } else {
           // Simple "forward"
           modifiedState.screens = {
             stack: this.state.screens.stack.concat(newScreen),
             i: this.state.screens.i + 1
           };
+
+          modifiedState[previousScreen].transition = {type: 'depart', direction: 'left'};
+          modifiedState[newScreen].transition = {type: 'arrive', direction: 'right'};
+          transition = true;
         }
 
         if (this.state.sideMenuVisible)
@@ -115,6 +150,21 @@ var app = {
 
         console.log('App.changeScreen modifiedState:', modifiedState);
         this.setState(modifiedState);
+
+        if (transition) {
+          _.defer(function(){
+            modifiedState[previousScreen].transition.inProgress = true;
+            modifiedState[newScreen].transition.inProgress = true;
+            that.setState(modifiedState);
+          });
+
+          _.delay(function(){
+            modifiedState[previousScreen].transition = void 0;
+            modifiedState[previousScreen].visible = false;
+            modifiedState[newScreen].transition = void 0;
+            that.setState(modifiedState);
+          }, 250); // Important: keep this delay in sync with `.rs-transition` duration
+        }
       },
       backToPreviousScreen: function(){
         console.log('backToPreviousScreen');
@@ -123,7 +173,9 @@ var app = {
       showSideMenu: function(){
         this.setState({sideMenuVisible: true});
       },
-      hideSideMenu: function(){
+      hideSideMenu: function (e) {
+        e.preventDefault();
+
         this.setState({sideMenuVisible: false});
       },
       render: function(){
@@ -150,6 +202,8 @@ var app = {
               <MatchesScreen getMatches={remote.parse.choice.getMatchesByUserDataId.bind(remote.parse.choice, remote.user.userData.id)} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} udid={remote.user.matchesScreen} {...this.state.matchesScreen}/>
 
                 <ChatScreen selfUserData={remote.user.userData} handleBack={this.backToPreviousScreen} {...this.state.chatScreen}/>
+
+              <BalancesScreen getBalances={remote.firebase.balance.getBalancesByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} allUserData={remote.allUserData} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} udid={remote.user.userData.id} {...this.state.balancesScreen}/>
             </div>
 
             <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>

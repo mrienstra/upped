@@ -28,6 +28,11 @@ var SideMenu = React.createClass({
         screen: 'matchesScreen',
         text: 'Matches',
         icon: 'icon-star-filled'
+      },
+      {
+        screen: 'balancesScreen',
+        text: 'Balances',
+        icon: 'ion-shuffle'
       }
     ];
 

@@ -3,7 +3,11 @@ var React = require('react/addons');
 // Components
 var UserListItem = require('../component/userListItem.jsx');
 
+// Mixins
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
+
 var ProfileScreen = React.createClass({
+  mixins: [ScreenTransitionMixin],
   getInitialState: function(){
     return {
       userData: this.props.viewingSelf ? this.props.selfUserData : this.props.userData
@@ -18,7 +22,7 @@ var ProfileScreen = React.createClass({
 
     if (!this.state.userData) {
       return (
-        <div className={this.props.visible ? '' : 'hide'}>
+        <div className={React.addons.classSet.apply(null, this.state.classNames)}>
           <span className="icon ion-loading-d"></span>
         </div>
       );
@@ -49,7 +53,7 @@ var ProfileScreen = React.createClass({
     }
 
     return (
-      <div className={this.props.visible ? '' : 'hide'}>
+      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
         <header className="bar bar-nav">
           {leftNavButton}
           {rightNavButton}

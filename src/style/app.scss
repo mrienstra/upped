@@ -19,7 +19,6 @@ html {
 body {
   padding: 0;
   margin: 0;
-  position: static; /* Fixes a weird bug in which a huge gap appears above the BODY (after trying to click the "POST" button?) */
   background: $page-bg-color;
   font-family: $helvetica;
   color: $text-copy-color;
@@ -135,6 +134,10 @@ header.bar-nav {
     padding: 2px 5px 3px;
     font-weight: normal;
   }
+  .btn-nav.pull-left {
+    margin-left: -10px;
+    padding: 0 15px 0 10px;
+  }
   .btn.pull-right {
     margin-right: 0;
   }
@@ -198,7 +201,7 @@ header.bar-nav {
     }
   }
   .post-form {
-    .left, .right { 
+    .left, .right {
       position: absolute;
       bottom: 1.3rem;
       width: 5rem;
@@ -427,6 +430,9 @@ header.bar-nav {
   .table-view-divider+.table-view-cell {
     border-top: 0;
   }
+  .table-view-divider:first-child, .table-view-cell:first-child {
+    margin-top: 2px;
+  }
 }
 .table-view .table-view-divider {
   border-bottom: 1px solid $table-border-color;
@@ -574,13 +580,17 @@ header.bar-nav {
 }
 
 .side-menu {
-  background: url('../img/splash_dk.jpg') no-repeat 0 0;
-  background-size: 100% 100%;
   color: $text-knockout-color;
   .content, .content .table-view {
-    background: transparent;
     color: $text-knockout-color;
     border: 0;
+  }
+  .content {
+    background: #2f2f2f url('../img/splash_dk.jpg') no-repeat 0 0;
+    background-size: cover;
+  }
+  .content .table-view {
+    background: transparent;
   }
   .table-view-cell > a:not(.btn):active {
     background-color: transparent;
@@ -605,9 +615,12 @@ header.bar-nav {
     margin-right: 1.5rem;
     width: 4rem;
     height: 4rem;
-  }
-  .icon-star-filled {
-    padding-left: .8rem;
+    &.icon-star-filled {
+      padding-left: .8rem;
+    }
+    &.ion-shuffle {
+      transform: rotate(-90deg);
+    }
   }
   .status.badge {
     left: 4rem;
@@ -633,16 +646,37 @@ header.bar-nav {
   top: 0; right: 0; bottom: 0; left: 0;
 
   box-shadow: 0 0 20px rgba(0, 0, 0, .5);
-  -webkit-transition: -webkit-transform .4s;
-     -moz-transition:    -moz-transform .4s;
-          transition:         transform .4s;
-  -webkit-transform: translate3d(0, 0, 0);
-      -ms-transform: translate3d(0, 0, 0);
-          transform: translate3d(0, 0, 0);
+  -webkit-transition: -webkit-transform .2s ease;
+     -moz-transition:    -moz-transform .2s ease;
+          transition:         transform .2s ease;
 
   & > * {
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
+  }
+
+  .rs-left {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  .rs-center {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  .rs-right {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+
+  /* https://github.com/driftyco/ionic/blob/master/scss/_transitions.scss */
+  .rs-transition {
+    // keep these durations in sync with `App.changeScreen` delay
+    -webkit-transition-duration: 250ms;
+    transition-duration: 250ms;
+    -webkit-transition-timing-function: cubic-bezier(0.36, 0.66, 0.04, 1);
+    transition-timing-function: cubic-bezier(0.36, 0.66, 0.04, 1);
   }
 }
 
@@ -751,7 +785,7 @@ header.bar-nav {
     z-index: 2000;
     height: 75% !important;
   }
-  .top { 
+  .top {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -915,9 +949,6 @@ header.bar-nav {
     overflow: visible;
     .stackListItem {
       background: #000;
-      left: 0;
-      top: 0;
-      position: absolute;
     }
   }
 }
@@ -1167,10 +1198,14 @@ header.bar-nav {
   }
 }
 
-.matches-list {
+.matches-list, .balances-list {
+  .table-view-divider .icon {
+    font-size: 100%;
+  }
   img {
     border-radius: 200px;
     width: 2em;
+    margin-right: 0.4em;
   }
 }
 
@@ -1288,7 +1323,7 @@ ol.messages {
   height: auto;
   background-color: #222;
   color: $primary-color;
-  .left, .right { 
+  .left, .right {
     position: absolute;
     bottom: 0;
     width: 5rem;

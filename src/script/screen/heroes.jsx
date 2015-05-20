@@ -5,6 +5,7 @@ var _ = require('lodash');
 
 // Mixins
 var ChooseScreenMixin = require('../mixin/chooseScreen.js');
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 var SwipeStackSliderMixin = require('../mixin/swipeStackSlider.js');
 
 // Modules
@@ -72,7 +73,7 @@ var UserList = React.createClass({
 });
 
 var HeroesScreen = React.createClass({
-  mixins: [ChooseScreenMixin],
+  mixins: [ChooseScreenMixin, ScreenTransitionMixin],
   propTypes: {
     remote: React.PropTypes.object.isRequired,
     getItems: React.PropTypes.func.isRequired, // for mixin
@@ -139,11 +140,11 @@ var HeroesScreen = React.createClass({
     }
 
     return (
-      <div className={'heroes' + (this.props.visible ? '' : ' hide')}>
+      <div className={React.addons.classSet.apply(null, ['heroes'].concat(this.state.classNames))}>
         {matchOverlay}
 
         <header className="bar bar-nav">
-          <a className="icon icon-bars pull-left" onTouchEnd={this.props.showSideMenu}></a>
+          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.showSideMenu}><span className="icon icon-bars"></span></a>
         </header>
 
         <div className="loadingOverlay">

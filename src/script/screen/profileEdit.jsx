@@ -6,7 +6,11 @@ var categories = require('../data/categories.js');
 // Libs
 var _ = require('lodash');
 
+// Mixins
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
+
 var ProfileEditScreen = React.createClass({
+  mixins: [ScreenTransitionMixin],
   editableProperties: ['name', 'statement', 'location', 'skills'],
   getInitialState: function() {
     if (this.props.userData) {
@@ -93,7 +97,7 @@ var ProfileEditScreen = React.createClass({
 
     if (!this.props.userData) {
       return (
-        <div className={this.props.visible ? '' : 'hide'}>
+        <div className={React.addons.classSet.apply(null, this.state.classNames)}>
           <span className="icon ion-loading-d"></span>
         </div>
       );
@@ -124,7 +128,7 @@ var ProfileEditScreen = React.createClass({
     }
 
     return (
-      <div className={this.props.visible ? '' : 'hide'}>
+      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleDone}>Done</a>
           <h1 className="title">Edit Profile</h1>

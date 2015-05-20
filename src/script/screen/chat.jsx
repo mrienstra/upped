@@ -4,6 +4,9 @@ var React = require('react/addons');
 window.Firebase = require('firebase');
 window.ReactFireMixin = require('reactfire');
 
+// Mixins
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
+
 // Modules
 var camera = require('../camera.js');
 var utils = require('../utils');
@@ -86,7 +89,7 @@ var ChatToolbar = React.createClass({
 
 
 var ChatScreen = React.createClass({
-  mixins: [ReactFireMixin],
+  mixins: [ReactFireMixin, ScreenTransitionMixin],
   getInitialState: function(){
     return {
       messages: []
@@ -95,7 +98,7 @@ var ChatScreen = React.createClass({
   initFirebase: function (props) {
     if (props.otherUserData) {
       var id = [props.selfUserData.id, props.otherUserData.id].sort().join('-');
-      this.messagesRef = new Firebase('https://fiery-heat-8100.firebaseio.com/' + id);
+      this.messagesRef = new Firebase('https://glaring-torch-1823.firebaseio.com/chat/' + id);
       this.bindAsArray(this.messagesRef, 'messages');
     }
   },
@@ -148,7 +151,7 @@ var ChatScreen = React.createClass({
 
     if (!this.props.otherUserData) {
       return (
-        <div className={this.props.visible ? '' : 'hide'}>
+        <div className={React.addons.classSet.apply(null, this.state.classNames)}>
           <header className="bar bar-nav">
             <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>
             <h1 className="title">Loading...</h1>
@@ -183,7 +186,7 @@ var ChatScreen = React.createClass({
     });
 
     return (
-      <div className={this.props.visible ? '' : 'hide'}>
+      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>
           <h1 className="title">Chat with {this.props.otherUserData.name}</h1>

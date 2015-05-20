@@ -1,6 +1,10 @@
 var React = require('react/addons');
 
+// Mixins
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
+
 var InviteScreen = React.createClass({
+  mixins: [ScreenTransitionMixin],
   getInitialState: function(){
     return {
       smsNumber: void 0
@@ -47,7 +51,7 @@ var InviteScreen = React.createClass({
     };
 
     return (
-      <div className={this.props.visible ? '' : 'hide'}>
+      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Done</a>
           <h1 className="title">Invite</h1>
