@@ -1,69 +1,37 @@
-var remote = require('./remote.js');
-
-var reactDomRoot = document.querySelector('.container');
+var React = require('react/addons');
 
 // Libs
 var _ = require('lodash');
+
+var remote = require('./remote.js');
+
+var reactDomRoot = document.querySelector('.container');
 
 var app = {
   init: function () {
     var SideMenu = require('./component/sideMenu.jsx');
 
-    var HeroesScreen = require('./screen/heroes.jsx');
-
-    var ProfileScreen = require('./screen/profile.jsx');
-
-      var ProfileEditScreen = require('./screen/profileEdit.jsx');
-
-    var GatheringsScreen = require('./screen/gatherings.jsx');
-
-      var InviteScreen = require('./screen/invite.jsx');
-
-    var MatchesScreen = require('./screen/activity.jsx');
-
-      var ChatScreen = require('./screen/chat.jsx');
-
     var BalancesScreen = require('./screen/balances.jsx');
+
+      var BalanceScreen = require('./screen/balance.jsx');
 
     var App = React.createClass({
       getInitialState: function(){
         return {
           screens: {
-            stack: ['heroesScreen'],
+            stack: ['balancesScreen'],
             i: 0,
           },
           sideMenuVisible: false,
           heroesScreen: {
-            visible: true
-          },
-          profileScreen: {
-            visible: false,
-            userData: void 0,
-            viewingSelf: void 0,
-            fromMenu: void 0,
-            matched: void 0
-          },
-          profileEditScreen: {
             visible: false
-          },
-          gatheringsScreen: {
-            visible: false
-          },
-          inviteScreen: {
-            visible: false,
-            gathering: void 0
-          },
-          matchesScreen: {
-            visible: false,
-            fromMenu: void 0,
-          },
-          chatScreen: {
-            visible: false,
-            otherUserData: void 0
           },
           balancesScreen: {
+            visible: true,
+          },
+          balanceScreen: {
             visible: false,
-            fromMenu: void 0,
+            balance: void 0,
           },
         }
       },
@@ -156,14 +124,14 @@ var app = {
             modifiedState[previousScreen].transition.inProgress = true;
             modifiedState[newScreen].transition.inProgress = true;
             that.setState(modifiedState);
-          });
 
-          _.delay(function(){
-            modifiedState[previousScreen].transition = void 0;
-            modifiedState[previousScreen].visible = false;
-            modifiedState[newScreen].transition = void 0;
-            that.setState(modifiedState);
-          }, 250); // Important: keep this delay in sync with `.rs-transition` duration
+            _.delay(function(){
+              modifiedState[previousScreen].transition = void 0;
+              modifiedState[previousScreen].visible = false;
+              modifiedState[newScreen].transition = void 0;
+              that.setState(modifiedState);
+            }, 250); // Important: keep this delay in sync with `.rs-transition` duration
+          });
         }
       },
       backToPreviousScreen: function(){
@@ -186,24 +154,12 @@ var app = {
 
         return (
           <div className={this.state.sideMenuVisible ? ' sideMenuVisible' : ''}>
-            <SideMenu changeScreen={this.changeScreen}/>
+            <SideMenu changeScreen={this.changeScreen} hideSideMenu={this.hideSideMenu}/>
 
             <div className="screens">
-              <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.parse.userData.getAll.bind(remote.parse.userData)} handleChoice={handleChoice} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
+              <BalancesScreen getBalances={remote.firebase.balance.getAllByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'balanceScreen')} {...this.state.balancesScreen}/>
 
-              <ProfileScreen handleEdit={this.changeScreen.bind(null, 'profileEditScreen')} handleChatChange={this.changeScreen.bind(null, 'chatScreen')} selfUserData={remote.user.userData} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
-
-                <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleSelectSkillsChange={handleSelectCategoriesChange} handleBack={this.backToPreviousScreen} {...this.state.profileEditScreen}/>
-
-              <GatheringsScreen pubSubDomain="gatherings" remote={remote} getItems={remote.parse.gatherings.getAll} handleChoice={handleRSVP} handleMatchesChange={this.changeScreen.bind(null, 'inviteScreen')} showSideMenu={this.showSideMenu} {...this.state.gatheringsScreen}/>
-
-              <InviteScreen handleBack={this.backToPreviousScreen} {...this.state.inviteScreen}/>
-
-              <MatchesScreen getMatches={remote.parse.choice.getMatchesByUserDataId.bind(remote.parse.choice, remote.user.userData.id)} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} udid={remote.user.matchesScreen} {...this.state.matchesScreen}/>
-
-                <ChatScreen selfUserData={remote.user.userData} handleBack={this.backToPreviousScreen} {...this.state.chatScreen}/>
-
-              <BalancesScreen getBalances={remote.firebase.balance.getBalancesByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} allUserData={remote.allUserData} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} udid={remote.user.userData.id} {...this.state.balancesScreen}/>
+                <BalanceScreen get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} deduct={remote.firebase.balance.deduct} handleBack={this.backToPreviousScreen} {...this.state.balanceScreen}/>
             </div>
 
             <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>

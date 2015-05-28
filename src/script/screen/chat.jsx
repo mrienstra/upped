@@ -1,10 +1,10 @@
 var React = require('react/addons');
 
 // Libs
-window.Firebase = require('firebase');
-window.ReactFireMixin = require('reactfire');
+var Firebase = require('firebase');
 
 // Mixins
+var ReactFireMixin = require('reactfire');
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 
 // Modules

@@ -2,121 +2,130 @@ var React = require('react/addons');
 
 // Libs
 var _ = require('lodash');
+var Firebase = require('firebase');
 
 // Mixins
+var ReactFireMixin = require('reactfire');
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
+var SetIntervalMixin = require('../../lib/set-interval-mixin.jsx');
 
 // Modules
 var utils = require('../utils');
 
 var UserListItemCompact = React.createClass({
+  mixins: [SetIntervalMixin],
+  getInitialState: function(){
+    return {
+      createdFromNow: void 0,
+      updatedFromNow: void 0,
+    };
+  },
+  updateFromNow: function (balance) {
+    var createdFromNow, updatedFromNow;
+
+    if (!balance && !this.props.balance)
+     return;
+
+    if (!balance)
+      balance = this.props.balance;
+
+    if (balance.created > Date.now()) {
+      createdFromNow = 'just now';
+    } else {
+      createdFromNow = utils.momentFromNowIfTime(balance.created);
+    }
+
+    if (balance.updated > Date.now()) {
+      updatedFromNow = 'just now';
+    } else {
+      updatedFromNow = utils.momentFromNowIfTime(balance.updated);
+    }
+
+    this.setState({
+      createdFromNow: createdFromNow,
+      updatedFromNow: updatedFromNow,
+    });
+  },
+  componentWillMount: function(){
+    this.updateFromNow();
+
+    this.setInterval(this.updateFromNow, 5 * 1000);
+  },
+  componentWillReceiveProps: function (nextProps) {
+    this.updateFromNow(nextProps.balance);
+  },
   render: function() {
     var balance = this.props.balance;
 
     /*
-    balance
-      current
-      original
     created
+    currentAmount
+    originalAmount
     provider
+      name
+      photoURL
+    providerID
     receiver
+      name
+      photoURL
+    receiverID
     sushi
     updated
-    otherUserData
-      id
-      age
-      distance
-      linkedinURL
-      location
-      name
-      nominations
-      photoURL
-      skills
-      statement
     */
 
-    var img = (balance.otherUserData && balance.otherUserData.photoURL) ? <img src={balance.otherUserData.photoURL}/> : '';
-
-    var createdFromNow = utils.momentFromNowIfTime(balance.created);
-    var updatedFromNow = utils.momentFromNowIfTime(balance.updated);
-
     return (
-      <li className="table-view-cell">
-        <a>
-          {img}
-          <h4>{balance.otherUserData && balance.otherUserData.name}: {balance.sushi}</h4>
-          <p>${(balance.balance.current === balance.balance.original) ? balance.balance.original : balance.balance.current + ' remaining of $' + balance.balance.original}</p>
-          <p>Last updated {updatedFromNow}, started {createdFromNow}</p>
-        </a>
-      </li>
+      <a className="item item-avatar" href="#" onTouchEnd={this.props.handleBalanceChange.bind(null, {state: {balance: balance, balanceID: this.props.balanceID, selfRole: this.props.selfRole}})}>
+        <img src={(this.props.selfRole === 'provider') ? balance.receiver.photoURL : balance.provider.photoURL} />
+        <h2>{(this.props.selfRole === 'provider') ? balance.receiver.name : balance.provider.name}: {balance.sushi}</h2>
+        <p>${(balance.currentAmount === balance.originalAmount) ? balance.originalAmount : balance.currentAmount + ' remaining of $' + balance.originalAmount}</p>
+        <p>Last updated {this.state.updatedFromNow}, started {this.state.createdFromNow}</p>
+      </a>
     );
   }
 });
 
 var BalancesList = React.createClass({
-  processBalances: function (props) { // Todo: Move to remote? Promises?
-    var that = this;
-
-    var newState = {
-      'providerBalances': [],
-      'receiverBalances': [],
-    };
-
-
-    _.forEach(newState, function (n, key) {
-      var modifiedBalances = props[key].map(function (balance) {
-        var otherUserDataId = (key === 'providerBalances') ? balance.receiver : balance.provider;
-        var modifiedBalance = _.clone(balance);
-        modifiedBalance.otherUserData = _.find(props.allUserData, {id: otherUserDataId});
-        return modifiedBalance;
-      });
-
-      newState[key] = modifiedBalances;
-    });
-
-    console.log('BalancesList.processBalances', props, newState);
-
-    that.setState(newState);
-  },
-  componentWillMount: function(){
-    this.processBalances(this.props);
-  },
-  componentWillReceiveProps: function (nextProps) {
-    this.processBalances(nextProps);
-  },
   render: function(){
     console.log('BalancesList.render', this)
 
+    var that = this;
+
     var providerBalanceNodes;
-    if (!this.state.providerBalances || this.state.providerBalances.length === 0) {
+    if (!this.props.providerBalances) {
       providerBalanceNodes = (
-        <li className="table-view-cell"><p><span className="icon ion-eye-disabled"></span> Nothing to see here.</p></li>
+        <div className="item item-icon-left">
+          <i className="icon ion-eye-disabled"></i>
+          Nothing to see here.
+        </div>
       );
     } else {
-      providerBalanceNodes = this.state.providerBalances.map(function (balance, index) {
-        return <UserListItemCompact key={index} balance={balance} />;
+      providerBalanceNodes = _.mapValues(this.props.providerBalances, function (balance, key) {
+        return <UserListItemCompact key={key} selfRole="provider" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />;
       });
     }
 
     var receiverBalanceNodes;
-    if (!this.state.receiverBalances || this.state.receiverBalances.length === 0) {
+    if (!this.props.receiverBalances) {
       receiverBalanceNodes = (
-        <li className="table-view-cell"><p><span className="icon ion-eye-disabled"></span> Nothing to see here.</p></li>
+        <div className="item item-icon-left">
+          <i className="icon ion-eye-disabled"></i>
+          Nothing to see here.
+        </div>
       );
     } else {
-      receiverBalanceNodes = this.state.receiverBalances.map(function (balance, index) {
-        return <UserListItemCompact key={index} balance={balance} />;
+      receiverBalanceNodes = _.mapValues(this.props.receiverBalances, function (balance, key) {
+        return <UserListItemCompact key={key} selfRole="receiver" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />;
       });
     }
 
     return (
-      <ul className="table-view balances-list">
-        <li className="table-view-divider">
-          <h4><span className="icon ion-arrow-expand"></span> Providing</h4>
+      <ul className="list">
+        <li className="item item-divider">
+          <i className="icon ion-arrow-expand"></i> Providing
         </li>
         {providerBalanceNodes}
-        <li className="table-view-divider">
-          <h4><span className="icon ion-arrow-shrink"></span> Receiving</h4>
+        <li className="item item-divider">
+          <i className="icon ion-arrow-shrink"></i> Receiving
         </li>
         {receiverBalanceNodes}
       </ul>
@@ -128,8 +137,8 @@ var BalancesScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin],
   getInitialState: function(){
     return {
-      providerBalances: [],
-      receiverBalances: [],
+      providerBalances: {},
+      receiverBalances: {},
     };
   },
   componentWillMount: function(){
@@ -137,29 +146,26 @@ var BalancesScreen = React.createClass({
 
     var balances = this.props.getBalances();
 
-    this.bindAsArray(balances.providerRef, 'providerBalances');
-    this.bindAsArray(balances.receiverRef, 'receiverBalances');
+    this.bindAsObject(balances.providerRef, 'providerBalances');
+    this.bindAsObject(balances.receiverRef, 'receiverBalances');
   },
   render: function(){
     console.log('BalancesScreen.render()', this, arguments);
 
-    var leftNavButton;
-    if (this.props.fromMenu) {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.showSideMenu}><span className="icon icon-bars"></span></a>;
-    } else {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>;
-    }
-
     return (
       <div className={React.addons.classSet.apply(null, this.state.classNames)}>
-        <header className="bar bar-nav solid">
-          {leftNavButton}
+        <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
+          <div className="buttons left-buttons">
+            <div>
+              <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>
+            </div>
+          </div>
           <h1 className="title">Balances</h1>
-        </header>
+        </div>
 
-        <div className="content">
+        <div className="scroll-content has-header">
 
-          <BalancesList providerBalances={this.state.providerBalances} receiverBalances={this.state.receiverBalances} allUserData={this.props.allUserData} />
+          <BalancesList providerBalances={this.state.providerBalances} receiverBalances={this.state.receiverBalances} handleBalanceChange={this.props.handleBalanceChange} />
 
         </div>
       </div>

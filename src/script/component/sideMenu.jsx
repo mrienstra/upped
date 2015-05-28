@@ -49,16 +49,24 @@ var SideMenu = React.createClass({
     });
 
     return (
-      <div id="sideMenu" className="side-menu">
-        <div className="content">
-          <ul className="table-view">
-            {LIs}
-            <li className="table-view-cell">
-              <a onTouchEnd={function(){ alert('todo!'); }}>
-                <h4><span className="icon ion-log-out"></span>Log Out</h4>
-              </a>
-            </li>
-          </ul>
+      <div className="menu menu-left">
+        <header className="bar bar-header bar-stable">
+          <h1 className="title"><img src="img/new_logo_dark.png"> </img>Pay With Sushi</h1>
+        </header>
+        <div className="has-header scroll-content">
+          <div className="scroll">
+            <div className="list disable-user-behavior">
+              <div className="item item-complex">
+                <a className="item-content" href="#" onTouchEnd={this.props.hideSideMenu}><span>Balances</span></a>
+              </div>
+              <div className="item item-complex">
+                <a className="item-content" href="#" onTouchEnd={this.props.hideSideMenu}><span>Logout</span></a>
+              </div>
+            </div>
+          </div>
+          <div className="scroll-bar scroll-bar-v">
+              <div className="scroll-bar-indicator scroll-bar-fade-out"></div>
+          </div>
         </div>
       </div>
     );

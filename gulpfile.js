@@ -16,7 +16,7 @@ var port = 8000;
 
 var libs = ['react/addons', 'firebase', 'reactfire', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/openfb-32c04deef7-mod.js', '../lib/noTouchendAfterTouchmove.js', '../lib/swipe-stack-0.1.js'];
 
-var cssLibs = 'src/lib/{ratchet-2.0.2/ratchet,ionicons-1.5.2/ionicons,swipe-stack-0.1}.css';
+var cssLibs = 'src/lib/{ionic-1.0.0/css/ionic,swipe-stack-0.1}.css';
 
 var mainJsFile = 'src/script/main.js';
 var parseJsFile = 'src/lib/parse-1.2.18/parse-1.2.18.min.js';
@@ -47,7 +47,7 @@ var path = {
   },
   font: {
     in: 'src/lib/**/*.{ttf,woff,eot,svg}',
-    out: 'build/css/fonts'
+    out: 'build/css/ionic-1.0.0/fonts'
   },
 }
 

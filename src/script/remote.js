@@ -135,7 +135,6 @@ var _remote = {
         remote.login = _remote.fcp.login;
 
         _remote.utils.dispatchCustomEvent('fbLoginNeeded');
-      
       }
     },
     login: function(){
@@ -346,17 +345,56 @@ var remote = {
   },
   firebase: {
     balance: {
-      getBalancesByUserDataId: function (userDataId) {
-        console.log('remote.firebase.balance.getBalancesByUserDataId', this, arguments);
+      getAllByUserDataId: function (userDataId) {
+        console.log('remote.firebase.balance.getAllByUserDataId', this, arguments);
 
         var ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances');
 
         return {
-          'providerRef': ref.orderByChild('provider').equalTo(userDataId),
-          'receiverRef': ref.orderByChild('receiver').equalTo(userDataId),
+          'providerRef': ref.orderByChild('providerID').equalTo(userDataId),
+          'receiverRef': ref.orderByChild('receiverID').equalTo(userDataId),
         };
-      }
-    }
+      },
+      get: function (balanceID) {
+        console.log('remote.firebase.balance.get', this, arguments);
+
+        return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID);
+      },
+      getHistory: function (historyID) {
+        console.log('remote.firebase.balance.getHistory', this, arguments);
+
+        return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + historyID);
+      },
+      deduct: function (balanceID, balanceCurrentAmount, amount, note) {
+        console.log('remote.firebase.balance.deduct', this, arguments);
+
+        var balanceRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID);
+
+        balanceRef.update({
+          currentAmount: balanceCurrentAmount - amount,
+          updated: Firebase.ServerValue.TIMESTAMP
+        });
+
+
+
+        var historyRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + balanceID);
+
+        var history = {
+          uid: remote.user.userData.id,
+          action: 'subtracted',
+          amount: amount,
+          timestamp: Firebase.ServerValue.TIMESTAMP
+        };
+        if (note) history.note = note;
+
+        historyRef.push(history);
+      },
+    },
+    userData: {
+      getById: function (udid) {
+        return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/userData/' + udid);
+      },
+    },
   },
   parse: {
     choice: {
