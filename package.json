@@ -3,24 +3,24 @@
   "version": "0.0.1",
   "devDependencies": {
     "gulp": "~3.8.0",
-    "gulp-browserify": "~0.5.0",
+    "gulp-browserify": "~0.5.1",
     "gulp-concat-css": "^2.2.0",
     "gulp-connect": "~2.2.0",
     "gulp-flatten": "0.0.4",
     "gulp-if": "~1.2.5",
     "gulp-sass": "~2.0.1",
-    "gulp-uglify": "~1.0.2",
-    "gulp-util": "~3.0.1",
+    "gulp-uglify": "~1.2.0",
+    "gulp-util": "~3.0.4",
     "open": "0.0.5",
-    "reactify": "~0.17.1"
+    "reactify": "~1.1.1"
   },
   "dependencies": {
-    "firebase": "~2.2.4",
-    "lodash": "~2.4.1",
-    "moment": "~2.8.4",
-    "pubsub-js": "~1.5.0",
-    "react": "~0.12.1",
+    "firebase": "~2.2.5",
+    "lodash": "~3.9.3",
+    "moment": "~2.10.3",
+    "pubsub-js": "~1.5.2",
+    "react": "~0.13.3",
     "reactfire": "~0.4.0",
-    "when": "~3.6.3"
+    "when": "~3.7.3"
   }
 }
