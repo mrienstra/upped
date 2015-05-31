@@ -1,7 +1,8 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Libs
 var _ = require('lodash');
+var classNames = require('classnames');
 var Firebase = require('firebase');
 
 // Mixins
@@ -47,7 +48,7 @@ var HistoryItem = React.createClass({
   render: function() {
     return (
       <div className="item">
-        ${this.props.history.amount} {this.props.history.action}
+        {utils.formatCurrency(this.props.history.amount)} {this.props.history.action}
         <span className="item-note">{this.state.fromNow}</span>
         <p className="subdued">{this.props.history.note}</p>
       </div>
@@ -97,8 +98,6 @@ var BalanceScreen = React.createClass({
     } else {
       createdFromNow = utils.momentFromNowIfTime(balance.created);
     }
-
-    console.log('BalanceScreen.updateFromNow()', this, balance);
 
     if (balance.updated > Date.now()) {
       updatedFromNow = 'just now';
@@ -158,7 +157,7 @@ var BalanceScreen = React.createClass({
 
     if (!balance) {
       return (
-        <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+        <div className={classNames.apply(null, this.state.classNames)}>
           <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
             <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
               <i className="icon ion-chevron-left"></i> Back
@@ -182,7 +181,7 @@ var BalanceScreen = React.createClass({
     historyNodes.reverse();
 
     return (
-      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+      <div className={classNames.apply(null, this.state.classNames)}>
         <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
           <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
             <i className="icon ion-chevron-left"></i> Back
@@ -197,7 +196,7 @@ var BalanceScreen = React.createClass({
             <div className="item item-avatar">
               <img src={(this.props.selfRole === 'provider') ? this.props.balance.receiver.photoURL : this.props.balance.provider.photoURL} />
               <h2>{(this.props.selfRole === 'provider') ? balance.receiver.name : balance.provider.name}: {balance.sushi}</h2>
-                <p>${(balance.currentAmount === balance.originalAmount) ? balance.originalAmount : balance.currentAmount + ' remaining of $' + balance.originalAmount}</p>
+                <p>{(balance.currentAmount === balance.originalAmount) ? utils.formatCurrency(balance.originalAmount) : utils.formatCurrency(balance.currentAmount) + ' remaining of ' + utils.formatCurrency(balance.originalAmount)}</p>
 
             </div>
 
@@ -206,10 +205,11 @@ var BalanceScreen = React.createClass({
 
               <div className="list">
                 <label className="item item-input">
-                  <input type="text" placeholder="Amount to deduct..." value={this.state.amountValue} onChange={this.handleAmountChange} />
+                  <span class="input-label">$ </span>
+                  <input type="text" placeholder=" Amount to deduct..." value={this.state.amountValue} onChange={this.handleAmountChange} />
                 </label>
                 <label className="item item-input">
-                  <textarea placeholder="Notes" value={this.state.notesValue} onChange={this.handleNotesChange}></textarea>
+                  <input type="text" placeholder="Notes..." value={this.state.notesValue} onChange={this.handleNotesChange} />
                 </label>
                 <div className="item">
                   <button className="button button-block button-positive" onTouchEnd={this.handleDeductSubmit}>

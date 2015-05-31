@@ -1,7 +1,8 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Libs
 var _ = require('lodash');
+var classNames = require('classnames');
 
 // Mixins
 var ChooseScreenMixin = require('../mixin/chooseScreen.js');
@@ -143,7 +144,7 @@ var GatheringsScreen = React.createClass({
     }
 
     return (
-      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+      <div className={classNames.apply(null, this.state.classNames)}>
         {matchOverlay}
 
         <header className="bar bar-nav">

@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Modules
 var pubSub = require('../pubSub.js');
@@ -60,7 +60,7 @@ var SideMenu = React.createClass({
                 <a className="item-content" href="#" onTouchEnd={this.props.hideSideMenu}><span>Balances</span></a>
               </div>
               <div className="item item-complex">
-                <a className="item-content" href="#" onTouchEnd={this.props.hideSideMenu}><span>Logout</span></a>
+                <a className="item-content" href="#" onTouchEnd={this.props.handleLogOut}><span>Logout</span></a>
               </div>
             </div>
           </div>

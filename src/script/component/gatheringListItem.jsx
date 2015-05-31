@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Mixins
 var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');

@@ -1,7 +1,8 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Libs
 var _ = require('lodash');
+var classNames = require('classnames');
 var Firebase = require('firebase');
 
 // Mixins
@@ -77,7 +78,7 @@ var UserListItemCompact = React.createClass({
       <a className="item item-avatar" href="#" onTouchEnd={this.props.handleBalanceChange.bind(null, {state: {balance: balance, balanceID: this.props.balanceID, selfRole: this.props.selfRole}})}>
         <img src={(this.props.selfRole === 'provider') ? balance.receiver.photoURL : balance.provider.photoURL} />
         <h2>{(this.props.selfRole === 'provider') ? balance.receiver.name : balance.provider.name}: {balance.sushi}</h2>
-        <p>${(balance.currentAmount === balance.originalAmount) ? balance.originalAmount : balance.currentAmount + ' remaining of $' + balance.originalAmount}</p>
+        <p>{(balance.currentAmount === balance.originalAmount) ? utils.formatCurrency(balance.originalAmount) : utils.formatCurrency(balance.currentAmount) + ' remaining of ' + utils.formatCurrency(balance.originalAmount)}</p>
         <p>Last updated {this.state.updatedFromNow}, started {this.state.createdFromNow}</p>
       </a>
     );
@@ -99,8 +100,11 @@ var BalancesList = React.createClass({
         </div>
       );
     } else {
-      providerBalanceNodes = _.mapValues(this.props.providerBalances, function (balance, key) {
-        return <UserListItemCompact key={key} selfRole="provider" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />;
+      providerBalanceNodes = [];
+      _.forEach(this.props.providerBalances, function (balance, key) {
+        providerBalanceNodes.push(
+          <UserListItemCompact key={key} selfRole="provider" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />
+        );
       });
     }
 
@@ -113,8 +117,11 @@ var BalancesList = React.createClass({
         </div>
       );
     } else {
-      receiverBalanceNodes = _.mapValues(this.props.receiverBalances, function (balance, key) {
-        return <UserListItemCompact key={key} selfRole="receiver" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />;
+      receiverBalanceNodes = [];
+      _.forEach(this.props.receiverBalances, function (balance, key) {
+        receiverBalanceNodes.push(
+          <UserListItemCompact key={key} selfRole="receiver" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />
+        );
       });
     }
 
@@ -153,7 +160,7 @@ var BalancesScreen = React.createClass({
     console.log('BalancesScreen.render()', this, arguments);
 
     return (
-      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+      <div className={classNames.apply(null, this.state.classNames)}>
         <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
           <div className="buttons left-buttons">
             <div>

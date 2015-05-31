@@ -1,4 +1,4 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Libs
 var _ = require('lodash');
@@ -23,9 +23,6 @@ var app = {
             i: 0,
           },
           sideMenuVisible: false,
-          heroesScreen: {
-            visible: false
-          },
           balancesScreen: {
             visible: true,
           },
@@ -154,7 +151,7 @@ var app = {
 
         return (
           <div className={this.state.sideMenuVisible ? ' sideMenuVisible' : ''}>
-            <SideMenu changeScreen={this.changeScreen} hideSideMenu={this.hideSideMenu}/>
+            <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} hideSideMenu={this.hideSideMenu}/>
 
             <div className="screens">
               <BalancesScreen getBalances={remote.firebase.balance.getAllByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'balanceScreen')} {...this.state.balancesScreen}/>
@@ -181,118 +178,6 @@ var app = {
 };
 
 
-var handleMatchesChange = function (fromMenu) {
-  console.log('handleMatchesChange', arguments, remote.user);
-
-  var getMatches = remote.parse.choice.getMatchesByUserDataId.bind(remote.parse.choice, remote.user.userData.id);
-
-  var MatchesScreen = require('./screen/activity.jsx');
-
-  app.screens.addScreen(
-    <MatchesScreen getMatches={getMatches} handleProfileChange={handleProfileChange} handleBack={handleBack} udid={remote.user.userData.id} fromMenu={fromMenu} />
-  );
-};
-
-var handleBack = function (e) {
-  console.log('handleBack', this, arguments);
-
-  e.preventDefault();
-
-  app.screens.back();
-};
-
-var handleWelcome2Change = function(){
-  console.log('handleWelcome2Change', this, arguments);
-  var Welcome2Screen = require('./screen/welcome2.jsx');
-
-  app.screens.addScreen(
-    <Welcome2Screen handleContinue={continuePastWelcome2Screen}></Welcome2Screen>
-  );
-};
-
-var handleHeroesChange = function(){
-  console.log('handleHeroesChange', this, arguments);
-  var HeroesScreen = require('./screen/heroes.jsx');
-
-  var getUsers = remote.parse.userData.getAll.bind(remote.parse.userData);
-
-  var handleMyProfileChange = handleProfileChange.bind(null, remote.user.userData, true);
-
-  app.screens.addScreen(
-    <HeroesScreen remote={remote} getItems={getUsers} handleChoice={handleChoice} handleMyProfileChange={handleMyProfileChange} handleMatchesChange={handleMatchesChange} handleGatheringsChange={handleGatheringsChange} handleLogOut={handleLogOut}></HeroesScreen>
-  );
-};
-
-var handleGatheringsChange = function(){
-  console.log('handleGatheringsChange', this, arguments);
-
-  var GatheringsScreen = require('./screen/gatherings.jsx');
-
-  var getGatherings = remote.parse.gatherings.getAll;
-
-  app.screens.addScreen(
-    <GatheringsScreen remote={remote} getItems={getGatherings} handleChoice={handleRSVP} handleBack={handleBack} handleMatchesChange={handleInviteChange}></GatheringsScreen>
-  );
-};
-
-var handleProfileChange = function (userData, fromMenu, matched) {
-  console.log('handleProfileChange', arguments, remote.user);
-
-  var viewingSelf = false;
-
-  if (userData.id === remote.user.userData.id) {
-    viewingSelf = true;
-    userData = remote.user.userData;
-  }
-
-  var ProfileScreen = require('./screen/profile.jsx');
-
-  app.screens.addScreen(
-    <ProfileScreen userData={userData} viewingSelf={viewingSelf} fromMenu={fromMenu} matched={matched} handleEdit={handleProfileEditChange} handleChatChange={handleChatChange} handleBack={handleBack}></ProfileScreen>
-  );
-};
-
-var handleProfileEditChange = function(){
-  console.log('handleProfileEditChange', arguments);
-
-  var ProfileEditScreen = require('./screen/profileEdit.jsx');
-
-  app.screens.addScreen(
-    <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.parse.userData.setCurrent} handleSelectSkillsChange={handleSelectCategoriesChange} handleBack={handleBack}></ProfileEditScreen>
-  );
-};
-
-var handleChatChange = function (otherUserData) {
-  console.log('handleChatChange', arguments);
-
-  var ChatScreen = require('./screen/chat.jsx');
-
-  app.screens.addScreen(
-    <ChatScreen selfUserData={remote.user.userData} otherUserData={otherUserData} handleBack={handleBack}></ChatScreen>
-  );
-};
-
-var handleSelectCategoriesChange = function (userDataSkills, propogateChanges) {
-  console.log('handleSelectCategoriesChange', arguments);
-
-  var SelectCategoriesScreen = require('./screen/selectCategories.jsx');
-
-  app.screens.addScreen(
-    <SelectCategoriesScreen skills={userDataSkills} propogateChanges={propogateChanges} handleBack={handleBack}></SelectCategoriesScreen>
-  );
-};
-
-var handleInviteChange = function (gathering) {
-  console.log('handleInviteChange', arguments);
-
-  var InviteScreen = require('./screen/invite.jsx');
-
-  app.screens.addScreen(
-    <InviteScreen gathering={gathering} handleBack={handleBack}></InviteScreen>
-  );
-};
-
-
 
 var handleChoice = function (chosenId, choice) {
   console.log('handleChoice', this, arguments, remote.parse.userData);
@@ -308,11 +193,11 @@ var handleRSVP = function (chosenId, choice) {
 
 
 
+// Todo: seems to be a small memory leak when repeatedly logging out then back in
 var handleLogOut = function(){
   console.log('handleLogOut');
 
   remote.logOut();
-  delete app.screens; // Todo: does this leak memory?
   showWelcomeScreen(void 0, true);
 };
 
@@ -329,14 +214,6 @@ var continuePastWelcomeScreen = function(){
   else console.log ('returning user!')
 
   app.init();
-};
-
-var continuePastWelcome2Screen = function(){
-  console.log('continuePastWelcome2Screen');
-
-  remote.user.parse.save({hasBegun: true});
-
-  handleHeroesChange();
 };
 
 var showFirstScreen = function(){

@@ -1,7 +1,10 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Components
 var UserListItem = require('../component/userListItem.jsx');
+
+// Libs
+var classNames = require('classnames');
 
 // Mixins
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
@@ -22,7 +25,7 @@ var ProfileScreen = React.createClass({
 
     if (!this.state.userData) {
       return (
-        <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+        <div className={classNames.apply(null, this.state.classNames)}>
           <span className="icon ion-loading-d"></span>
         </div>
       );
@@ -53,7 +56,7 @@ var ProfileScreen = React.createClass({
     }
 
     return (
-      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+      <div className={classNames.apply(null, this.state.classNames)}>
         <header className="bar bar-nav">
           {leftNavButton}
           {rightNavButton}

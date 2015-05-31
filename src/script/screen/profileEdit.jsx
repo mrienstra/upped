@@ -1,10 +1,11 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Data
 var categories = require('../data/categories.js');
 
 // Libs
 var _ = require('lodash');
+var classNames = require('classnames');
 
 // Mixins
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
@@ -97,7 +98,7 @@ var ProfileEditScreen = React.createClass({
 
     if (!this.props.userData) {
       return (
-        <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+        <div className={classNames.apply(null, this.state.classNames)}>
           <span className="icon ion-loading-d"></span>
         </div>
       );
@@ -128,7 +129,7 @@ var ProfileEditScreen = React.createClass({
     }
 
     return (
-      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+      <div className={classNames.apply(null, this.state.classNames)}>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleDone}>Done</a>
           <h1 className="title">Edit Profile</h1>

@@ -1,7 +1,10 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Components
 var UserListItemCompact = require('../component/userListItemCompact.jsx');
+
+// Libs
+var classNames = require('classnames');
 
 // Mixins
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
@@ -101,7 +104,7 @@ var MatchesScreen = React.createClass({
     }
 
     return (
-      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+      <div className={classNames.apply(null, this.state.classNames)}>
         <header className="bar bar-nav solid">
           {leftNavButton}
           <h1 className="title">Matches</h1>

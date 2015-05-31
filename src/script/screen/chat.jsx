@@ -1,6 +1,7 @@
-var React = require('react/addons');
+var React = require('react');
 
 // Libs
+var classNames = require('classnames');
 var Firebase = require('firebase');
 
 // Mixins
@@ -151,7 +152,7 @@ var ChatScreen = React.createClass({
 
     if (!this.props.otherUserData) {
       return (
-        <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+        <div className={classNames.apply(null, this.state.classNames)}>
           <header className="bar bar-nav">
             <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>
             <h1 className="title">Loading...</h1>
@@ -186,7 +187,7 @@ var ChatScreen = React.createClass({
     });
 
     return (
-      <div className={React.addons.classSet.apply(null, this.state.classNames)}>
+      <div className={classNames.apply(null, this.state.classNames)}>
         <header className="bar bar-nav">
           <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>
           <h1 className="title">Chat with {this.props.otherUserData.name}</h1>
