@@ -3,6 +3,7 @@ var moment = require('moment');
 var utils = {
   formatCurrency: function (n) {
     var minimumFractionDigits;
+    var output;
 
     if (n % 1 === 0) {
       minimumFractionDigits = 0;
@@ -10,7 +11,16 @@ var utils = {
       minimumFractionDigits = 2;
     }
 
-    return (n).toLocaleString("en-US", {style: "currency", currency: "USD", minimumFractionDigits: minimumFractionDigits});
+    output = (n).toLocaleString("en-US", {style: "currency", currency: "USD", minimumFractionDigits: minimumFractionDigits});
+
+    if (output[0] !== '$') {
+      output = '$' + output;
+      if (/\.\d$/.test(output)) {
+        output += '0';
+      }
+    }
+
+    return output;
   },
   momentFromNowIfTime: function (time) {
     var formattedTime = moment(time);

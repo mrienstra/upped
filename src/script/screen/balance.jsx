@@ -105,10 +105,12 @@ var BalanceScreen = React.createClass({
       updatedFromNow = utils.momentFromNowIfTime(balance.updated);
     }
 
-    this.setState({
-      createdFromNow: createdFromNow,
-      updatedFromNow: updatedFromNow,
-    });
+    if (this.state.createdFromNow !== createdFromNow || this.state.updatedFromNow !== updatedFromNow) {
+      this.setState({
+        createdFromNow: createdFromNow,
+        updatedFromNow: updatedFromNow,
+      });
+    }
   },
   componentWillMount: function(){
     console.log('BalanceScreen.componentWillMount()', this, arguments);
@@ -205,7 +207,7 @@ var BalanceScreen = React.createClass({
 
               <div className="list">
                 <label className="item item-input">
-                  <span class="input-label">$ </span>
+                  <span className="input">$ </span>
                   <input type="text" placeholder=" Amount to deduct..." value={this.state.amountValue} onChange={this.handleAmountChange} />
                 </label>
                 <label className="item item-input">

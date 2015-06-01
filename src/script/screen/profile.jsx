@@ -33,18 +33,17 @@ var ProfileScreen = React.createClass({
 
     var leftNavButton;
     if (this.props.fromMenu) {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.showSideMenu}><span className="icon icon-bars"></span></a>;
+      leftNavButton = <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>;
     } else {
-      leftNavButton = <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.handleBack}><span className="icon icon-left-nav"></span> Back</a>;
+      leftNavButton = <button className="button button-icon icon ion-chevron-left" onTouchEnd={this.props.handleBack}></button>;
     }
 
     var rightNavButton;
     if (this.props.viewingSelf) {
-      rightNavButton = <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.props.handleEdit}>Edit</a>;
+      rightNavButton = <button className="button button-icon icon ion-edit" onTouchEnd={this.props.handleEdit}></button>;
     } else if (this.props.matched) {
-      rightNavButton = <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.props.handleChatChange.bind(null, {state: {otherUserData: this.state.userData}})}><span className="icon ion-chatbubbles"></span> Chat</a>;
+      rightNavButton = <button className="button button-icon icon ion-chatbubbles" onTouchEnd={this.props.handleChatChange.bind(null, {state: {otherUserData: this.state.userData}})}></button>;
     }
-    console.log('rightNavButton', rightNavButton);
 
     var title;
     if (this.props.viewingSelf) {
@@ -57,16 +56,23 @@ var ProfileScreen = React.createClass({
 
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
-        <header className="bar bar-nav">
-          {leftNavButton}
-          {rightNavButton}
+        <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
+          <div className="buttons left-buttons">
+            <div>
+              {leftNavButton}
+            </div>
+          </div>
           <h1 className="title">{title}</h1>
-        </header>
-
-        <div className="content">
-          <UserListItem user={this.state.userData} fromMenu={this.props.fromMenu}></UserListItem>;
+            <div className="buttons left-buttons">
+              <div>
+                {rightNavButton}
+              </div>
+            </div>
         </div>
 
+        <div className="scroll-content overflow-scroll has-header">
+          <UserListItem user={this.state.userData} fromMenu={this.props.fromMenu}></UserListItem>
+        </div>
       </div>
     );
   }

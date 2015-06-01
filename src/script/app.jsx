@@ -15,6 +15,8 @@ var app = {
 
       var BalanceScreen = require('./screen/balance.jsx');
 
+    var ProfileScreen = require('./screen/profile.jsx');
+
     var App = React.createClass({
       getInitialState: function(){
         return {
@@ -29,6 +31,14 @@ var app = {
           balanceScreen: {
             visible: false,
             balance: void 0,
+          },
+          profileScreen: {
+            visible: false,
+            userData: void 0,
+            viewingSelf: void 0,
+            fromMenu: void 0,
+            matched: void 0,
+            cssClass: 'profileScreen',
           },
         }
       },
@@ -151,12 +161,14 @@ var app = {
 
         return (
           <div className={this.state.sideMenuVisible ? ' sideMenuVisible' : ''}>
-            <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} hideSideMenu={this.hideSideMenu}/>
+            <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
             <div className="screens">
               <BalancesScreen getBalances={remote.firebase.balance.getAllByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'balanceScreen')} {...this.state.balancesScreen}/>
 
                 <BalanceScreen get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} deduct={remote.firebase.balance.deduct} handleBack={this.backToPreviousScreen} {...this.state.balanceScreen}/>
+
+              <ProfileScreen handleEdit={this.changeScreen.bind(null, 'profileEditScreen')} handleChatChange={this.changeScreen.bind(null, 'chatScreen')} selfUserData={remote.user.userData} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
             </div>
 
             <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>
@@ -165,15 +177,11 @@ var app = {
       }
     });
 
-    if (remote.user.parse.get('hasBegun')) {
-      React.render(
-        <App/>
-        ,
-        reactDomRoot
-      );
-    } else {
-      handleWelcome2Change();
-    }
+    React.render(
+      <App/>
+      ,
+      reactDomRoot
+    );
   }
 };
 

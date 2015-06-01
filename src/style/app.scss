@@ -54,6 +54,10 @@
   display: block;
 }
 
+.menu-left .ion-shuffle::before {
+  transform: rotate(-90deg);
+}
+
 .bar-header h1.title img {
   height: 16px;
   position: relative;
@@ -71,4 +75,8 @@
   background: url('../img/splash.png') no-repeat;
   background-size: cover;
   text-shadow: 0 0 .4em white, 0 0 1em white;
+}
+
+.profileScreen .userListItem {
+  margin-top: -1px;
 }

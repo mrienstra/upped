@@ -12,6 +12,10 @@ var ScreenTransitionMixin = {
   applyTransitionClasses: function (props) {
     var classNames = ['pane'];
 
+    if (props.cssClass) {
+      classNames.push(props.cssClass);
+    }
+
     if (props.transition) {
       if (props.transition.inProgress) {
         if (props.transition.type === 'depart') {

@@ -15,21 +15,6 @@ var SideMenu = React.createClass({
         icon: 'ion-person'
       },
       {
-        screen: 'gatheringsScreen',
-        text: 'Gatherings',
-        icon: 'ion-search'
-      },
-      {
-        screen: 'heroesScreen',
-        text: 'Heroes',
-        icon: 'ion-search'
-      },
-      {
-        screen: 'matchesScreen',
-        text: 'Matches',
-        icon: 'icon-star-filled'
-      },
-      {
         screen: 'balancesScreen',
         text: 'Balances',
         icon: 'ion-shuffle'
@@ -38,13 +23,11 @@ var SideMenu = React.createClass({
 
     var that = this;
 
-    var LIs = menuOptions.map(function (option, i) {
+    var listItems = menuOptions.map(function (option, i) {
       return (
-        <li key={i} className="table-view-cell">
-          <a onTouchEnd={that.props.changeScreen.bind(null, option.screen, {state: {fromMenu: true}})}>
-            <h4><span className={'icon ' + option.icon}></span>{option.text}</h4>
-          </a>
-        </li>
+        <a className="item item-icon-left" href="#" onTouchEnd={that.props.changeScreen.bind(null, option.screen, {state: {fromMenu: true}})}>
+          <i className={'icon ' + option.icon}></i>{option.text}
+        </a>
       );
     });
 
@@ -56,12 +39,10 @@ var SideMenu = React.createClass({
         <div className="has-header scroll-content">
           <div className="scroll">
             <div className="list disable-user-behavior">
-              <div className="item item-complex">
-                <a className="item-content" href="#" onTouchEnd={this.props.hideSideMenu}><span>Balances</span></a>
-              </div>
-              <div className="item item-complex">
-                <a className="item-content" href="#" onTouchEnd={this.props.handleLogOut}><span>Logout</span></a>
-              </div>
+              {listItems}
+              <a className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
+                <i className="icon ion-log-out"></i>Logout
+              </a>
             </div>
           </div>
           <div className="scroll-bar scroll-bar-v">

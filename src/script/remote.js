@@ -52,7 +52,7 @@ var _remote = {
       console.log('_remote.fb.getLoginStatusCallback', response);
 
       if (response.status === 'connected') {
-        _remote.parse.loginWithFBAuthResponse(response.authResponse);
+        remote.firebase.auth.loginWithFBAuthResponse(response.authResponse);
       } else {
         remote.login = _remote.fb.login;
 
@@ -76,7 +76,7 @@ var _remote = {
           _remote.fb.updatePermissions({grantedScopes: response.authResponse.grantedScopes});
         }
 
-        _remote.parse.loginWithFBAuthResponse(response.authResponse);
+        remote.firebase.auth.loginWithFBAuthResponse(response.authResponse);
       } else {
         console.log('Game over!'); // Todo?
       }
@@ -130,7 +130,7 @@ var _remote = {
       console.log('_remote.fcp.getLoginStatusCallback', response);
 
       if (response.status === 'connected') {
-        _remote.parse.loginWithFBAuthResponse(response.authResponse);
+        remote.firebase.auth.loginWithFBAuthResponse(response.authResponse);
       } else {
         remote.login = _remote.fcp.login;
 
@@ -336,14 +336,48 @@ var remote = {
   logOut: function(){
     console.log('remote.logOut');
 
-    if (remote.user.location.checkedIn) {
-      remote.parse.checkin.checkInOut(remote.user.location.parseId, remote.user.location.fbId, false);
-    }
-
-    Parse.User.logOut();
     remote.resetUser();
   },
   firebase: {
+    auth: {
+      loginWithFBAuthResponse: function (authResponse, attemptCount) {
+        console.log('remote.firebase.auth.loginWithFBAuthResponse', arguments);
+
+        if (!this.ref) {
+          this.ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com');
+        }
+
+        this.ref.authWithOAuthToken('facebook', authResponse.accessToken, function (error, authData) {
+          if (error) {
+            console.warn('Login Failed!', error);
+          } else {
+            console.warn('Authenticated successfully with payload:', authData);
+            remote.firebase.auth.authData = authData;
+
+            var uid = (authData.uid === 'facebook:10152693261186518') ? 'ypoaKC1xaF' : authData.uid;
+
+            var ref = remote.firebase.userData.getById(uid);
+
+            ref.on('value', function(snapshot) {
+              var val = snapshot.val();
+
+              if (val === null) {
+                console.warn('Unknown user!');
+              } else {
+                console.warn('Known user!', val);
+                remote.user.userData = val;
+                remote.user.userData.id = uid;
+
+                _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
+                ga('send', 'event', 'session', 'login', 'fbAndParseLoginSuccess');
+              }
+            }, function (errorObject) {
+              console.log('The read failed: ' + errorObject.code);
+            });
+          }
+        });
+      }
+    },
     balance: {
       getAllByUserDataId: function (userDataId) {
         console.log('remote.firebase.balance.getAllByUserDataId', this, arguments);

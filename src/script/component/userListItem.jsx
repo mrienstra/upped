@@ -19,43 +19,29 @@ var UserListItem = React.createClass({
       if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
         name = category.name;
       }
-      return <li key={i}>{name}</li>;
-    });
-
-    var nominations = this.props.user.nominations.map(function (nomination, i) {
-      return (
-        <li key={i}>
-          <img/>
-          <h5>{nomination.name}</h5>
-          <span className="skill">{nomination.skill}</span>
-          <p>{nomination.text}</p>
-        </li>
-      );
+      return <div key={i} className="item">{name}</div>;
     });
 
     return (
-      <div className="stackListItem userListItem" onTouchEnd={this.handleToggleDetails}>
-        {img}
-        <div className={'summary' + (this.state.expanded ? ' hide' : '')}>
-          <div className="nameAndSkillCount">{this.props.user.name}</div>
-          <div className="statement">{this.props.user.statement}</div>
+      <div className="list stackListItem userListItem" onTouchEnd={this.handleToggleDetails}>
+        <div className="item item-image">
+          {img}
         </div>
-        <div className={'details' + (this.state.expanded ? ' show' : '')}>
-          <div className="nameAndSkillCount">{this.props.user.name}</div>
-          <div className="statement">{this.props.user.statement}</div>
-          <div className="distance hide">{this.props.user.distance}</div>
-          <div className="location">{this.props.user.location}</div>
-          <div className="skills">
-            <h4><span className="icon ion-ios7-bolt"></span> Super Powers</h4>
-            <ul>
-              {skills}
-            </ul>
-          </div>
-          <div className="nominations">
-            <h4><span className="icon ion-ribbon-b"></span> Hero Nominations</h4>
-            <ul>
-              {nominations}
-            </ul>
+        <div className="item item-divider">
+          <h2>{this.props.user.name}</h2>
+          <h3>{this.props.user.statement}</h3>
+        </div>
+        <div className={'item' + (this.state.expanded ? ' show' : '')}>
+          <h3>
+            <i className="icon ion-earth"></i> {this.props.user.location}
+          </h3>
+        </div>
+        <div className="item">
+          <div className="list">
+            <div className="item item-divider">
+              <i className="icon ion-planet"></i> Super Powers
+            </div>
+            {skills}
           </div>
         </div>
       </div>

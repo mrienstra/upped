@@ -130,12 +130,16 @@ var ProfileEditScreen = React.createClass({
 
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
-        <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-right" onTouchEnd={this.handleDone}>Done</a>
+        <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
+          <div className="buttons left-buttons">
+            <div>
+              <button className="button" onTouchEnd={this.handleDone}>Done</button>
+            </div>
+          </div>
           <h1 className="title">Edit Profile</h1>
-        </header>
+        </div>
 
-        <div className="content">
+        <div className="scroll-content overflow-scroll has-header">
           <div className="userListItem">
             {img}
             <div className="details show">
