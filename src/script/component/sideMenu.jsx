@@ -15,8 +15,13 @@ var SideMenu = React.createClass({
         icon: 'ion-person'
       },
       {
-        screen: 'balancesScreen',
-        text: 'Balances',
+        screen: 'creditsScreen',
+        text: 'Credits',
+        icon: 'ion-shuffle'
+      },
+      {
+        screen: 'debitsScreen',
+        text: 'Debits',
         icon: 'ion-shuffle'
       }
     ];
