@@ -1,9 +1,13 @@
+// Libs
+var _ = require('lodash');
 var moment = require('moment');
 
 var utils = {
   formatCurrency: function (n) {
     var minimumFractionDigits;
     var output;
+
+    if (!_.isNumber(n)) return n;
 
     if (n % 1 === 0) {
       minimumFractionDigits = 0;

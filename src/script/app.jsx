@@ -175,13 +175,13 @@ var app = {
             <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
             <div className="screens">
-              <CreditsScreen getBalances={remote.firebase.balance.getAllByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'creditScreen')} {...this.state.creditsScreen}/>
+              <CreditsScreen getBalances={remote.firebase.balance.getCreditsByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'creditScreen')} {...this.state.creditsScreen}/>
 
-                <CreditScreen get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} deduct={remote.firebase.balance.deduct} handleBack={this.backToPreviousScreen} {...this.state.creditScreen}/>
+                <CreditScreen get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} addNote={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.creditScreen}/>
 
-              <DebitsScreen getBalances={remote.firebase.balance.getAllByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'creditScreen')} {...this.state.debitsScreen}/>
+              <DebitsScreen getBalances={remote.firebase.balance.getDebitsByUserDataId.bind(remote.firebase.balance, remote.user.userData.id)} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'debitScreen')} {...this.state.debitsScreen}/>
 
-                <DebitScreen get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} deduct={remote.firebase.balance.deduct} handleBack={this.backToPreviousScreen} {...this.state.debitScreen}/>
+                <DebitScreen get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} deductAndOrAddNote={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.debitScreen}/>
 
               <ProfileScreen handleEdit={this.changeScreen.bind(null, 'profileEditScreen')} handleChatChange={this.changeScreen.bind(null, 'chatScreen')} selfUserData={remote.user.userData} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
             </div>

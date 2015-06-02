@@ -379,15 +379,19 @@ var remote = {
       }
     },
     balance: {
-      getAllByUserDataId: function (userDataId) {
-        console.log('remote.firebase.balance.getAllByUserDataId', this, arguments);
+      getCreditsByUserDataId: function (userDataId) {
+        console.log('remote.firebase.balance.getCreditsByUserDataId', this, arguments);
 
         var ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances');
 
-        return {
-          'providerRef': ref.orderByChild('providerID').equalTo(userDataId),
-          'receiverRef': ref.orderByChild('receiverID').equalTo(userDataId),
-        };
+        return ref.orderByChild('receiverID').equalTo(userDataId);
+      },
+      getDebitsByUserDataId: function (userDataId) {
+        console.log('remote.firebase.balance.getDebitsByUserDataId', this, arguments);
+
+        var ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances');
+
+        return ref.orderByChild('providerID').equalTo(userDataId);
       },
       get: function (balanceID) {
         console.log('remote.firebase.balance.get', this, arguments);
@@ -399,27 +403,34 @@ var remote = {
 
         return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + historyID);
       },
-      deduct: function (balanceID, balanceCurrentAmount, amount, note) {
-        console.log('remote.firebase.balance.deduct', this, arguments);
+      deductAndOrAddNote: function (balanceID, balanceCurrentAmount, amount, note) {
+        console.log('remote.firebase.balance.deductAndOrAddNote', this, arguments);
 
         var balanceRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID);
 
-        balanceRef.update({
-          currentAmount: balanceCurrentAmount - amount,
-          updated: Firebase.ServerValue.TIMESTAMP
-        });
-
-
-
         var historyRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + balanceID);
+
+        var newBalanceData = {
+          updated: Firebase.ServerValue.TIMESTAMP,
+        };
 
         var history = {
           uid: remote.user.userData.id,
-          action: 'subtracted',
-          amount: amount,
-          timestamp: Firebase.ServerValue.TIMESTAMP
+          timestamp: Firebase.ServerValue.TIMESTAMP,
         };
+
+        if (balanceCurrentAmount > 0 && amount > 0) {
+          newBalanceData.currentAmount = balanceCurrentAmount - amount;
+
+          history.action = 'subtracted';
+          history.amount = amount;
+        } else {
+          history.action = 'said';
+        }
+
         if (note) history.note = note;
+
+        balanceRef.update(newBalanceData);
 
         historyRef.push(history);
       },

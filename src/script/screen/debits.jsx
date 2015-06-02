@@ -85,79 +85,53 @@ var UserListItemCompact = React.createClass({
   }
 });
 
-var BalancesList = React.createClass({
+var DebitsList = React.createClass({
   render: function(){
-    console.log('BalancesList.render', this)
+    console.log('DebitsList.render', this)
 
     var that = this;
 
-    var providerBalanceNodes;
-    if (!this.props.providerBalances) {
-      providerBalanceNodes = (
+    var debitNodes;
+    if (!this.props.debits) {
+      debitNodes = (
         <div className="item item-icon-left">
           <i className="icon ion-eye-disabled"></i>
           Nothing to see here.
         </div>
       );
     } else {
-      providerBalanceNodes = [];
-      _.forEach(this.props.providerBalances, function (balance, key) {
-        providerBalanceNodes.push(
+      debitNodes = [];
+      _.forEach(this.props.debits, function (balance, key) {
+        debitNodes.push(
           <UserListItemCompact key={key} selfRole="provider" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />
-        );
-      });
-    }
-
-    var receiverBalanceNodes;
-    if (!this.props.receiverBalances) {
-      receiverBalanceNodes = (
-        <div className="item item-icon-left">
-          <i className="icon ion-eye-disabled"></i>
-          Nothing to see here.
-        </div>
-      );
-    } else {
-      receiverBalanceNodes = [];
-      _.forEach(this.props.receiverBalances, function (balance, key) {
-        receiverBalanceNodes.push(
-          <UserListItemCompact key={key} selfRole="receiver" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />
         );
       });
     }
 
     return (
       <ul className="list">
-        <li className="item item-divider">
-          <i className="icon ion-arrow-expand"></i> Providing
-        </li>
-        {providerBalanceNodes}
-        <li className="item item-divider">
-          <i className="icon ion-arrow-shrink"></i> Receiving
-        </li>
-        {receiverBalanceNodes}
+        {debitNodes}
       </ul>
     );
   }
 });
 
-var BalancesScreen = React.createClass({
+var DebitsScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin],
   getInitialState: function(){
     return {
-      providerBalances: {},
-      receiverBalances: {},
+      debits: {},
     };
   },
   componentWillMount: function(){
-    console.log('BalancesScreen.componentWillMount()', this, arguments);
+    console.log('DebitsScreen.componentWillMount()', this, arguments);
 
-    var balances = this.props.getBalances();
+    var debitsRef = this.props.getBalances();
 
-    this.bindAsObject(balances.providerRef, 'providerBalances');
-    this.bindAsObject(balances.receiverRef, 'receiverBalances');
+    this.bindAsObject(debitsRef, 'debits');
   },
   render: function(){
-    console.log('BalancesScreen.render()', this, arguments);
+    console.log('DebitsScreen.render()', this, arguments);
 
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
@@ -167,12 +141,12 @@ var BalancesScreen = React.createClass({
               <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>
             </div>
           </div>
-          <h1 className="title">Balances</h1>
+          <h1 className="title">Debits</h1>
         </div>
 
         <div className="scroll-content has-header">
 
-          <BalancesList providerBalances={this.state.providerBalances} receiverBalances={this.state.receiverBalances} handleBalanceChange={this.props.handleBalanceChange} />
+          <DebitsList debits={this.state.debits} handleBalanceChange={this.props.handleBalanceChange} />
 
         </div>
       </div>
@@ -180,4 +154,4 @@ var BalancesScreen = React.createClass({
   }
 });
 
-module.exports = BalancesScreen;
+module.exports = DebitsScreen;

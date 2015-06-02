@@ -1,5 +1,8 @@
 var React = require('react');
 
+// Components
+var HistoryListItem = require('../component/historyListItem.jsx');
+
 // Libs
 var _ = require('lodash');
 var classNames = require('classnames');
@@ -13,54 +16,11 @@ var SetIntervalMixin = require('../../lib/set-interval-mixin.jsx');
 // Modules
 var utils = require('../utils');
 
-var HistoryItem = React.createClass({
-  mixins: [SetIntervalMixin],
-  propTypes: {
-    'history': React.PropTypes.object,
-  },
-  getInitialState: function(){
-    return {
-      fromNow: void 0,
-    };
-  },
-  updateFromNow: function (timestamp) {
-    var fromNow;
-
-    if (timestamp === void 0)
-      timestamp = this.props.history.timestamp;
-
-    if (timestamp > Date.now()) {
-      fromNow = 'just now';
-    } else {
-      fromNow = utils.momentFromNowIfTime(timestamp);
-    }
-
-    this.setState({fromNow: fromNow});
-  },
-  componentWillMount: function(){
-    this.updateFromNow();
-
-    this.setInterval(this.updateFromNow, 5 * 1000);
-  },
-  componentWillReceiveProps: function (nextProps) {
-    this.updateFromNow(nextProps.history.timestamp);
-  },
-  render: function() {
-    return (
-      <div className="item">
-        {utils.formatCurrency(this.props.history.amount)} {this.props.history.action}
-        <span className="item-note">{this.state.fromNow}</span>
-        <p className="subdued">{this.props.history.note}</p>
-      </div>
-    );
-  }
-});
-
-var BalanceScreen = React.createClass({
+var DebitScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin, SetIntervalMixin],
   propTypes: {
     'balance': React.PropTypes.object,
-    'deduct': React.PropTypes.func,
+    'deductAndOrAddNote': React.PropTypes.func,
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
@@ -113,7 +73,7 @@ var BalanceScreen = React.createClass({
     }
   },
   componentWillMount: function(){
-    console.log('BalanceScreen.componentWillMount()', this, arguments);
+    console.log('DebitScreen.componentWillMount()', this, arguments);
 
     this.initFirebase(this.props);
 
@@ -134,15 +94,23 @@ var BalanceScreen = React.createClass({
     var value = event.target.value;
     this.setState({notesValue: value});
   },
-  handleDeductSubmit: function(){
-    console.log('handleDeductSubmit', this, arguments);
+  handleDeductAndOrNoteSubmit: function(){
+    console.log('handleDeductAndOrNoteSubmit', this, arguments);
 
     var amount = parseFloat(this.state.amountValue);
 
     var notes = this.state.notesValue || void 0;
 
-    if (amount > 0 && amount <=  this.props.balance.currentAmount) {
-      this.props.deduct(this.props.balanceID, this.props.balance.currentAmount, amount, notes);
+    if (!this.state.amountValue && notes !== void 0) {
+      this.props.deductAndOrAddNote(this.props.balanceID, void 0, void 0, notes);
+
+      this.setState({
+        notesValue: '',
+      });
+
+      _.defer(this.updateFromNow);
+    } else if (amount > 0 && amount <= this.props.balance.currentAmount) {
+      this.props.deductAndOrAddNote(this.props.balanceID, this.props.balance.currentAmount, amount, notes);
 
       this.setState({
         amountValue: '',
@@ -153,7 +121,7 @@ var BalanceScreen = React.createClass({
     }
   },
   render: function(){
-    console.log('BalanceScreen.render', this);
+    console.log('DebitScreen.render', this);
 
     var balance = this.state.balance || this.props.balance;
 
@@ -164,7 +132,7 @@ var BalanceScreen = React.createClass({
             <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
               <i className="icon ion-chevron-left"></i> Back
             </div>
-            <h1 className="title">Balance</h1>
+            <h1 className="title">Debit</h1>
           </div>
 
           <div className="scroll-content has-header">
@@ -176,8 +144,10 @@ var BalanceScreen = React.createClass({
 
     var historyNodes = [];
     _.forIn(this.state.history, function (history, key) {
+      var name = (history.uid === balance.providerID) ? balance.provider.name : balance.receiver.name;
+      var photoURL = (history.uid === balance.providerID) ? balance.provider.photoURL : balance.receiver.photoURL;
       historyNodes.push(
-        <HistoryItem key={key} history={history} />
+        <HistoryListItem key={key} history={history} name={name} photoURL={photoURL} />
       );
     });
     historyNodes.reverse();
@@ -188,7 +158,7 @@ var BalanceScreen = React.createClass({
           <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
             <i className="icon ion-chevron-left"></i> Back
           </div>
-          <h1 className="title">Balance</h1>
+          <h1 className="title">Debit</h1>
         </div>
 
         <div className="scroll-content overflow-scroll has-header">
@@ -208,14 +178,14 @@ var BalanceScreen = React.createClass({
               <div className="list">
                 <label className="item item-input">
                   <span className="input">$ </span>
-                  <input type="text" placeholder=" Amount to deduct..." value={this.state.amountValue} onChange={this.handleAmountChange} />
+                  <input type="text" placeholder=" Amount to deduct (optional)" value={this.state.amountValue} onChange={this.handleAmountChange} />
                 </label>
                 <label className="item item-input">
-                  <input type="text" placeholder="Notes..." value={this.state.notesValue} onChange={this.handleNotesChange} />
+                  <input type="text" placeholder="Notes (optional)" value={this.state.notesValue} onChange={this.handleNotesChange} />
                 </label>
                 <div className="item">
-                  <button className="button button-block button-positive" onTouchEnd={this.handleDeductSubmit}>
-                    Deduct
+                  <button className="button button-block button-positive" onTouchEnd={this.handleDeductAndOrNoteSubmit}>
+                    Deduct and/or Add Note
                   </button>
                 </div>
               </div>
@@ -231,4 +201,4 @@ var BalanceScreen = React.createClass({
   }
 });
 
-module.exports = BalanceScreen;
+module.exports = DebitScreen;

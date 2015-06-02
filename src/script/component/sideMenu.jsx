@@ -17,12 +17,12 @@ var SideMenu = React.createClass({
       {
         screen: 'creditsScreen',
         text: 'Credits',
-        icon: 'ion-shuffle'
+        icon: 'ion-arrow-shrink'
       },
       {
         screen: 'debitsScreen',
         text: 'Debits',
-        icon: 'ion-shuffle'
+        icon: 'ion-arrow-expand'
       }
     ];
 
