@@ -1,3 +1,20 @@
+@mixin flex-vertical-center() {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
 .screens {
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
@@ -75,4 +92,16 @@
 
 .profileScreen .userListItem {
   margin-top: -1px;
+}
+
+.item-note.remaining {
+  @include flex-vertical-center();
+  right: 50px;
+  text-align: center;
+  font-size: 10px;
+  color: inherit;
+  h3 {
+    margin: 0;
+    font-size: 20px;
+  }
 }

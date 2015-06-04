@@ -17,12 +17,11 @@ var UserListItemCompact = React.createClass({
   mixins: [SetIntervalMixin],
   getInitialState: function(){
     return {
-      createdFromNow: void 0,
       updatedFromNow: void 0,
     };
   },
   updateFromNow: function (balance) {
-    var createdFromNow, updatedFromNow;
+    var updatedFromNow;
 
     if (!balance && !this.props.balance)
      return;
@@ -30,22 +29,17 @@ var UserListItemCompact = React.createClass({
     if (!balance)
       balance = this.props.balance;
 
-    if (balance.created > Date.now()) {
-      createdFromNow = 'just now';
-    } else {
-      createdFromNow = utils.momentFromNowIfTime(balance.created);
-    }
-
     if (balance.updated > Date.now()) {
       updatedFromNow = 'just now';
     } else {
       updatedFromNow = utils.momentFromNowIfTime(balance.updated);
     }
 
-    this.setState({
-      createdFromNow: createdFromNow,
-      updatedFromNow: updatedFromNow,
-    });
+    if (this.state.updatedFromNow !== updatedFromNow) {
+      this.setState({
+        updatedFromNow: updatedFromNow,
+      });
+    }
   },
   componentWillMount: function(){
     this.updateFromNow();
@@ -74,12 +68,35 @@ var UserListItemCompact = React.createClass({
     updated
     */
 
+    var remainingDIV;
+    if (balance.currentAmount === 0) {
+      remainingDIV = (
+        <div>
+          <h3>DONE!</h3>
+        </div>
+      );
+    } else {
+      remainingDIV = (
+        <div>
+          <h3>{utils.formatCurrency(balance.currentAmount)}</h3>
+          remaining
+        </div>
+      );
+    }
+
     return (
-      <a className="item item-avatar" href="#" onTouchEnd={this.props.handleBalanceChange.bind(null, {state: {balance: balance, balanceID: this.props.balanceID, selfRole: this.props.selfRole}})}>
+      <a className="item item-avatar item-icon-right" href="#" onTouchEnd={this.props.handleBalanceChange.bind(null, {state: {balance: balance, balanceID: this.props.balanceID, selfRole: this.props.selfRole}})}>
         <img src={(this.props.selfRole === 'provider') ? balance.receiver.photoURL : balance.provider.photoURL} />
-        <h2>{(this.props.selfRole === 'provider') ? balance.receiver.name : balance.provider.name}: {balance.sushi}</h2>
-        <p>{(balance.currentAmount === balance.originalAmount) ? utils.formatCurrency(balance.originalAmount) : utils.formatCurrency(balance.currentAmount) + ' remaining of ' + utils.formatCurrency(balance.originalAmount)}</p>
-        <p>Last updated {this.state.updatedFromNow}, started {this.state.createdFromNow}</p>
+
+        <span className="item-note remaining">
+          {remainingDIV}
+        </span>
+
+        <h2>{(this.props.selfRole === 'provider') ? balance.receiver.name : balance.provider.name}</h2>
+        <p>{utils.formatCurrency(balance.originalAmount)} credit for {balance.sushi}</p>
+        <p>Last active {this.state.updatedFromNow}</p>
+
+        <i className="icon ion-ios-arrow-forward"></i>
       </a>
     );
   }
@@ -141,7 +158,7 @@ var CreditsScreen = React.createClass({
               <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>
             </div>
           </div>
-          <h1 className="title">Credits</h1>
+          <h1 className="title">My Credits</h1>
         </div>
 
         <div className="scroll-content has-header">
