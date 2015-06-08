@@ -16,13 +16,8 @@ var SideMenu = React.createClass({
       },
       {
         screen: 'creditsScreen',
-        text: 'Credits',
-        icon: 'ion-arrow-shrink'
-      },
-      {
-        screen: 'debitsScreen',
-        text: 'Debits',
-        icon: 'ion-arrow-expand'
+        text: 'Wallet',
+        icon: 'ion-shuffle'
       }
     ];
 
@@ -30,7 +25,7 @@ var SideMenu = React.createClass({
 
     var listItems = menuOptions.map(function (option, i) {
       return (
-        <a className="item item-icon-left" href="#" onTouchEnd={that.props.changeScreen.bind(null, option.screen, {state: {fromMenu: true}})}>
+        <a key={i} className="item item-icon-left" href="#" onTouchEnd={that.props.changeScreen.bind(null, option.screen, {state: {fromMenu: true}})}>
           <i className={'icon ' + option.icon}></i>{option.text}
         </a>
       );
@@ -45,7 +40,7 @@ var SideMenu = React.createClass({
           <div className="scroll">
             <div className="list disable-user-behavior">
               {listItems}
-              <a className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
+              <a key={menuOptions.length} className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
                 <i className="icon ion-log-out"></i>Logout
               </a>
             </div>

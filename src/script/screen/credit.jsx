@@ -19,11 +19,12 @@ var utils = require('../utils');
 var CreditScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin, SetIntervalMixin],
   propTypes: {
-    'balance': React.PropTypes.object,
     'addNote': React.PropTypes.func,
+    'balance': React.PropTypes.object,
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
+    'selfUID': React.PropTypes.string,
     'visible': React.PropTypes.bool,
   },
   getInitialState: function(){
@@ -126,12 +127,32 @@ var CreditScreen = React.createClass({
       );
     }
 
+    var selfDataKey = this.props.selfUID + '_data';
+    var selfData = balance[selfDataKey];
+    var otherData = _.find(balance, function (val, key) {
+      return key !== selfDataKey && /_data$/.test(key);
+    });
+
+    var remainingDIV;
+    if (otherData.currentAmount === 0) {
+      remainingDIV = (
+        <div>
+          <h3>DONE!</h3>
+        </div>
+      );
+    } else {
+      remainingDIV = (
+        <div>
+          <h3>{utils.formatCurrency(otherData.currentAmount)}</h3>
+          remaining
+        </div>
+      );
+    }
+
     var historyNodes = [];
     _.forIn(this.state.history, function (history, key) {
-      var name = (history.uid === balance.providerID) ? balance.provider.name : balance.receiver.name;
-      var photoURL = (history.uid === balance.providerID) ? balance.provider.photoURL : balance.receiver.photoURL;
       historyNodes.push(
-        <HistoryListItem key={key} history={history} name={name} photoURL={photoURL} />
+        <HistoryListItem key={key} history={history} name={balance[history.uid + '_data'].name} photoURL={balance[history.uid + '_data'].photoURL} />
       );
     });
     historyNodes.reverse();
@@ -145,34 +166,37 @@ var CreditScreen = React.createClass({
           <h1 className="title">Credit</h1>
         </div>
 
-        <div className="scroll-content overflow-scroll has-header">
+        <div className="scroll-content overflow-scroll has-header wallet-card">
 
-          <div className="list card">
+          <span className="remaining">
+            {remainingDIV}
+          </span>
 
-            <div className="item item-avatar">
-              <img src={(this.props.selfRole === 'provider') ? this.props.balance.receiver.photoURL : this.props.balance.provider.photoURL} />
-              <h2>{(this.props.selfRole === 'provider') ? balance.receiver.name : balance.provider.name}: {balance.sushi}</h2>
-                <p>{(balance.currentAmount === balance.originalAmount) ? utils.formatCurrency(balance.originalAmount) : utils.formatCurrency(balance.currentAmount) + ' remaining of ' + utils.formatCurrency(balance.originalAmount)}</p>
+          <img className="avatar" src={otherData.photoURL} />
 
+          <h2>{otherData.name}</h2>
+
+          <div className="row">
+            <div className="col">
+              <h4 className="icon-left ion-arrow-shrink">You Get</h4>
+              <p className="sushi">{otherData.sushi}</p>
+              <p>{utils.formatCurrency(otherData.currentAmount)} remaining</p>
+              <button className="button button-energized icon-right ion-arrow-right-b">
+                Redeem
+              </button>
             </div>
-
-            <div className="item item-body">
-              <p className="subdued">Last updated {this.state.updatedFromNow}, started {this.state.createdFromNow}</p>
-
-              <div className="list">
-                <label className="item item-input">
-                  <input type="text" placeholder="Notes..." value={this.state.notesValue} onChange={this.handleNotesChange} />
-                </label>
-                <div className="item">
-                  <button className="button button-block button-positive" onTouchEnd={this.handleNoteSubmit}>
-                    Add Note
-                  </button>
-                </div>
-              </div>
+            <div className="col">
+              <h4 className="icon-left ion-arrow-expand">You Pay</h4>
+              <p className="sushi">{selfData.sushi}</p>
+              <p>{utils.formatCurrency(selfData.currentAmount)} remaining</p>
+              <button className="button button-energized icon-right ion-arrow-right-b">
+                Deduct
+              </button>
             </div>
+          </div>
 
+          <div className="list padding-top">
             {historyNodes}
-
           </div>
 
         </div>

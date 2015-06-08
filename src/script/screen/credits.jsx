@@ -13,7 +13,7 @@ var SetIntervalMixin = require('../../lib/set-interval-mixin.jsx');
 // Modules
 var utils = require('../utils');
 
-var UserListItemCompact = React.createClass({
+var BalanceCard = React.createClass({
   mixins: [SetIntervalMixin],
   getInitialState: function(){
     return {
@@ -51,53 +51,67 @@ var UserListItemCompact = React.createClass({
   },
   render: function() {
     var balance = this.props.balance;
+    var selfDataKey = this.props.selfUID + '_data';
+    var selfData = balance[selfDataKey];
+    var otherData = _.find(balance, function (val, key) {
+      return key !== selfDataKey && /_data$/.test(key);
+    });
 
     /*
     created
-    currentAmount
-    originalAmount
-    provider
-      name
-      photoURL
-    providerID
-    receiver
-      name
-      photoURL
-    receiverID
-    sushi
     updated
+    [each uid has a key with a truthy value]
+    [for each uid, with key uid + '_data']
+      currentAmount
+      originalAmount
+      name
+      photoURL
+      sushi
+      unread
     */
 
-    var remainingDIV;
-    if (balance.currentAmount === 0) {
+    var cornerRibbon, remainingDIV;
+    if (otherData.currentAmount === 0) {
       remainingDIV = (
         <div>
           <h3>DONE!</h3>
         </div>
       );
     } else {
+      cornerRibbon = (
+        <span className="corner-ribbon">
+          Open
+        </span>
+      );
       remainingDIV = (
         <div>
-          <h3>{utils.formatCurrency(balance.currentAmount)}</h3>
+          <h3>{utils.formatCurrency(otherData.currentAmount)}</h3>
           remaining
         </div>
       );
     }
 
     return (
-      <a className="item item-avatar item-icon-right" href="#" onTouchEnd={this.props.handleBalanceChange.bind(null, {state: {balance: balance, balanceID: this.props.balanceID, selfRole: this.props.selfRole}})}>
-        <img src={(this.props.selfRole === 'provider') ? balance.receiver.photoURL : balance.provider.photoURL} />
+      <div className="card wallet-card">
+        <div className="item item-text-wrap">
+          {cornerRibbon}
 
-        <span className="item-note remaining">
-          {remainingDIV}
-        </span>
+          <span className="remaining">
+            {remainingDIV}
+          </span>
 
-        <h2>{(this.props.selfRole === 'provider') ? balance.receiver.name : balance.provider.name}</h2>
-        <p>{utils.formatCurrency(balance.originalAmount)} credit for {balance.sushi}</p>
-        <p>Last active {this.state.updatedFromNow}</p>
+          <img className="avatar" src={otherData.photoURL} />
 
-        <i className="icon ion-ios-arrow-forward"></i>
-      </a>
+          <h2>{otherData.name}</h2>
+          <p className="sushi">{otherData.sushi}</p>
+          <p className="sushi">Paying with {selfData.sushi}</p>
+          <p>Last active {this.state.updatedFromNow}{(selfData.unread) ? ', ' + selfData.unread + ' unread' : ''}</p>
+
+          <button className="button button-small button-energized icon-right ion-arrow-right-b" onTouchEnd={this.props.handleBalanceChange.bind(null, {state: {balance: balance, balanceID: this.props.balanceID, selfUID: this.props.selfUID}})}>
+            Details
+          </button>
+        </div>
+      </div>
     );
   }
 });
@@ -120,7 +134,7 @@ var CreditsList = React.createClass({
       creditNodes = [];
       _.forEach(this.props.credits, function (balance, key) {
         creditNodes.push(
-          <UserListItemCompact key={key} selfRole="receiver" balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />
+          <BalanceCard key={key} selfUID={that.props.selfUID} balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />
         );
       });
     }
@@ -158,12 +172,12 @@ var CreditsScreen = React.createClass({
               <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>
             </div>
           </div>
-          <h1 className="title">My Credits</h1>
+          <h1 className="title">My Wallet</h1>
         </div>
 
         <div className="scroll-content has-header">
 
-          <CreditsList credits={this.state.credits} handleBalanceChange={this.props.handleBalanceChange} />
+          <CreditsList credits={this.state.credits} selfUID={this.props.selfUID} handleBalanceChange={this.props.handleBalanceChange} />
 
         </div>
       </div>

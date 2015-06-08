@@ -351,7 +351,7 @@ var remote = {
           if (error) {
             console.warn('Login Failed!', error);
           } else {
-            console.warn('Authenticated successfully with payload:', authData);
+            console.log('Authenticated successfully with payload:', authData);
             remote.firebase.auth.authData = authData;
 
             var uid = (authData.uid === 'facebook:10152693261186518') ? 'ypoaKC1xaF' : authData.uid;
@@ -364,7 +364,7 @@ var remote = {
               if (val === null) {
                 console.warn('Unknown user!');
               } else {
-                console.warn('Known user!', val);
+                console.log('Known user!', val);
                 remote.user.userData = val;
                 remote.user.userData.id = uid;
 
@@ -379,19 +379,12 @@ var remote = {
       }
     },
     balance: {
-      getCreditsByUserDataId: function (userDataId) {
-        console.log('remote.firebase.balance.getCreditsByUserDataId', this, arguments);
+      getByUID: function (userDataId) {
+        console.log('remote.firebase.balance.getByUID', this, arguments);
 
         var ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances');
 
-        return ref.orderByChild('receiverID').equalTo(userDataId);
-      },
-      getDebitsByUserDataId: function (userDataId) {
-        console.log('remote.firebase.balance.getDebitsByUserDataId', this, arguments);
-
-        var ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances');
-
-        return ref.orderByChild('providerID').equalTo(userDataId);
+        return ref.orderByChild(userDataId).equalTo(1);
       },
       get: function (balanceID) {
         console.log('remote.firebase.balance.get', this, arguments);
