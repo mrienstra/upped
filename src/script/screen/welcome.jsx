@@ -1,32 +1,33 @@
 var React = require('react');
 
-var WelcomeScreen = React.createClass({
-  getInitialState: function() {
-    return {
-      loading: false
-    };
-  },
-  handleLoginButton: function(){
-    this.setState({loading: true});
-    this.props.handleLoginButton();
-  },
-  render: function(){
-    var buttonClasses = 'button button-full button-positive';
-    if (this.state.loading) {
-      buttonClasses += ' icon-right ion-load-d';
-    }
+// Libs
+var classNames = require('classnames');
 
+// Mixins
+var ScreenTransitionMixin = require('../mixin/screenTransition.js');
+
+var WelcomeScreen = React.createClass({
+  mixins: [ScreenTransitionMixin],
+  render: function(){
     return (
-      <div className="welcome pane">
+      <div className={classNames.apply(null, this.state.classNames)}>
         <header className="bar bar-header bar-stable">
           <h1 className="title"><img src="img/new_logo_dark.png"> </img>Pay With Sushi</h1>
         </header>
         <div className="scroll-content has-header has-footer padding">
-          <h1>Welcome to Pay with Sushi!</h1>
-          <h3>What’s your sushi?</h3>
+          <h2>
+            SIGN UP
+          </h2>
+          <button className="button button-block button-assertive" onTouchEnd={this.props.handleFBLoginButton}>
+            Sign Up with Facebook
+          </button>
+          <button className="button button-block button-assertive" onTouchEnd={this.props.handleEmailSignupChange}>
+            Sign Up with Email
+          </button>
+          <p>By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
         </div>
-        <div className="bar bar-footer">
-          <button className={buttonClasses} onTouchEnd={this.handleLoginButton}>Log In with Facebook</button>
+        <div className="bar bar-footer bar-flat">
+          <div className="title title-link"><a href="#" onTouchEnd={this.props.handleEmailLoginChange}>Already a member?</a></div>
         </div>
       </div>
     );

@@ -15,6 +15,10 @@
   height: 100%;
 }
 
+a {
+  color: black;
+}
+
 .screens {
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
@@ -81,17 +85,32 @@
   top: 2px;
 }
 
+.bar-flat {
+  background: transparent;
+}
+
+.list-topless .item:first-child {
+  border-top: 0;
+}
+
+p.center {
+  text-align: center;
+}
+
 .bar-footer .button-full {
   margin: 0;
   position: absolute;
   left: 0; top: 0; right: 0; bottom: 0;
 }
+.bar-footer .title-link {
+  font-size: 100%;
+  font-weight: inherit;
+}
 
-.welcome .scroll-content {
-  height: 100%;
-  background: url('../img/splash.png') no-repeat;
-  background-size: cover;
-  text-shadow: 0 0 .4em white, 0 0 1em white;
+.welcome {
+  .scroll-content, .bar-footer {
+    text-align: center;
+  }
 }
 
 .profileScreen .userListItem {

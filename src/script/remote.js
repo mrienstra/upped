@@ -340,43 +340,139 @@ var remote = {
   },
   firebase: {
     auth: {
-      loginWithFBAuthResponse: function (authResponse, attemptCount) {
-        console.log('remote.firebase.auth.loginWithFBAuthResponse', arguments);
-
+      getRef: function(){
         if (!this.ref) {
           this.ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com');
         }
 
-        this.ref.authWithOAuthToken('facebook', authResponse.accessToken, function (error, authData) {
+        return this.ref;
+      },
+      postLogin2: function (uid) {
+        var ref = remote.firebase.userData.getById(uid);
+
+        ref.on('value', function(snapshot) {
+          var val = snapshot.val();
+
+          if (val === null) {
+            console.warn('Unknown user!');
+          } else {
+            console.log('Known user!', val);
+            remote.user.userData = val;
+            remote.user.userData.id = uid;
+
+            _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
+            ga('send', 'event', 'session', 'login', 'fbAndParseLoginSuccess');
+          }
+        }, function (errorObject) {
+          // todo: handle
+          console.warn('The read failed', errorObject);
+          ga('send', 'event', 'userData', 'get ' + user.uid, 'error: ' + errorObject.code);
+        });
+      },
+      postLogin: function (authData) {
+        remote.firebase.auth.authData = authData;
+
+        var that = this;
+
+        var ref = this.getRef();
+
+        ref.child('users/' + authData.uid).on('value', function (snapshot) {
+          var user = snapshot.val();
+          if (user === null) {
+            if (document.location.search.substring(0, 6) === '?udid=') {
+              var uid = document.location.search.substring(6);
+              ref.child('users/' + authData.uid).set({
+                'uid': uid,
+              });
+              that.postLogin2(uid);
+            } else {
+              // Unknown user!
+              // Todo: get name from FB and use it to guess?
+
+              alert('Hmm, we weren\'t able to figure out who you are...');
+            }
+          } else {
+            that.postLogin2(user.uid);
+          }
+        }, function (errorObject) {
+          // todo: handle
+          console.warn('The read failed', errorObject);
+          ga('send', 'event', 'users', 'get ' + authData.uid, 'error: ' + errorObject.code);
+        });
+      },
+      loginWithFBAuthResponse: function (authResponse, attemptCount) {
+        console.log('remote.firebase.auth.loginWithFBAuthResponse', arguments);
+
+        var that = this;
+
+        var ref = this.getRef();
+
+        ref.authWithOAuthToken('facebook', authResponse.accessToken, function (error, authData) {
           if (error) {
             console.warn('Login Failed!', error);
           } else {
             console.log('Authenticated successfully with payload:', authData);
-            remote.firebase.auth.authData = authData;
-
-            var uid = (authData.uid === 'facebook:10152693261186518') ? 'ypoaKC1xaF' : authData.uid;
-
-            var ref = remote.firebase.userData.getById(uid);
-
-            ref.on('value', function(snapshot) {
-              var val = snapshot.val();
-
-              if (val === null) {
-                console.warn('Unknown user!');
-              } else {
-                console.log('Known user!', val);
-                remote.user.userData = val;
-                remote.user.userData.id = uid;
-
-                _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
-                ga('send', 'event', 'session', 'login', 'fbAndParseLoginSuccess');
-              }
-            }, function (errorObject) {
-              console.log('The read failed: ' + errorObject.code);
-            });
+            that.postLogin(authData);
           }
         });
-      }
+      },
+      passwordLogin: function (email, password, onError) {
+        console.log('remote.firebase.auth.passwordLogin', this, arguments);
+
+        var that = this;
+
+        var ref = this.getRef();
+
+        ref.authWithPassword({
+          email: email,
+          password: password,
+        }, function (error, authData) {
+          if (error) {
+            console.log('Login Failed!', error);
+            onError && onError(error.message || error);
+          } else {
+            console.log('Authenticated successfully with payload:', authData);
+            that.postLogin(authData);
+          }
+        });
+      },
+      passwordSignup: function (data, onError) {
+        console.log('remote.firebase.auth.passwordSignup', this, arguments);
+
+        var that = this;
+
+        var ref = this.getRef();
+
+        ref.createUser({
+          email: data.email,
+          password: data.password,
+        }, function (error, userData) {
+          if (error) {
+            console.log('Error creating user:', error);
+            onError && onError(error.message || error);
+          } else {
+            console.log('Successfully created user account with uid:', userData.uid);
+            that.passwordLogin(data.email, data.password);
+          }
+        });
+      },
+      passwordForgot: function (email, onError, onSuccess) {
+        var ref = this.getRef();
+
+        console.log('remote.firebase.auth.passwordForgot', this, arguments);
+
+        ref.resetPassword({
+          email : email
+        }, function (error) {
+          if (error === null) {
+            console.log("Password reset email sent successfully");
+            onSuccess && onSuccess();
+          } else {
+            console.warn("Error sending password reset email:", error);
+            onError && onError(error.message || error);
+          }
+        });
+      },
     },
     balance: {
       getByUID: function (userDataId) {
