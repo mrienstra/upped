@@ -55,13 +55,13 @@ var WelcomeScreen = React.createClass({
           </h4>
           <div className="list list-topless">
             <label className="item item-input">
-              <input ref="firstnameInput" type="text" placeholder="First Name"/>
+              <input ref="firstnameInput" type="text" inputmode="latin-name" placeholder="First Name"/>
             </label>
             <label className="item item-input">
-              <input ref="lastnameInput" type="text" placeholder="Last Name"/>
+              <input ref="lastnameInput" type="text" inputmode="latin-name" placeholder="Last Name"/>
             </label>
             <label className="item item-input">
-              <input ref="emailInput" type="text" placeholder="Email"/>
+              <input ref="emailInput" type="email" placeholder="Email"/>
             </label>
             <label className="item item-input">
               <input ref="passwordInput" type="password" placeholder="Password"/>

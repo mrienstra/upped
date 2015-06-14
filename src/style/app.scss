@@ -85,6 +85,12 @@ a {
   top: 2px;
 }
 
+.bar .button.back-button {
+  padding: 6px 18px 35px 6px;
+  margin-top: -6px;
+  margin-left: -6px;
+}
+
 .bar-flat {
   background: transparent;
 }
@@ -93,7 +99,7 @@ a {
   border-top: 0;
 }
 
-p.center {
+h2.center, p.center {
   text-align: center;
 }
 

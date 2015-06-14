@@ -175,7 +175,7 @@ var CreditsScreen = React.createClass({
           <h1 className="title">My Wallet</h1>
         </div>
 
-        <div className="scroll-content has-header">
+        <div className="scroll-content overflow-scroll has-header">
 
           <CreditsList credits={this.state.credits} selfUID={this.props.selfUID} handleBalanceChange={this.props.handleBalanceChange} />
 

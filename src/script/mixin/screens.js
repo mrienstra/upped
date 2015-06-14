@@ -84,18 +84,12 @@ var ScreensMixin = {
     this.setState(modifiedState);
 
     if (transition) {
-      _.defer(function(){
-        modifiedState[previousScreen].transition.inProgress = true;
-        modifiedState[newScreen].transition.inProgress = true;
+      _.delay(function(){
+        modifiedState[previousScreen].transition = void 0;
+        modifiedState[previousScreen].visible = false;
+        modifiedState[newScreen].transition = void 0;
         that.setState(modifiedState);
-
-        _.delay(function(){
-          modifiedState[previousScreen].transition = void 0;
-          modifiedState[previousScreen].visible = false;
-          modifiedState[newScreen].transition = void 0;
-          that.setState(modifiedState);
-        }, 250); // Important: keep this delay in sync with `.rs-transition` duration
-      });
+      }, 260); // Important: keep this delay in sync with `.rs-transition` duration
     }
   },
   backToPreviousScreen: function(){

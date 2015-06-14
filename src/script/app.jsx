@@ -87,16 +87,26 @@ var authInit = function (e, afterLogOut) {
 
   var EmailForgotScreen = require('./screen/emailForgot.jsx');
 
+  var ResetPasswordScreen = require('./screen/resetPassword.jsx');
+
   var App = React.createClass({
     mixins: [ScreensMixin],
     getInitialState: function(){
+      var initialScreen;
+      if (e && e.detail && e.detail.initialScreen) {
+        initialScreen = e.detail.initialScreen;
+      } else {
+        initialScreen = 'welcomeScreen';
+      }
+
       return {
         screens: {
-          stack: ['welcomeScreen'],
+          stack: [initialScreen],
           i: 0,
         },
         welcomeScreen: {
-          visible: true,
+          visible: (initialScreen === 'welcomeScreen') ? true : false,
+          errorMessage: (e && e.detail && e.detail.errorMessage) ? e.detail.errorMessage : void 0
         },
         emailSignupScreen: {
           visible: false,
@@ -106,6 +116,9 @@ var authInit = function (e, afterLogOut) {
         },
         emailForgotScreen: {
           visible: false,
+        },
+        resetPasswordScreen: {
+          visible: (initialScreen === 'resetPasswordScreen') ? true : false,
         },
       }
     },
@@ -166,6 +179,8 @@ var authInit = function (e, afterLogOut) {
               <EmailLoginScreen handleEmailForgotChange={this.changeScreen.bind(null, 'emailForgotScreen')} doEmailLogin={doEmailLogin} handleFBLoginButton={handleFBLoginButton} handleEmailSignupChange={this.changeScreen.bind(null, 'emailSignupScreen')} handleBack={this.backToPreviousScreen} {...this.state.emailLoginScreen}/>
 
               <EmailForgotScreen doEmailForgot={doEmailForgot} handleEmailSignupChange={this.changeScreen.bind(null, 'emailSignupScreen')} handleBack={this.backToPreviousScreen} {...this.state.emailForgotScreen}/>
+
+              <ResetPasswordScreen doResetPassword={remote.firebase.auth.resetPassword.bind(remote.firebase.auth)} {...this.state.resetPasswordScreen}/>
           </div>
         </div>
       );

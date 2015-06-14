@@ -40,7 +40,7 @@ var ProfileScreen = React.createClass({
 
     var rightNavButton;
     if (this.props.viewingSelf) {
-      rightNavButton = <button className="button button-icon icon ion-edit" onTouchEnd={this.props.handleEdit}></button>;
+      //rightNavButton = <button className="button button-icon icon ion-edit" onTouchEnd={this.props.handleEdit}></button>;
     } else if (this.props.matched) {
       rightNavButton = <button className="button button-icon icon ion-chatbubbles" onTouchEnd={this.props.handleChatChange.bind(null, {state: {otherUserData: this.state.userData}})}></button>;
     }
