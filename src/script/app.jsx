@@ -13,9 +13,9 @@ var reactDomRoot = document.querySelector('.container');
 var appInit = function () {
   var SideMenu = require('./component/sideMenu.jsx');
 
-  var CreditsScreen = require('./screen/credits.jsx');
+  var WalletScreen = require('./screen/wallet.jsx');
 
-    var CreditScreen = require('./screen/credit.jsx');
+    var WalletDetailScreen = require('./screen/walletDetail.jsx');
 
       var RedeemScreen = require('./screen/redeem.jsx');
 
@@ -28,14 +28,14 @@ var appInit = function () {
     getInitialState: function(){
       return {
         screens: {
-          stack: ['creditsScreen'],
+          stack: ['walletScreen'],
           i: 0,
         },
         sideMenuVisible: false,
-        creditsScreen: {
+        walletScreen: {
           visible: true,
         },
-        creditScreen: {
+        walletDetailScreen: {
           visible: false,
           balance: void 0,
           balanceID: void 0,
@@ -70,9 +70,9 @@ var appInit = function () {
           <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
           <div className="screens">
-            <CreditsScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} changeScreen={this.changeScreen} {...this.state.creditsScreen}/>
+            <WalletScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} changeScreen={this.changeScreen} {...this.state.walletScreen}/>
 
-              <CreditScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} addNote={remote.firebase.balance.deductAndOrAddNote} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.creditScreen}/>
+              <WalletDetailScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} addNote={remote.firebase.balance.deductAndOrAddNote} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.walletDetailScreen}/>
 
                 <RedeemScreen selfUID={remote.user.userData.id} handleBack={this.backToPreviousScreen} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} {...this.state.redeemScreen}/>
 
