@@ -24,6 +24,7 @@ var WalletDetailScreen = React.createClass({
     'balance': React.PropTypes.object,
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
+    'markRead': React.PropTypes.func,
     'changeScreen': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,
@@ -107,7 +108,14 @@ var WalletDetailScreen = React.createClass({
     var note = React.findDOMNode(this.refs.noteTextarea).value;
 
     if (note) {
-      this.props.addNote(this.props.balanceID, note);
+      var balance = this.state.balance || this.props.balance;
+      var selfDataKey = this.props.selfUID + '_data';
+      var otherUID = _.find(_.keys(balance), function (val) {
+        return val !== selfDataKey && /_data$/.test(val);
+      }).split('_data')[0];
+      var otherData = balance[otherUID + '_data'];
+
+      this.props.addNote(this.props.balanceID, note, otherUID, otherData.unread);
 
       React.findDOMNode(this.refs.noteTextarea).value = '';
 
@@ -142,6 +150,12 @@ var WalletDetailScreen = React.createClass({
     var otherData = _.find(balance, function (val, key) {
       return key !== selfDataKey && /_data$/.test(key);
     });
+
+    if (selfData.unread) { // todo: move, doesn't really belong in render
+      _.defer(function(){
+        that.props.markRead(that.props.balanceID, that.props.selfUID);
+      });
+    }
 
     var historyNodes = [];
     _.forIn(this.state.history, function (history, key) {

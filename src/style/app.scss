@@ -204,3 +204,13 @@ a {
     }
   }
 }
+
+.item-avatar .unread {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 14px;
+  height: 14px;
+  background: #E7982A;
+  border-radius: 50%;
+}

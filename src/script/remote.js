@@ -473,11 +473,11 @@ var remote = {
 
         return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + historyID);
       },
-      deductAndOrAddNote: function (balanceID, note, uid, currentAmount, amount) {
+      deductAndOrAddNote: function (balanceID, note, otherUID, otherUnread, currentAmount, amount) {
         console.log('remote.firebase.balance.deductAndOrAddNote', this, arguments);
 
         var balanceRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID);
-        var balanceHalfRef = balanceRef.child(uid + '_data');
+        var balanceOtherDataRef = balanceRef.child(otherUID + '_data');
         var historyRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + balanceID);
 
         var history = {
@@ -485,10 +485,12 @@ var remote = {
           timestamp: Firebase.ServerValue.TIMESTAMP,
         };
 
+        var otherDataRefUpdate = {
+          unread: otherUnread + 1
+        };
+
         if (currentAmount > 0 && amount > 0 && amount <= currentAmount) {
-          balanceHalfRef.update({ // todo: consider switching to `transaction` for atomicity
-            currentAmount: currentAmount - amount,
-          });
+          otherDataRefUpdate.currentAmount = currentAmount - amount;
 
           history.action = 'subtracted';
           history.amount = amount;
@@ -500,6 +502,8 @@ var remote = {
           updated: Firebase.ServerValue.TIMESTAMP,
         });
 
+        balanceOtherDataRef.update(otherDataRefUpdate); // todo: consider switching to `transaction` for atomicity
+
         historyRef.push(history);
       },
       confirmDeduction: function (balanceID, deductionID) {
@@ -507,6 +511,13 @@ var remote = {
 
         deductionRef.update({
           confirmed: 1,
+        });
+      },
+      markRead: function (balanceID, selfUID) {
+        var balanceSelfDataRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID + '/' + selfUID + '_data');
+
+        balanceSelfDataRef.update({
+          unread: 0,
         });
       },
     },

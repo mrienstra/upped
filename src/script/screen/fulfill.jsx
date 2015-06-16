@@ -48,9 +48,7 @@ var FulfillScreen = React.createClass({
     var otherData = balance[otherUID + '_data'];
 
     if (amount && amount > 0 && amount <= otherData.currentAmount && comment) {
-
-
-      this.props.doDeduct(this.props.balanceID, comment, otherUID, otherData.currentAmount, amount);
+      this.props.doDeduct(this.props.balanceID, comment, otherUID, otherData.unread, otherData.currentAmount, amount);
 
       React.findDOMNode(this.refs.amountInput).value = '';
       React.findDOMNode(this.refs.commentTextarea).value = '';
