@@ -99,6 +99,21 @@ a {
   border-top: 0;
 }
 
+.list-inset-dotted {
+  margin: 0 20px;
+  .item {
+    border-left: 0;
+    border-right: 0;
+    border-style: dashed;
+  }
+  .item:first-child {
+    border-top: 0;
+  }
+  .item:last-child {
+    border-bottom: 0;
+  }
+}
+
 .center {
   text-align: center;
 }

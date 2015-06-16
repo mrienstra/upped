@@ -12,13 +12,18 @@ var SideMenu = React.createClass({
       {
         screen: 'myProfileScreen',
         text: 'Profile',
-        icon: 'ion-person'
+        icon: 'ion-person',
       },
       {
-        screen: 'creditsScreen',
+        screen: 'walletScreen',
         text: 'Wallet',
-        icon: 'ion-shuffle'
-      }
+        icon: 'ion-shuffle',
+      },
+      {
+        screen: 'feedbackScreen',
+        text: 'Feedback',
+        icon: 'ion-heart',
+      },
     ];
 
     var that = this;

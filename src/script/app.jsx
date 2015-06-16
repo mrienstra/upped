@@ -23,6 +23,8 @@ var appInit = function () {
 
   var ProfileScreen = require('./screen/profile.jsx');
 
+  var FeedbackScreen = require('./screen/feedback.jsx');
+
   var App = React.createClass({
     mixins: [ScreensMixin],
     getInitialState: function(){
@@ -57,6 +59,9 @@ var appInit = function () {
           matched: void 0,
           cssClass: 'profileScreen',
         },
+        feedbackScreen: {
+          visible: false,
+        },
       }
     },
     render: function(){
@@ -79,6 +84,8 @@ var appInit = function () {
                 <FulfillScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} doDeduct={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.fulfillScreen}/>
 
             <ProfileScreen selfUserData={remote.user.userData} get={remote.firebase.userData.getById} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
+
+            <FeedbackScreen showSideMenu={this.showSideMenu} {...this.state.feedbackScreen}/>
           </div>
 
           <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>
