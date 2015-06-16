@@ -69,6 +69,11 @@ var BalanceCard = React.createClass({
       return key !== selfDataKey && /_data$/.test(key);
     });
 
+    var creditText = 'credit';
+    if (selfData.currentAmount === 0 && otherData.currentAmount === 0) {
+      creditText += ' completed';
+    }
+
     /*
     created
     updated
@@ -87,7 +92,7 @@ var BalanceCard = React.createClass({
         <div className="item item-avatar">
           <img src={otherData.photoURL}/>
           <h2>{otherData.name}</h2>
-          <p>{utils.formatCurrency(otherData.originalAmount)} credit</p>
+          <p>{utils.formatCurrency(otherData.originalAmount)} {creditText}</p>
         </div>
         <div className="item item-text-wrap center">
           {otherData.sushi}

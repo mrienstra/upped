@@ -10,7 +10,6 @@ var HistoryListItem = React.createClass({
   mixins: [SetIntervalMixin],
   propTypes: {
     'history': React.PropTypes.object,
-    'name': React.PropTypes.string,
     'photoURL': React.PropTypes.string,
   },
   getInitialState: function(){
@@ -41,17 +40,28 @@ var HistoryListItem = React.createClass({
     this.updateFromNow(nextProps.history.timestamp);
   },
   render: function() {
-    var firstLine;
+    var topRight, firstLine, action;
     if (this.props.history.amount) {
+      if (this.props.history.action === 'opened') {
+        action = 'credit';
+        topRight = (
+          <div className="right">opened</div>
+        );
+      } else {
+        action = this.props.history.action;
+      }
+
       firstLine = (
         <div>
-          {utils.formatCurrency(this.props.history.amount)} {this.props.history.action}
+          {utils.formatCurrency(this.props.history.amount)} {action}
         </div>
       );
     }
+
     return (
-      <div className="item item-avatar item-text-wrap">
+      <div className="item item-avatar item-text-wrap item-history">
         <img src={this.props.photoURL} />
+        {topRight}
         {firstLine}
         <p>{this.props.history.note}</p>
         <p className="subdued">{this.state.fromNow}</p>

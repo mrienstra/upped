@@ -142,8 +142,9 @@ var WalletDetailScreen = React.createClass({
 
     var historyNodes = [];
     _.forIn(this.state.history, function (history, key) {
+      var photoURL = (history.uid) ? balance[history.uid + '_data'].photoURL : 'img/new_logo_dark.png';
       historyNodes.push(
-        <HistoryListItem key={key} history={history} name={balance[history.uid + '_data'].name} photoURL={balance[history.uid + '_data'].photoURL} />
+        <HistoryListItem key={key} history={history} photoURL={photoURL} />
       );
     });
     historyNodes.reverse();
@@ -193,10 +194,6 @@ var WalletDetailScreen = React.createClass({
               <a className="tab-item" href="#"onTouchEnd={this.handleFulfillChange}>
                 <i className="icon ion-speedometer"></i>
                 fulfill
-              </a>
-              <a className="tab-item" href="#">
-                <i className="icon ion-ios-more"></i>
-                more
               </a>
             </div>
             <div className="item item-avatar item-commentform">
