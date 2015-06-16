@@ -16,7 +16,7 @@ var SetIntervalMixin = require('../../lib/set-interval-mixin.jsx');
 // Modules
 var utils = require('../utils');
 
-var CreditScreen = React.createClass({
+var WalletDetailScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin, SetIntervalMixin],
   propTypes: {
     'addNote': React.PropTypes.func,
@@ -79,7 +79,7 @@ var CreditScreen = React.createClass({
     }
   },
   componentWillMount: function(){
-    console.log('CreditScreen.componentWillMount()', this, arguments);
+    console.log('WalletDetailScreen.componentWillMount()', this, arguments);
 
     this.initFirebase(this.props);
 
@@ -114,7 +114,7 @@ var CreditScreen = React.createClass({
     }
   },
   render: function(){
-    console.log('CreditScreen.render', this);
+    console.log('WalletDetailScreen.render', this);
 
     var balance = this.state.balance || this.props.balance;
 
@@ -214,4 +214,4 @@ var CreditScreen = React.createClass({
   }
 });
 
-module.exports = CreditScreen;
+module.exports = WalletDetailScreen;

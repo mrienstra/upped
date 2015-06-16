@@ -46,7 +46,7 @@ var BalanceCard = React.createClass({
     e.stopPropagation();
   },
   handleChatChange: function (e) {
-    this.props.changeScreen('creditScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
+    this.props.changeScreen('walletDetailScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
     e.stopPropagation();
   },
   handleFulfillChange: function (e) {
@@ -114,24 +114,24 @@ var BalanceCard = React.createClass({
   }
 });
 
-var CreditsList = React.createClass({
+var WalletList = React.createClass({
   render: function(){
-    console.log('CreditsList.render', this)
+    console.log('WalletList.render', this)
 
     var that = this;
 
-    var creditNodes;
-    if (!this.props.credits) {
-      creditNodes = (
+    var walletItemNodes;
+    if (!this.props.walletItems) {
+      walletItemNodes = (
         <div className="item item-icon-left">
           <i className="icon ion-eye-disabled"></i>
           Nothing to see here.
         </div>
       );
     } else {
-      creditNodes = [];
-      _.forEach(this.props.credits, function (balance, key) {
-        creditNodes.push(
+      walletItemNodes = [];
+      _.forEach(this.props.walletItems, function (balance, key) {
+        walletItemNodes.push(
           <BalanceCard key={key} selfUID={that.props.selfUID} balanceID={key} balance={balance} changeScreen={that.props.changeScreen} />
         );
       });
@@ -139,28 +139,28 @@ var CreditsList = React.createClass({
 
     return (
       <ul className="list">
-        {creditNodes}
+        {walletItemNodes}
       </ul>
     );
   }
 });
 
-var CreditsScreen = React.createClass({
+var WalletScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin],
   getInitialState: function(){
     return {
-      credits: {},
+      walletItems: {},
     };
   },
   componentWillMount: function(){
-    console.log('CreditsScreen.componentWillMount()', this, arguments);
+    console.log('WalletScreen.componentWillMount()', this, arguments);
 
-    var creditsRef = this.props.getBalances();
+    var balancesRef = this.props.getBalances();
 
-    this.bindAsObject(creditsRef, 'credits');
+    this.bindAsObject(balancesRef, 'walletItems');
   },
   render: function(){
-    console.log('CreditsScreen.render()', this, arguments);
+    console.log('WalletScreen.render()', this, arguments);
 
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
@@ -175,7 +175,7 @@ var CreditsScreen = React.createClass({
 
         <div className="scroll-content overflow-scroll has-header">
 
-          <CreditsList credits={this.state.credits} selfUID={this.props.selfUID} changeScreen={this.props.changeScreen} />
+          <WalletList walletItems={this.state.walletItems} selfUID={this.props.selfUID} changeScreen={this.props.changeScreen} />
 
         </div>
       </div>
@@ -183,4 +183,4 @@ var CreditsScreen = React.createClass({
   }
 });
 
-module.exports = CreditsScreen;
+module.exports = WalletScreen;
