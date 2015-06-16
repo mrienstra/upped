@@ -36,7 +36,7 @@ var ScreensMixin = {
     modifiedState[newScreen] = this.state[newScreen];
     modifiedState[newScreen].visible = true;
     if (options && options.state)
-      _.merge(modifiedState[newScreen], options.state);
+      _.assign(modifiedState[newScreen], options.state);
 
     if (back) {
       // Simple "back"

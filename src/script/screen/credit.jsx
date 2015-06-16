@@ -32,10 +32,16 @@ var CreditScreen = React.createClass({
     return {
       createdFromNow: void 0,
       updatedFromNow: void 0,
+      balance: void 0,
       history: void 0,
     };
   },
   initFirebase: function (props) {
+    this.setState({
+      balance: void 0,
+      history: void 0,
+    });
+
     var history = props.getHistory(props.balanceID);
 
     this.bindAsObject(history, 'history');
@@ -82,9 +88,11 @@ var CreditScreen = React.createClass({
     this.setInterval(this.updateFromNow, 5 * 1000);
   },
   componentWillReceiveProps: function (nextProps) {
-    this.initFirebase(nextProps);
+    if (nextProps.balanceID !== this.props.balanceID) {
+      this.initFirebase(nextProps);
 
-    this.updateFromNow(nextProps.balance);
+      this.updateFromNow(nextProps.balance);
+    }
   },
   handleRedeemChange: function (e) {
     this.props.changeScreen('redeemScreen', {state: {balance: this.props.balance}});

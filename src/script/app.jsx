@@ -38,6 +38,7 @@ var appInit = function () {
         creditScreen: {
           visible: false,
           balance: void 0,
+          balanceID: void 0,
         },
         redeemScreen: {
           visible: false,
@@ -46,6 +47,7 @@ var appInit = function () {
         fulfillScreen: {
           visible: false,
           balance: void 0,
+          balanceID: void 0,
         },
         profileScreen: {
           visible: false,
