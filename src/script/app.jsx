@@ -17,6 +17,10 @@ var appInit = function () {
 
     var CreditScreen = require('./screen/credit.jsx');
 
+      var RedeemScreen = require('./screen/redeem.jsx');
+
+      var FulfillScreen = require('./screen/fulfill.jsx');
+
   var ProfileScreen = require('./screen/profile.jsx');
 
   var App = React.createClass({
@@ -35,9 +39,17 @@ var appInit = function () {
           visible: false,
           balance: void 0,
         },
+        redeemScreen: {
+          visible: false,
+          balance: void 0,
+        },
+        fulfillScreen: {
+          visible: false,
+          balance: void 0,
+        },
         profileScreen: {
           visible: false,
-          userData: void 0,
+          uid: void 0,
           viewingSelf: void 0,
           fromMenu: void 0,
           matched: void 0,
@@ -56,11 +68,15 @@ var appInit = function () {
           <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
           <div className="screens">
-            <CreditsScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} handleBalanceChange={this.changeScreen.bind(null, 'creditScreen')} {...this.state.creditsScreen}/>
+            <CreditsScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} changeScreen={this.changeScreen} {...this.state.creditsScreen}/>
 
-              <CreditScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} addNote={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.creditScreen}/>
+              <CreditScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} addNote={remote.firebase.balance.deductAndOrAddNote} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.creditScreen}/>
 
-            <ProfileScreen handleEdit={this.changeScreen.bind(null, 'profileEditScreen')} handleChatChange={this.changeScreen.bind(null, 'chatScreen')} selfUserData={remote.user.userData} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
+                <RedeemScreen selfUID={remote.user.userData.id} handleBack={this.backToPreviousScreen} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} {...this.state.redeemScreen}/>
+
+                <FulfillScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} doDeduct={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.fulfillScreen}/>
+
+            <ProfileScreen selfUserData={remote.user.userData} get={remote.firebase.userData.getById} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
           </div>
 
           <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>

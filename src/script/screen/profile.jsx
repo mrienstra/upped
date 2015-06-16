@@ -7,18 +7,30 @@ var UserListItem = require('../component/userListItem.jsx');
 var classNames = require('classnames');
 
 // Mixins
+var ReactFireMixin = require('reactfire');
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 
 var ProfileScreen = React.createClass({
-  mixins: [ScreenTransitionMixin],
+  mixins: [ReactFireMixin, ScreenTransitionMixin],
   getInitialState: function(){
     return {
       userData: this.props.viewingSelf ? this.props.selfUserData : this.props.userData
     };
   },
+  initFirebase: function (props) {
+    if (props.viewingSelf) {
+      this.setState({userData: props.selfUserData});
+    } else {
+      var userData = props.get(props.uid);
+
+      this.bindAsObject(userData, 'userData');
+    }
+  },
+  componentWillMount: function(){
+    this.initFirebase(this.props);
+  },
   componentWillReceiveProps: function(nextProps) {
-    var userData = nextProps.viewingSelf ? nextProps.selfUserData : nextProps.userData;
-    this.setState({userData: userData});
+    this.initFirebase(nextProps);
   },
   render: function(){
     console.log('ProfileScreen.render', this);

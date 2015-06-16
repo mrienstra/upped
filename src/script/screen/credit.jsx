@@ -23,6 +23,7 @@ var CreditScreen = React.createClass({
     'balance': React.PropTypes.object,
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
+    'changeScreen': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,
     'visible': React.PropTypes.bool,
@@ -32,7 +33,6 @@ var CreditScreen = React.createClass({
       createdFromNow: void 0,
       updatedFromNow: void 0,
       history: void 0,
-      notesValue: void 0,
     };
   },
   initFirebase: function (props) {
@@ -86,21 +86,21 @@ var CreditScreen = React.createClass({
 
     this.updateFromNow(nextProps.balance);
   },
-  handleNotesChange: function (event) {
-    var value = event.target.value;
-    this.setState({notesValue: value});
+  handleRedeemChange: function (e) {
+    this.props.changeScreen('redeemScreen', {state: {balance: this.props.balance}});
+  },
+  handleFulfillChange: function (e) {
+    this.props.changeScreen('fulfillScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
   },
   handleNoteSubmit: function(){
     console.log('handleNoteSubmit', this, arguments);
 
-    var notes = this.state.notesValue.trim();
+    var note = React.findDOMNode(this.refs.noteTextarea).value;
 
-    if (notes) {
-      this.props.addNote(this.props.balanceID, void 0, void 0, notes);
+    if (note) {
+      this.props.addNote(this.props.balanceID, note);
 
-      this.setState({
-        notesValue: '',
-      });
+      React.findDOMNode(this.refs.noteTextarea).value = '';
 
       _.defer(this.updateFromNow);
     }
@@ -117,11 +117,10 @@ var CreditScreen = React.createClass({
             <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
               <i className="icon ion-chevron-left"></i> Back
             </div>
-            <h1 className="title">Credit</h1>
+            <h1 className="title">DEAL DETAILS</h1>
           </div>
 
           <div className="scroll-content has-header">
-
           </div>
         </div>
       );
@@ -132,22 +131,6 @@ var CreditScreen = React.createClass({
     var otherData = _.find(balance, function (val, key) {
       return key !== selfDataKey && /_data$/.test(key);
     });
-
-    var remainingDIV;
-    if (otherData.currentAmount === 0) {
-      remainingDIV = (
-        <div>
-          <h3>DONE!</h3>
-        </div>
-      );
-    } else {
-      remainingDIV = (
-        <div>
-          <h3>{utils.formatCurrency(otherData.currentAmount)}</h3>
-          remaining
-        </div>
-      );
-    }
 
     var historyNodes = [];
     _.forIn(this.state.history, function (history, key) {
@@ -163,42 +146,66 @@ var CreditScreen = React.createClass({
           <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
             <i className="icon ion-chevron-left"></i> Back
           </div>
-          <h1 className="title">Credit</h1>
+          <h1 className="title">DEAL DETAILS</h1>
         </div>
 
-        <div className="scroll-content overflow-scroll has-header wallet-card">
+        <div className="scroll-content overflow-scroll has-header">
 
-          <span className="remaining">
-            {remainingDIV}
-          </span>
-
-          <img className="avatar" src={otherData.photoURL} />
-
-          <h2>{otherData.name}</h2>
-
-          <div className="row">
-            <div className="col">
-              <h4 className="icon-left ion-arrow-shrink">You Get</h4>
-              <p className="sushi">{otherData.sushi}</p>
-              <p>{utils.formatCurrency(otherData.currentAmount)} remaining</p>
-              <button className="button button-energized icon-right ion-arrow-right-b">
-                Redeem
+          <div className="list">
+            <div className="item item-avatar">
+              <img src={otherData.photoURL}/>
+              <h2>{otherData.name}</h2>
+              <p>{utils.formatCurrency(otherData.originalAmount)} credit</p>
+            </div>
+            <div className="item item-text-wrap center">
+              {otherData.sushi}
+            </div>
+            <div className="item item-text-wrap">
+              <div className="row">
+                <div className="col">
+                  <h2>{utils.formatCurrency(otherData.currentAmount)}</h2>
+                  <span className="subdued">remaining</span>
+                </div>
+                <div className="col col-75">
+                  {otherData.sushi}
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <h2>{utils.formatCurrency(selfData.currentAmount)}</h2>
+                  <span className="subdued">remaining</span>
+                </div>
+                <div className="col col-75">
+                  {selfData.sushi}
+                </div>
+              </div>
+            </div>
+            <div className="item center">
+              Updated {this.state.updatedFromNow}
+            </div>
+            <div className="item tabs tabs-secondary tabs-icon-left">
+              <a className="tab-item" href="#" onTouchEnd={this.handleRedeemChange}>
+                <i className="icon ion-fork"></i>
+                redeem
+              </a>
+              <a className="tab-item" href="#"onTouchEnd={this.handleFulfillChange}>
+                <i className="icon ion-speedometer"></i>
+                fulfill
+              </a>
+              <a className="tab-item" href="#">
+                <i className="icon ion-ios-more"></i>
+                more
+              </a>
+            </div>
+            <div className="item item-avatar item-commentform">
+              <img src={selfData.photoURL}/>
+              <textarea ref="noteTextarea"/>
+              <button className="button button-small button-positive" onTouchEnd={this.handleNoteSubmit}>
+                Comment
               </button>
             </div>
-            <div className="col">
-              <h4 className="icon-left ion-arrow-expand">You Pay</h4>
-              <p className="sushi">{selfData.sushi}</p>
-              <p>{utils.formatCurrency(selfData.currentAmount)} remaining</p>
-              <button className="button button-energized icon-right ion-arrow-right-b">
-                Deduct
-              </button>
-            </div>
-          </div>
-
-          <div className="list padding-top">
             {historyNodes}
           </div>
-
         </div>
       </div>
     );

@@ -473,34 +473,32 @@ var remote = {
 
         return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + historyID);
       },
-      deductAndOrAddNote: function (balanceID, balanceCurrentAmount, amount, note) {
+      deductAndOrAddNote: function (balanceID, note, uid, currentAmount, amount) {
         console.log('remote.firebase.balance.deductAndOrAddNote', this, arguments);
 
         var balanceRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID);
-
+        var balanceHalfRef = balanceRef.child(uid + '_data');
         var historyRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + balanceID);
-
-        var newBalanceData = {
-          updated: Firebase.ServerValue.TIMESTAMP,
-        };
 
         var history = {
           uid: remote.user.userData.id,
           timestamp: Firebase.ServerValue.TIMESTAMP,
         };
 
-        if (balanceCurrentAmount > 0 && amount > 0) {
-          newBalanceData.currentAmount = balanceCurrentAmount - amount;
+        if (currentAmount > 0 && amount > 0 && amount <= currentAmount) {
+          balanceHalfRef.update({ // todo: consider switching to `transaction` for atomicity
+            currentAmount: currentAmount - amount,
+          });
 
           history.action = 'subtracted';
           history.amount = amount;
-        } else {
-          history.action = 'said';
         }
 
         if (note) history.note = note;
 
-        balanceRef.update(newBalanceData);
+        balanceRef.update({
+          updated: Firebase.ServerValue.TIMESTAMP,
+        });
 
         historyRef.push(history);
       },

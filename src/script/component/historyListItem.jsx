@@ -41,12 +41,20 @@ var HistoryListItem = React.createClass({
     this.updateFromNow(nextProps.history.timestamp);
   },
   render: function() {
+    var firstLine;
+    if (this.props.history.amount) {
+      firstLine = (
+        <div>
+          {utils.formatCurrency(this.props.history.amount)} {this.props.history.action}
+        </div>
+      );
+    }
     return (
       <div className="item item-avatar">
         <img src={this.props.photoURL} />
-        {this.props.name} {this.props.history.action} {utils.formatCurrency(this.props.history.amount)}
-        <span className="item-note">{this.state.fromNow}</span>
-        <p className="subdued">{this.props.history.note}</p>
+        {firstLine}
+        <p>{this.props.history.note}</p>
+        <p className="subdued">{this.state.fromNow}</p>
       </div>
     );
   }

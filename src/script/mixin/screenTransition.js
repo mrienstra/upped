@@ -21,13 +21,13 @@ var ScreenTransitionMixin = {
       classNames.push(props.cssClass);
     }
 
-    if (transitionState === 'init') {
+    if (props.transition && transitionState === 'init') {
       if (props.transition.type === 'depart') {
         classNames.push('rs-center');
       } else {
         classNames.push('rs-' + props.transition.direction);
       }
-    } else if (transitionState === 'inProgress') {
+    } else if (props.transition && transitionState === 'inProgress') {
       if (props.transition.type === 'depart') {
         classNames.push('rs-transition', 'rs-' + props.transition.direction);
       } else {

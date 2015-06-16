@@ -41,6 +41,18 @@ var BalanceCard = React.createClass({
       });
     }
   },
+  handleRedeemChange: function (e) {
+    this.props.changeScreen('redeemScreen', {state: {balance: this.props.balance}});
+    e.stopPropagation();
+  },
+  handleChatChange: function (e) {
+    this.props.changeScreen('creditScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
+    e.stopPropagation();
+  },
+  handleFulfillChange: function (e) {
+    this.props.changeScreen('fulfillScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
+    e.stopPropagation();
+  },
   componentWillMount: function(){
     this.updateFromNow();
 
@@ -70,46 +82,32 @@ var BalanceCard = React.createClass({
       unread
     */
 
-    var cornerRibbon, remainingDIV;
-    if (otherData.currentAmount === 0) {
-      remainingDIV = (
-        <div>
-          <h3>DONE!</h3>
-        </div>
-      );
-    } else {
-      cornerRibbon = (
-        <span className="corner-ribbon">
-          Open
-        </span>
-      );
-      remainingDIV = (
-        <div>
-          <h3>{utils.formatCurrency(otherData.currentAmount)}</h3>
-          remaining
-        </div>
-      );
-    }
-
     return (
-      <div className="card wallet-card">
-        <div className="item item-text-wrap">
-          {cornerRibbon}
-
-          <span className="remaining">
-            {remainingDIV}
-          </span>
-
-          <img className="avatar" src={otherData.photoURL} />
-
+      <div className="card wallet-card" onTouchEnd={this.handleChatChange}>
+        <div className="item item-avatar">
+          <img src={otherData.photoURL}/>
           <h2>{otherData.name}</h2>
-          <p className="sushi">{otherData.sushi}</p>
-          <p className="sushi">Paying with {selfData.sushi}</p>
-          <p>Last active {this.state.updatedFromNow}{(selfData.unread) ? ', ' + selfData.unread + ' unread' : ''}</p>
-
-          <button className="button button-small button-energized icon-right ion-arrow-right-b" onTouchEnd={this.props.handleBalanceChange.bind(null, {state: {balance: balance, balanceID: this.props.balanceID, selfUID: this.props.selfUID}})}>
-            Details
-          </button>
+          <p>{utils.formatCurrency(otherData.originalAmount)} credit</p>
+        </div>
+        <div className="item item-text-wrap center">
+          {otherData.sushi}
+        </div>
+        <div className="item center">
+          Updated {this.state.updatedFromNow}
+        </div>
+        <div className="item tabs tabs-secondary tabs-icon-left">
+          <a className="tab-item" href="#" onTouchEnd={this.handleRedeemChange}>
+            <i className="icon ion-fork"></i>
+            redeem
+          </a>
+          <a className="tab-item" href="#">
+            <i className="icon ion-chatbox"></i>
+            chat
+          </a>
+          <a className="tab-item" href="#" onTouchEnd={this.handleFulfillChange}>
+            <i className="icon ion-speedometer"></i>
+            fulfill
+          </a>
         </div>
       </div>
     );
@@ -134,7 +132,7 @@ var CreditsList = React.createClass({
       creditNodes = [];
       _.forEach(this.props.credits, function (balance, key) {
         creditNodes.push(
-          <BalanceCard key={key} selfUID={that.props.selfUID} balanceID={key} balance={balance} handleBalanceChange={that.props.handleBalanceChange} />
+          <BalanceCard key={key} selfUID={that.props.selfUID} balanceID={key} balance={balance} changeScreen={that.props.changeScreen} />
         );
       });
     }
@@ -177,7 +175,7 @@ var CreditsScreen = React.createClass({
 
         <div className="scroll-content overflow-scroll has-header">
 
-          <CreditsList credits={this.state.credits} selfUID={this.props.selfUID} handleBalanceChange={this.props.handleBalanceChange} />
+          <CreditsList credits={this.state.credits} selfUID={this.props.selfUID} changeScreen={this.props.changeScreen} />
 
         </div>
       </div>
