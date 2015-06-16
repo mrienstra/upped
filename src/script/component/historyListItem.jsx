@@ -11,6 +11,8 @@ var HistoryListItem = React.createClass({
   propTypes: {
     'history': React.PropTypes.object,
     'photoURL': React.PropTypes.string,
+    'isMine': React.PropTypes.bool,
+    'confirmDeduction': React.PropTypes.func,
   },
   getInitialState: function(){
     return {
@@ -40,20 +42,41 @@ var HistoryListItem = React.createClass({
     this.updateFromNow(nextProps.history.timestamp);
   },
   render: function() {
+    var history = this.props.history;
+
     var topRight, firstLine, action;
-    if (this.props.history.amount) {
-      if (this.props.history.action === 'opened') {
+    if (history.amount) {
+      if (history.action === 'opened') {
         action = 'credit';
-        topRight = (
-          <div className="right">opened</div>
-        );
+        topRight = 'opened';
       } else {
-        action = this.props.history.action;
+        action = history.action;
+        if (this.props.isMine) {
+          action = 'fulfilled';
+
+          if (history.confirmed) {
+            topRight = 'confirmed';
+          }
+        } else {
+          action = 'redeemed';
+
+          if (history.confirmed) {
+            topRight = 'confirmed';
+          } else {
+            topRight = (
+              <a href="#" onTouchEnd={this.props.confirmDeduction}>confirm</a>
+            );
+          }
+        }
       }
+
+      topRight = (
+        <div className="right">{topRight}</div>
+      );
 
       firstLine = (
         <div>
-          {utils.formatCurrency(this.props.history.amount)} {action}
+          {utils.formatCurrency(history.amount)} {action}
         </div>
       );
     }
@@ -63,7 +86,7 @@ var HistoryListItem = React.createClass({
         <img src={this.props.photoURL} />
         {topRight}
         {firstLine}
-        <p>{this.props.history.note}</p>
+        <p>{history.note}</p>
         <p className="subdued">{this.state.fromNow}</p>
       </div>
     );

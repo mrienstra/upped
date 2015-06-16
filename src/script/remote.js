@@ -502,6 +502,13 @@ var remote = {
 
         historyRef.push(history);
       },
+      confirmDeduction: function (balanceID, deductionID) {
+        var deductionRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + balanceID + '/' + deductionID);
+
+        deductionRef.update({
+          confirmed: 1,
+        });
+      },
     },
     userData: {
       getById: function (udid) {

@@ -198,4 +198,9 @@ a {
   .right, .subdued {
     font-style: italic;
   }
+  &:last-of-type {
+    img {
+      border-radius: 0;
+    }
+  }
 }

@@ -20,6 +20,7 @@ var WalletDetailScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin, SetIntervalMixin],
   propTypes: {
     'addNote': React.PropTypes.func,
+    'balanceID': React.PropTypes.string,
     'balance': React.PropTypes.object,
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
@@ -116,6 +117,8 @@ var WalletDetailScreen = React.createClass({
   render: function(){
     console.log('WalletDetailScreen.render', this);
 
+    var that = this;
+
     var balance = this.state.balance || this.props.balance;
 
     if (!balance) {
@@ -144,7 +147,7 @@ var WalletDetailScreen = React.createClass({
     _.forIn(this.state.history, function (history, key) {
       var photoURL = (history.uid) ? balance[history.uid + '_data'].photoURL : 'img/new_logo_dark.png';
       historyNodes.push(
-        <HistoryListItem key={key} history={history} photoURL={photoURL} />
+        <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={that.props.selfUID === history.uid} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
       );
     });
     historyNodes.reverse();
