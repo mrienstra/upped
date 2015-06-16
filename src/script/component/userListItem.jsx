@@ -27,7 +27,7 @@ var UserListItem = React.createClass({
         <div className="item item-image">
           {img}
         </div>
-        <div className="item item-divider">
+        <div className="item item-divider item-text-wrap">
           <h2>{this.props.user.name}</h2>
           <h3>{this.props.user.statement}</h3>
         </div>

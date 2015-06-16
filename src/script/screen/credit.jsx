@@ -157,31 +157,25 @@ var CreditScreen = React.createClass({
               <h2>{otherData.name}</h2>
               <p>{utils.formatCurrency(otherData.originalAmount)} credit</p>
             </div>
-            <div className="item item-text-wrap center">
-              {otherData.sushi}
-            </div>
             <div className="item item-text-wrap">
               <div className="row">
-                <div className="col">
+                <div className="col amount">
                   <h2>{utils.formatCurrency(otherData.currentAmount)}</h2>
-                  <span className="subdued">remaining</span>
+                  <span>remaining</span>
                 </div>
                 <div className="col col-75">
                   {otherData.sushi}
                 </div>
               </div>
               <div className="row">
-                <div className="col">
+                <div className="col amount">
                   <h2>{utils.formatCurrency(selfData.currentAmount)}</h2>
-                  <span className="subdued">remaining</span>
+                  <span>remaining</span>
                 </div>
                 <div className="col col-75">
                   {selfData.sushi}
                 </div>
               </div>
-            </div>
-            <div className="item center">
-              Updated {this.state.updatedFromNow}
             </div>
             <div className="item tabs tabs-secondary tabs-icon-left">
               <a className="tab-item" href="#" onTouchEnd={this.handleRedeemChange}>

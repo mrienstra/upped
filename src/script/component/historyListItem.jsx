@@ -50,7 +50,7 @@ var HistoryListItem = React.createClass({
       );
     }
     return (
-      <div className="item item-avatar">
+      <div className="item item-avatar item-text-wrap">
         <img src={this.props.photoURL} />
         {firstLine}
         <p>{this.props.history.note}</p>

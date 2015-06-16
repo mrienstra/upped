@@ -75,7 +75,7 @@ var RedeemScreen = React.createClass({
             <div className="item item-avatar">
               <img src={otherData.photoURL}/>
               <h2>{otherData.name}</h2>
-              <p>{utils.formatCurrency(otherData.currentAmount)} remaining</p>
+              <p>{utils.formatCurrency(selfData.currentAmount)} remaining</p>
             </div>
             <div className="item item-text-wrap leftalign-with-avatar">
               <p>To redeem this deal, get in touch with {otherData.name}.</p>
