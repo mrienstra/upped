@@ -1,23 +1,35 @@
 var React = require('react');
 
+// Components
+var HistoryListItem = require('../component/historyListItem.jsx');
+
 // Libs
 var _ = require('lodash');
 var classNames = require('classnames');
 
 // Mixins
+var ReactFireMixin = require('reactfire');
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 
 // Modules
 var utils = require('../utils');
 
 var RedeemScreen = React.createClass({
-  mixins: [ScreenTransitionMixin],
+  mixins: [ReactFireMixin, ScreenTransitionMixin],
   propTypes: {
+    'balanceID': React.PropTypes.string,
     'balance': React.PropTypes.object,
     'handleProfileChange': React.PropTypes.func,
+    'getHistory': React.PropTypes.func,
+    'confirmDeduction': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,
     'visible': React.PropTypes.bool,
+  },
+  getInitialState: function(){
+    return {
+      history: void 0,
+    };
   },
   handleProfileChange: function(){
     var balance = this.props.balance;
@@ -32,8 +44,26 @@ var RedeemScreen = React.createClass({
       'viewingSelf': false,
     }});
   },
+  initFirebase: function (props) {
+    this.setState({
+      history: void 0,
+    });
+
+    var history = props.getHistory(props.balanceID);
+    this.bindAsObject(history, 'history');
+  },
+  componentWillMount: function(){
+    this.initFirebase(this.props);
+  },
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.balanceID !== this.props.balanceID) {
+      this.initFirebase(nextProps);
+    }
+  },
   render: function(){
     console.log('RedeemScreen.render', this);
+
+    var that = this;
 
     var balance = this.props.balance;
 
@@ -48,7 +78,6 @@ var RedeemScreen = React.createClass({
           </div>
 
           <div className="scroll-content has-header">
-
           </div>
         </div>
       );
@@ -59,6 +88,18 @@ var RedeemScreen = React.createClass({
     var otherData = _.find(balance, function (val, key) {
       return key !== selfDataKey && /_data$/.test(key);
     });
+
+    var historyNodes = [];
+    _.forIn(this.state.history, function (history, key) {
+      var isMine = that.props.selfUID === history.uid;
+      if (!isMine && history.amount) {
+        var photoURL = (history.uid) ? balance[history.uid + '_data'].photoURL : 'img/new_logo_dark.png';
+        historyNodes.push(
+          <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={isMine} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
+        );
+      }
+    });
+    historyNodes.reverse();
 
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
@@ -83,6 +124,7 @@ var RedeemScreen = React.createClass({
                 View Profile
               </button>
             </div>
+            {historyNodes}
           </div>
         </div>
       </div>

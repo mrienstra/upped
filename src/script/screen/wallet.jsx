@@ -3,7 +3,6 @@ var React = require('react');
 // Libs
 var _ = require('lodash');
 var classNames = require('classnames');
-var Firebase = require('firebase');
 
 // Mixins
 var ReactFireMixin = require('reactfire');
@@ -42,7 +41,7 @@ var BalanceCard = React.createClass({
     }
   },
   handleRedeemChange: function (e) {
-    this.props.changeScreen('redeemScreen', {state: {balance: this.props.balance}});
+    this.props.changeScreen('redeemScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
     e.stopPropagation();
   },
   handleChatChange: function (e) {

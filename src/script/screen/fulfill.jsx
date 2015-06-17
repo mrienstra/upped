@@ -6,7 +6,6 @@ var HistoryListItem = require('../component/historyListItem.jsx');
 // Libs
 var _ = require('lodash');
 var classNames = require('classnames');
-var Firebase = require('firebase');
 
 // Mixins
 var ReactFireMixin = require('reactfire');
@@ -113,7 +112,7 @@ var FulfillScreen = React.createClass({
     var historyNodes = [];
     _.forIn(this.state.history, function (history, key) {
       var isMine = that.props.selfUID === history.uid;
-      if (isMine && history.amount) {
+      if (history.action === 'opened' || (isMine && history.amount)) {
         var photoURL = (history.uid) ? balance[history.uid + '_data'].photoURL : 'img/new_logo_dark.png';
         historyNodes.push(
           <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={isMine} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
