@@ -14,15 +14,16 @@ var ProfileScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin],
   getInitialState: function(){
     return {
-      userData: this.props.viewingSelf ? this.props.selfUserData : this.props.userData
+      userData: void 0,
     };
   },
   initFirebase: function (props) {
     if (props.viewingSelf) {
       this.setState({userData: props.selfUserData});
     } else {
-      var userData = props.get(props.uid);
+      this.setState({userData: void 0});
 
+      var userData = props.get(props.uid);
       this.bindAsObject(userData, 'userData');
     }
   },
