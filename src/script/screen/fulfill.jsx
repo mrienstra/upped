@@ -28,6 +28,7 @@ var FulfillScreen = React.createClass({
   },
   getInitialState: function(){
     return {
+      balance: void 0,
       createdFromNow: void 0,
       updatedFromNow: void 0,
     };
@@ -55,8 +56,9 @@ var FulfillScreen = React.createClass({
     }
   },
   initFirebase: function (props) {
-    var balance = props.get(props.balanceID);
+    this.setState({balance: void 0});
 
+    var balance = props.get(props.balanceID);
     this.bindAsObject(balance, 'balance');
   },
   componentWillMount: function(){

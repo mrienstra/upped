@@ -162,14 +162,13 @@ var WalletScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin],
   getInitialState: function(){
     return {
-      walletItems: {},
+      walletItems: void 0,
     };
   },
   componentWillMount: function(){
-    console.log('WalletScreen.componentWillMount()', this, arguments);
+    this.setState({walletItems: void 0});
 
     var balancesRef = this.props.getBalances();
-
     this.bindAsObject(balancesRef, 'walletItems');
   },
   render: function(){

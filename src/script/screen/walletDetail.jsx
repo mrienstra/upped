@@ -45,11 +45,9 @@ var WalletDetailScreen = React.createClass({
     });
 
     var history = props.getHistory(props.balanceID);
-
     this.bindAsObject(history, 'history');
 
     var balance = props.get(props.balanceID);
-
     this.bindAsObject(balance, 'balance');
   },
   updateFromNow: function (balance) {
