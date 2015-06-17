@@ -54,7 +54,7 @@ var WelcomeScreen = React.createClass({
           <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
             <i className="icon ion-chevron-left"></i> Back
           </div>
-          <h1 className="title">RESET PASSWORD</h1>
+          <h1 className="title">Reset Password</h1>
         </div>
         <div className="scroll-content has-header has-footer">
           <div className="padding">

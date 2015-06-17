@@ -46,7 +46,7 @@ var ResetPasswordScreen = React.createClass({
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
         <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
-          <h1 className="title">RESET PASSWORD</h1>
+          <h1 className="title">Reset Password</h1>
         </div>
         <div className="scroll-content has-header">
           {error}
