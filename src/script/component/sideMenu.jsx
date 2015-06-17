@@ -12,17 +12,17 @@ var SideMenu = React.createClass({
       {
         screen: 'myProfileScreen',
         text: 'Profile',
-        icon: 'ion-person',
+        icon: 'ion-ios-person',
       },
       {
         screen: 'walletScreen',
         text: 'Wallet',
-        icon: 'ion-shuffle',
+        icon: 'ion-card',
       },
       {
         screen: 'feedbackScreen',
         text: 'Feedback',
-        icon: 'ion-heart',
+        icon: 'ion-ios-heart-outline',
       },
     ];
 
@@ -46,7 +46,7 @@ var SideMenu = React.createClass({
             <div className="list disable-user-behavior">
               {listItems}
               <a key={menuOptions.length} className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
-                <i className="icon ion-log-out"></i>Logout
+                <i className="icon ion-android-exit"></i>Logout
               </a>
             </div>
           </div>
