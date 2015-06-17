@@ -19,9 +19,12 @@ var FulfillScreen = React.createClass({
   mixins: [ReactFireMixin, ScreenTransitionMixin],
   propTypes: {
     'addNote': React.PropTypes.func,
+    'balanceID': React.PropTypes.string,
     'balance': React.PropTypes.object,
     'get': React.PropTypes.func,
+    'getHistory': React.PropTypes.func,
     'doDeduct': React.PropTypes.func,
+    'confirmDeduction': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,
     'visible': React.PropTypes.bool,
@@ -29,6 +32,7 @@ var FulfillScreen = React.createClass({
   getInitialState: function(){
     return {
       balance: void 0,
+      history: void 0,
       createdFromNow: void 0,
       updatedFromNow: void 0,
     };
@@ -56,7 +60,13 @@ var FulfillScreen = React.createClass({
     }
   },
   initFirebase: function (props) {
-    this.setState({balance: void 0});
+    this.setState({
+      balance: void 0,
+      history: void 0,
+    });
+
+    var history = props.getHistory(props.balanceID);
+    this.bindAsObject(history, 'history');
 
     var balance = props.get(props.balanceID);
     this.bindAsObject(balance, 'balance');
@@ -67,10 +77,14 @@ var FulfillScreen = React.createClass({
     this.initFirebase(this.props);
   },
   componentWillReceiveProps: function (nextProps) {
-    this.initFirebase(nextProps);
+    if (nextProps.balanceID !== this.props.balanceID) {
+      this.initFirebase(nextProps);
+    }
   },
   render: function(){
     console.log('FulfillScreen.render', this);
+
+    var that = this;
 
     var balance = this.state.balance || this.props.balance;
 
@@ -95,6 +109,18 @@ var FulfillScreen = React.createClass({
     var otherData = _.find(balance, function (val, key) {
       return key !== selfDataKey && /_data$/.test(key);
     });
+
+    var historyNodes = [];
+    _.forIn(this.state.history, function (history, key) {
+      var isMine = that.props.selfUID === history.uid;
+      if (isMine && history.amount) {
+        var photoURL = (history.uid) ? balance[history.uid + '_data'].photoURL : 'img/new_logo_dark.png';
+        historyNodes.push(
+          <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={isMine} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
+        );
+      }
+    });
+    historyNodes.reverse();
 
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
@@ -127,6 +153,7 @@ var FulfillScreen = React.createClass({
                 </div>
               </div>
             </div>
+            {historyNodes}
           </div>
         </div>
       </div>

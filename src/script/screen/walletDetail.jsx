@@ -25,6 +25,7 @@ var WalletDetailScreen = React.createClass({
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
     'markRead': React.PropTypes.func,
+    'confirmDeduction': React.PropTypes.func,
     'changeScreen': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,

@@ -81,7 +81,7 @@ var appInit = function () {
 
                 <RedeemScreen selfUID={remote.user.userData.id} handleBack={this.backToPreviousScreen} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} {...this.state.redeemScreen}/>
 
-                <FulfillScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} doDeduct={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.fulfillScreen}/>
+                <FulfillScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} doDeduct={remote.firebase.balance.deductAndOrAddNote} confirmDeduction={remote.firebase.balance.confirmDeduction} handleBack={this.backToPreviousScreen} {...this.state.fulfillScreen}/>
 
             <ProfileScreen selfUserData={remote.user.userData} get={remote.firebase.userData.getById} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
 
