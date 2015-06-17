@@ -1,20 +1,8 @@
-@mixin flex-vertical-center() {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -moz-box;
-  display: -moz-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  height: 100%;
-}
+/* === IMPORTS === */
+@import 'styles';
+@import 'mixins';
 
+/* === GLOBAL STYLES === */
 a {
   color: black;
 }
@@ -114,13 +102,47 @@ a {
   }
 }
 
-.center {
-  text-align: center;
-}
-.right {
-  float: right;
+.col-12-5 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 12.5%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 12.5%;
+  -ms-flex: 0 0 12.5%;
+  flex: 0 0 12.5%;
+  max-width: 12.5%;
 }
 
+/* === HELPERS === */
+.dwyer {
+  display: block;
+  width: 0;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.right {
+  float: right
+}
+.left {
+  float: left
+}
+.center {
+  text-align: center
+}
+.hide {
+  display: none;
+  line-height: 0
+}
+.hidden {
+  visibility: none
+}
+.clear {
+  clear: both
+}
+
+/* === COMPONENTS === */
 .bar-footer .button-full {
   margin: 0;
   position: absolute;
@@ -135,10 +157,6 @@ a {
   .scroll-content, .bar-footer {
     text-align: center;
   }
-}
-
-.profileScreen .userListItem {
-  margin-top: -1px;
 }
 
 .item-commentform {
@@ -184,16 +202,6 @@ a {
   padding-left: 72px;
 }
 
-.col-12-5 {
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 12.5%;
-  -moz-box-flex: 0;
-  -moz-flex: 0 0 12.5%;
-  -ms-flex: 0 0 12.5%;
-  flex: 0 0 12.5%;
-  max-width: 12.5%;
-}
-
 .item-history {
   .right, .subdued {
     font-style: italic;
@@ -213,4 +221,9 @@ a {
   height: 14px;
   background: #E7982A;
   border-radius: 50%;
+}
+
+/* === SCREENS === */
+.profileScreen .userListItem {
+  margin-top: -1px;
 }

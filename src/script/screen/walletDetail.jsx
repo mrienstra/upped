@@ -172,7 +172,7 @@ var WalletDetailScreen = React.createClass({
           <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
             <i className="icon ion-chevron-left"></i> Back
           </div>
-          <h1 className="title">DEAL DETAILS</h1>
+          <h1 className="title">Deal Details</h1>
         </div>
 
         <div className="scroll-content overflow-scroll has-header">
@@ -205,11 +205,11 @@ var WalletDetailScreen = React.createClass({
             </div>
             <div className="item tabs tabs-secondary tabs-icon-left">
               <a className="tab-item" href="#" onTouchEnd={this.handleRedeemChange}>
-                <i className="icon ion-fork"></i>
+                <i className="icon ion-ios-color-wand"></i>
                 redeem
               </a>
               <a className="tab-item" href="#"onTouchEnd={this.handleFulfillChange}>
-                <i className="icon ion-speedometer"></i>
+                <i className="icon ion-ios-list-outline"></i>
                 fulfill
               </a>
             </div>

@@ -110,15 +110,15 @@ var BalanceCard = React.createClass({
         </div>
         <div className="item tabs tabs-secondary tabs-icon-left">
           <a className="tab-item" href="#" onTouchEnd={this.handleRedeemChange}>
-            <i className="icon ion-fork"></i>
+            <i className="icon ion-ios-color-wand"></i>
             redeem
           </a>
           <a className="tab-item" href="#">
-            <i className="icon ion-chatbox"></i>
+            <i className="icon ion-ios-chatboxes-outline"></i>
             chat
           </a>
           <a className="tab-item" href="#" onTouchEnd={this.handleFulfillChange}>
-            <i className="icon ion-speedometer"></i>
+            <i className="icon ion-ios-list-outline"></i>
             fulfill
           </a>
         </div>
