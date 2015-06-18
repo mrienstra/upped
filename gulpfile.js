@@ -6,6 +6,7 @@ var flatten = require('gulp-flatten');
 var gulpIf = require('gulp-if');
 var gutil = require('gulp-util');
 var libBundle = require('./gulp-lib-bundle');
+var minifyCss = require('gulp-minify-css');
 var open = require('open');
 var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
@@ -14,12 +15,11 @@ var uglify = require('gulp-uglify');
 
 var port = 8000;
 
-var libs = ['react', 'firebase', 'reactfire', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/openfb-32c04deef7-mod.js', '../lib/noTouchendAfterTouchmove.js', '../lib/swipe-stack-0.1.js'];
+var libs = ['react', 'firebase', 'reactfire', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/openfb-32c04deef7-mod.js', '../lib/noTouchendAfterTouchmove.js'];
 
-var cssLibs = 'src/lib/{ionic-1.0.0/css/ionic,swipe-stack-0.1}.css';
+var cssLibs = 'src/lib/ionic-1.0.0/css/ionic.css';
 
 var mainJsFile = 'src/script/main.js';
-var parseJsFile = 'src/lib/parse-1.2.18/parse-1.2.18.min.js';
 var mainSassFile = 'src/style/main.scss';
 var sassIncludePaths = ['src/style'];
 
@@ -47,7 +47,8 @@ var path = {
   },
   font: {
     in: 'src/lib/**/*.{ttf,woff,eot,svg}',
-    out: 'build/css/ionic-1.0.0/fonts'
+    outDev: 'build/fonts',
+    outProd: 'build/lib/ionic-1.0.0/fonts'
   },
 }
 
@@ -98,9 +99,6 @@ gulp.task('lib', function () {
   gulp.src('src/lib/trackjs-1.2.5.js')
     .pipe(gulp.dest(path.script.out));
 
-  gulp.src(parseJsFile)
-    .pipe(gulp.dest(path.script.out));
-
   gulp.src(cssLibs)
     .pipe(concatCss('libs.css'))
     .pipe(gulp.dest(path.style.out));
@@ -136,8 +134,7 @@ gulp.task('sass', function () {
       includePaths : sassIncludePaths
     })
     .on('error', onError))
-    .pipe(gutil.env.production ? minifyCSS() : gutil.noop())
-    .pipe(gutil.env.production ? rev() : gutil.noop())
+    .pipe(gutil.env.production ? minifyCss() : gutil.noop())
     .pipe(gulp.dest(path.style.out))
     .pipe(connect.reload());
 });
@@ -151,7 +148,7 @@ gulp.task('img', function () {
 gulp.task('font', function() {
   gulp.src(path.font.in)
     .pipe(flatten())
-    .pipe(gulp.dest(path.font.out));
+    .pipe(gulp.dest(gutil.env.production ? path.font.outProd : path.font.outDev));
 });
 
 gulp.task('watchdog', function () {
