@@ -28,8 +28,11 @@ var WelcomeScreen = React.createClass({
         <div className="scroll-content has-header has-footer">
           {error}
           <h2 className="center">
-            Sign Up
+            The Smarter Way to Pay
           </h2>
+          <h4 className="center">
+            Pay with your goods and services. Track it just like cash.
+          </h4>
           <button className="button button-block button-assertive" onTouchEnd={this.props.handleFBLoginButton}>
             Sign Up with Facebook
           </button>

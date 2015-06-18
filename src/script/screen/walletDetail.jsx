@@ -188,7 +188,7 @@ var WalletDetailScreen = React.createClass({
                   <span>remaining</span>
                 </div>
                 <div className="col col-75">
-                  Get Served: {otherData.sushi}
+                  Get: {otherData.sushi}
                 </div>
               </div>
               <div className="row">
@@ -197,7 +197,7 @@ var WalletDetailScreen = React.createClass({
                   <span>remaining</span>
                 </div>
                 <div className="col col-75">
-                  You Serve: {selfData.sushi}
+                  Give: {selfData.sushi}
                 </div>
               </div>
             </div>

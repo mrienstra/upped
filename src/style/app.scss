@@ -286,9 +286,21 @@ a {
   a {
     color: $text-knockout-color;
   }
-  h2 {
-    padding-top: 4rem;
+  h1,h2,h3,h4 {
     color: $text-knockout-color;
+  }
+  h2 {
+    font-size: 250%;
+    padding-top: .3rem;
+    color: $text-knockout-color;
+  }
+  h4 {
+    font-style: italic;
+    font-size: 110%;
+    padding-bottom: 1rem;
+  }
+  .padding {
+    padding: 0 2rem;
   }
 }
 
