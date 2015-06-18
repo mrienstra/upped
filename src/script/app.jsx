@@ -72,7 +72,7 @@ var appInit = function () {
       console.log('App.render', this, this.state.screens);
 
       return (
-        <div className={this.state.sideMenuVisible ? ' sideMenuVisible' : ''}>
+        <div className={this.state.sideMenuVisible ? 'sideMenuWrapper sideMenuVisible' : 'sideMenuWrapper'}>
           <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
           <div className="screens">
