@@ -235,9 +235,21 @@ html, body, .container, .sideMenuWrapper {
   border-radius: 50%;
 }
 
+.item-history .right {
+  font-size: 80%;
+}
+
 /* instructions */
 .item .instructions {
   padding-bottom: 1rem;
+}
+
+.item-avatar {
+  background-color: #f5f5f5;
+}
+
+.item-history {
+  background-color: #fff;
 }
 
 /* === SCREENS === */
@@ -309,9 +321,17 @@ html, body, .container, .sideMenuWrapper {
   }
 }
 
+/* welcomeScreen */
 .welcomeScreen {
   .scroll-content {
     padding: 3em;
+  }
+}
+
+/* redeemScreen */
+.redeemScreen {
+  .tabs-icon-left {
+    border: 0;
   }
 }
 

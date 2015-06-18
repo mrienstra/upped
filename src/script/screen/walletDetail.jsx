@@ -188,7 +188,7 @@ var WalletDetailScreen = React.createClass({
                   <span>remaining</span>
                 </div>
                 <div className="col col-75">
-                  Get: {otherData.sushi}
+                  You Get: {otherData.sushi}
                 </div>
               </div>
               <div className="row">
@@ -197,7 +197,7 @@ var WalletDetailScreen = React.createClass({
                   <span>remaining</span>
                 </div>
                 <div className="col col-75">
-                  Give: {selfData.sushi}
+                  You Pay: {selfData.sushi}
                 </div>
               </div>
             </div>
@@ -208,7 +208,7 @@ var WalletDetailScreen = React.createClass({
               </a>
               <a className="tab-item" href="#"onTouchEnd={this.handleFulfillChange}>
                 <i className="icon ion-ios-list-outline"></i>
-                Fulfill
+                Charge
               </a>
             </div>
             <div className="item item-divider">
@@ -218,7 +218,7 @@ var WalletDetailScreen = React.createClass({
               <img src={selfData.photoURL}/>
               <textarea ref="noteTextarea"/>
               <button className="button button-small button-assertive" onTouchEnd={this.handleNoteSubmit}>
-                Comment
+                Add Comment
               </button>
             </div>
             {historyNodes}

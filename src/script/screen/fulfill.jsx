@@ -94,7 +94,7 @@ var FulfillScreen = React.createClass({
             <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
               <i className="icon ion-chevron-left"></i> Back
             </div>
-            <h1 className="title">Fulfill</h1>
+            <h1 className="title">Charge</h1>
           </div>
 
           <div className="scroll-content has-header">
@@ -127,7 +127,7 @@ var FulfillScreen = React.createClass({
           <div className="button-clear button back-button disable-user-behavior" onTouchEnd={this.props.handleBack}>
             <i className="icon ion-chevron-left"></i> Back
           </div>
-          <h1 className="title">Fulfill</h1>
+          <h1 className="title">Charge</h1>
         </div>
 
         <div className="scroll-content overflow-scroll has-header">
@@ -139,7 +139,7 @@ var FulfillScreen = React.createClass({
               <p>{utils.formatCurrency(otherData.currentAmount)} remaining</p>
             </div>
             <div className="item item-text-wrap item-fulfillform">
-              <p className="instructions">Indicate how much work (approximate dollar value) you completed below, and include a brief note explaining what you did.</p>
+              <p className="instructions">Indicate the dollar value (in goods or services) you provided, and include a brief note explaining what you did. {otherData.name} will be given a chance to confirm this transaction.</p>
               <div className="row">
                 <div className="col col-12-5">
                   <input type="number" placeholder="$" ref="amountInput"/>
@@ -147,7 +147,7 @@ var FulfillScreen = React.createClass({
                 <div className="col">
                   <textarea ref="commentTextarea"/>
                   <button className="button button-small button-assertive" onTouchEnd={this.handleFulfillSubmit}>
-                    Charge for work
+                    Submit Charge
                   </button>
                 </div>
               </div>

@@ -118,7 +118,7 @@ var BalanceCard = React.createClass({
           </a>
           <a className="tab-item" href="#" onTouchEnd={this.handleFulfillChange}>
             <i className="icon ion-ios-list-outline"></i>
-            Fulfill
+            Charge
           </a>
         </div>
       </div>

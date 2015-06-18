@@ -52,7 +52,7 @@ var HistoryListItem = React.createClass({
       } else {
         action = history.action;
         if (this.props.isMine) {
-          action = 'fulfilled';
+          action = 'charged';
 
           if (history.confirmed) {
             topRight = 'confirmed';

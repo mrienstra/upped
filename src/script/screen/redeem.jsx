@@ -20,6 +20,7 @@ var RedeemScreen = React.createClass({
     'balanceID': React.PropTypes.string,
     'balance': React.PropTypes.object,
     'handleProfileChange': React.PropTypes.func,
+    'changeScreen': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
     'confirmDeduction': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
@@ -43,6 +44,10 @@ var RedeemScreen = React.createClass({
       'fromMenu': false,
       'viewingSelf': false,
     }});
+  },
+  handleChatChange: function (e) {
+    this.props.changeScreen('walletDetailScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
+    e.stopPropagation();
   },
   initFirebase: function (props) {
     this.setState({
@@ -119,10 +124,17 @@ var RedeemScreen = React.createClass({
               <p>{utils.formatCurrency(selfData.currentAmount)} remaining</p>
             </div>
             <div className="item item-text-wrap leftalign-with-avatar">
-              <p className="instructions">To redeem this deal, get in touch with {otherData.name}.</p>
-              <button className="button button-small button-assertive" onTouchEnd={this.handleProfileChange}>
-                View Profile
-              </button>
+              <p className="instructions">To redeem this deal, get in touch with {otherData.name}. Chat directly within our app!</p>
+              <div className="item tabs tabs-secondary tabs-icon-left">
+                <a className="tab-item" href="#" onTouchEnd={this.handleChatChange}>
+                  <i className="icon ion-ios-chatboxes-outline"></i>
+                  Chat
+                </a>
+                <a className="tab-item" href="#" onTouchEnd={this.handleProfileChange}>
+                  <i className="icon ion-ios-person"></i>
+                  View Profile
+                </a>
+              </div>
             </div>
             {historyNodes}
           </div>
