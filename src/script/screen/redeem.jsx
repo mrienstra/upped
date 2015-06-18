@@ -124,7 +124,7 @@ var RedeemScreen = React.createClass({
               <p>{utils.formatCurrency(selfData.currentAmount)} remaining</p>
             </div>
             <div className="item item-text-wrap leftalign-with-avatar">
-              <p className="instructions">To redeem this deal, get in touch with {otherData.name}. Chat directly within our app!</p>
+              <p className="instructions">To redeem, get in touch with {otherData.name}. Chat directly within our app!</p>
               <div className="item tabs tabs-secondary tabs-icon-left">
                 <a className="tab-item" href="#" onTouchEnd={this.handleChatChange}>
                   <i className="icon ion-ios-chatboxes-outline"></i>
