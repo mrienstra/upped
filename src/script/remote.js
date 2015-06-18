@@ -228,7 +228,7 @@ var remote = {
         return this.ref;
       },
       onAuth: function (authData) {
-        console.log('remote.firebase.auth.onAuth', authData);
+        console.log('remote.firebase.auth.onAuth', authData, remote.firebase.auth.temporarilyIgnoreAuthChanges);
 
         if (remote.firebase.auth.temporarilyIgnoreAuthChanges === true) {
           return;
@@ -256,6 +256,12 @@ var remote = {
           } else {
             remote.login = remote.firebase.auth.loginWithFB.bind(remote.firebase.auth);
             _remote.utils.dispatchCustomEvent('fbLoginNeeded');
+
+            if (window.FB) {
+              _remote.fb.init();
+            } else {
+              window.fbAsyncInit = _remote.fb.init;
+            }
           }
         } else {
           if (_.isEqual(authData, remote.firebase.auth.authData)) {

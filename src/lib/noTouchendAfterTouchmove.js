@@ -11,15 +11,16 @@ var dragging = false;
 var body = document.querySelector('body');
 
 body.addEventListener('touchstart', function(){
-  dragging = false;
+  dragging = 0;
 }, false);
 
 body.addEventListener('touchmove', function(){
-  dragging = true;
+  dragging++;
 }, false);
 
 body.addEventListener('touchend', function (e) {
-  if (dragging) {
+  if (dragging > 1) {
+    console.log('Ignoring drag', dragging);
     e.stopPropagation();
   }
 }, false);
