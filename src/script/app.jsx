@@ -133,7 +133,7 @@ var authInit = function (e, afterLogOut) {
         welcomeScreen: {
           visible: (initialScreen === 'welcomeScreen') ? true : false,
           errorMessage: (e && e.detail && e.detail.errorMessage) ? e.detail.errorMessage : void 0,
-          cssClass: 'loginScreen',
+          cssClass: 'welcomeScreen loginScreen',
         },
         emailSignupScreen: {
           visible: false,

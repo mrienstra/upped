@@ -280,8 +280,8 @@ a {
   background: transparent !important;
   color: $text-knockout-color;
   text-align: center;
-  .padding {
-    padding: 3em;
+  .scroll-content {
+    padding: 1em;
   }
   a {
     color: $text-knockout-color;
@@ -289,6 +289,12 @@ a {
   h2 {
     padding-top: 4rem;
     color: $text-knockout-color;
+  }
+}
+
+.welcomeScreen {
+  .scroll-content {
+    padding: 3em;
   }
 }
 
