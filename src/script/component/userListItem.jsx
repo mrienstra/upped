@@ -29,20 +29,12 @@ var UserListItem = React.createClass({
         </div>
         <div className="item item-divider item-text-wrap">
           <h2>{this.props.user.name}</h2>
-          <h3>{this.props.user.statement}</h3>
+          <h3>{this.props.user.sushi}</h3>
         </div>
         <div className={'item' + (this.state.expanded ? ' show' : '')}>
           <h3>
             <i className="icon ion-earth"></i> {this.props.user.location}
           </h3>
-        </div>
-        <div className="item">
-          <div className="list">
-            <div className="item item-divider">
-              <i className="icon ion-planet"></i> Super Powers
-            </div>
-            {skills}
-          </div>
         </div>
       </div>
     );
