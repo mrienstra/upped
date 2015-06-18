@@ -321,17 +321,16 @@ html, body, .container, .sideMenuWrapper {
   }
 }
 
+.feedbackScreen {
+  background: $primary-color url('../img/feedback.jpg') no-repeat 100% !important;
+  background-size: 100% 100% !important;
+  @include image-2x('../img/feedback_2x.jpg', 100%, 100%);
+}
+
 /* welcomeScreen */
 .welcomeScreen {
   .scroll-content {
     padding: 3em;
-  }
-}
-
-/* redeemScreen */
-.redeemScreen {
-  .tabs-icon-left {
-    border: 0;
   }
 }
 

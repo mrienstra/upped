@@ -46,7 +46,6 @@ var appInit = function () {
           visible: false,
           balance: void 0,
           balanceID: void 0,
-          cssClass: 'redeemScreen',
         },
         fulfillScreen: {
           visible: false,
@@ -63,6 +62,7 @@ var appInit = function () {
         },
         feedbackScreen: {
           visible: false,
+          cssClass: 'loginScreen feedbackScreen',
         },
       }
     },

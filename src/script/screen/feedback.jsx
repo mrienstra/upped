@@ -17,26 +17,19 @@ var FeedbackScreen = React.createClass({
               <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>
             </div>
           </div>
-          <h1 className="title">PAY WITH SUSHI</h1>
+          <h1 className="title">Feedback</h1>
         </div>
 
         <div className="scroll-content overflow-scroll has-header">
 
-          <div className="list list-inset-dotted">
-            <div className="item item-text-wrap center">
-              <h1>Feedback</h1>
-              <img src="img/new_logo_dark.png"/>
-              <h2>How's the smartest way to pay since the bank roll?</h2>
-            </div>
-            <div className="item item-text-wrap center">
-              <h4>This is a new limited release app, and we want your feedback. Let us know what you think!</h4>
-              <div className="padding">
-                <button className="button button-assertive">
-                  Feedback
-                </button>
-              </div>
-            </div>
-          </div>
+          <h2 className="center">
+            We &#9825; You
+          </h2>
+          <h4 className="center">
+            How some ideas, problems, or questions? This is a new release, and we want your feedback. Text or call: 831.607.9007
+          </h4>
+          <p className="center"><a className="button button-assertive" href="sms://831.607.9007?body=Pay%20With%20Sushi%20feedback:%20">Send Us a Text</a></p>
+          <p className="center"><a className="button button-assertive" href="tel:831.607.9007">Give Us a Call</a></p>
         </div>
       </div>
     );
