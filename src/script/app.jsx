@@ -131,19 +131,24 @@ var authInit = function (e, afterLogOut) {
         },
         welcomeScreen: {
           visible: (initialScreen === 'welcomeScreen') ? true : false,
-          errorMessage: (e && e.detail && e.detail.errorMessage) ? e.detail.errorMessage : void 0
+          errorMessage: (e && e.detail && e.detail.errorMessage) ? e.detail.errorMessage : void 0,
+          cssClass: 'loginScreen',
         },
         emailSignupScreen: {
           visible: false,
+          cssClass: 'loginScreen',
         },
         emailLoginScreen: {
           visible: false,
+          cssClass: 'loginScreen',
         },
         emailForgotScreen: {
           visible: false,
+          cssClass: 'loginScreen',
         },
         resetPasswordScreen: {
           visible: (initialScreen === 'resetPasswordScreen') ? true : false,
+          cssClass: 'loginScreen',
         },
       }
     },

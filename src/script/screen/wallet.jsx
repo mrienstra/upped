@@ -105,21 +105,21 @@ var BalanceCard = React.createClass({
         <div className="item item-text-wrap center">
           {otherData.sushi}
         </div>
-        <div className="item center">
+        <div className="item center timestamp">
           Updated {this.state.updatedFromNow}
         </div>
         <div className="item tabs tabs-secondary tabs-icon-left">
           <a className="tab-item" href="#" onTouchEnd={this.handleRedeemChange}>
             <i className="icon ion-ios-color-wand"></i>
-            redeem
+            Redeem
           </a>
           <a className="tab-item" href="#">
             <i className="icon ion-ios-chatboxes-outline"></i>
-            chat
+            Chat
           </a>
           <a className="tab-item" href="#" onTouchEnd={this.handleFulfillChange}>
             <i className="icon ion-ios-list-outline"></i>
-            fulfill
+            Fulfill
           </a>
         </div>
       </div>

@@ -64,7 +64,7 @@ var HistoryListItem = React.createClass({
             topRight = 'confirmed';
           } else {
             topRight = (
-              <a href="#" onTouchEnd={this.props.confirmDeduction}>confirm</a>
+              <a className="button button-small button-stable" href="#" onTouchEnd={this.props.confirmDeduction}>Confirm</a>
             );
           }
         }

@@ -78,8 +78,8 @@ var RedeemScreen = React.createClass({
               <p>{utils.formatCurrency(selfData.currentAmount)} remaining</p>
             </div>
             <div className="item item-text-wrap leftalign-with-avatar">
-              <p>To redeem this deal, get in touch with {otherData.name}.</p>
-              <button className="button button-assertive" onTouchEnd={this.handleProfileChange}>
+              <p className="instructions">To redeem this deal, get in touch with {otherData.name}.</p>
+              <button className="button button-small button-assertive" onTouchEnd={this.handleProfileChange}>
                 View Profile
               </button>
             </div>

@@ -4,7 +4,7 @@
 
 /* === GLOBAL STYLES === */
 a {
-  color: black;
+//  color: black;
 }
 
 .screens {
@@ -44,35 +44,24 @@ a {
     -webkit-transition-timing-function: cubic-bezier(0.36, 0.66, 0.04, 1);
     transition-timing-function: cubic-bezier(0.36, 0.66, 0.04, 1);
   }
-}
 
-.sideMenuVisible .screens {
-  -webkit-transform: translate3d(275px, 0, 0);
-  -ms-transform: translate3d(275px, 0, 0);
-  transform: translate3d(275px, 0, 0);
-}
-
-.sideMenuBlockerCloser {
-  display: none;
-  position: fixed;
-  top: 0; right: 0; bottom: 0; left: 275px;
-  z-index: 999999;
-  background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==) transparent;
-}
-.sideMenuVisible .sideMenuBlockerCloser {
-  display: block;
-}
-
-.bar-header h1.title img {
-  height: 16px;
-  position: relative;
-  top: 2px;
+  .pane {
+    background-color: rgba(255,255,255,1);
+  }
 }
 
 .bar .button.back-button {
   padding: 6px 18px 35px 6px;
   margin-top: -6px;
   margin-left: -6px;
+}
+
+.button {
+  border-radius: 300px;
+}
+
+.button.button-assertive {
+  background-color: #ef4136;
 }
 
 .bar-flat {
@@ -139,6 +128,25 @@ a {
 }
 
 /* === COMPONENTS === */
+.bar.bar-stable {
+  background-color: rgba(0,0,0,.9);
+  background-size: 0px;
+  color: $text-knockout-color;
+  .title {
+    color: $text-knockout-color;
+  }
+  .button {
+    color: $text-knockout-color;
+  }
+}
+
+.bar-header h1.title img {
+  height: 18px;
+  position: relative;
+  top: 3px;
+  padding-right: .1rem;
+}
+
 .bar-footer .button-full {
   margin: 0;
   position: absolute;
@@ -147,12 +155,6 @@ a {
 .bar-footer .title-link {
   font-size: 100%;
   font-weight: inherit;
-}
-
-.welcome {
-  .scroll-content, .bar-footer {
-    text-align: center;
-  }
 }
 
 .item-commentform {
@@ -166,6 +168,11 @@ a {
     float: right;
     margin-top: 10px;
   }
+}
+
+.timestamp {
+  font-size: 90%;
+  font-style: italic;
 }
 
 .amount span {
@@ -200,7 +207,6 @@ a {
 
 .item-history {
   .right, .subdued {
-    font-style: italic;
   }
   &:last-of-type {
     img {
@@ -219,7 +225,105 @@ a {
   border-radius: 50%;
 }
 
+/* instructions */
+.item .instructions {
+  padding-bottom: 1rem;
+}
+
 /* === SCREENS === */
+
+/* splash */
+.splash {
+  position: absolute;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  background: $primary-color url('../img/splash.jpg') no-repeat 50%;
+  background-size: 100% 100%;
+  @include image-2x('../img/splash_2x.jpg', 100%, 100%);
+  color: $text-knockout-color;
+  h1 {
+    display: none; // hiding the logo for now
+    margin-top: 20rem;
+    width: 100%;
+    height: 8.3rem;
+    background-size: 100% 100%;
+    background: url('../img/fueling_up.png') no-repeat 50% 50%;
+    @include image-2x('../img/fueling_up_2x.png', 8.3rem, 8.3rem);
+  }
+  .icon {
+    font-size: 200%;
+  }
+}
+
+/* welcome */
+.welcome {
+  .scroll-content, .bar-footer {
+    text-align: center;
+  }
+}
+
+/* default screens background */
+.screens {
+  background: $primary-color url('../img/splash.jpg') no-repeat 50%;
+  background-size: 100% 100%;
+  @include image-2x('../img/splash_2x.jpg', 100%, 100%);
+}
+
+/* loginScreen */
+.loginScreen {
+  background: transparent !important;
+  color: $text-knockout-color;
+  text-align: center;
+  .padding {
+    padding: 3em;
+  }
+  a {
+    color: $text-knockout-color;
+  }
+  h2 {
+    padding-top: 4rem;
+    color: $text-knockout-color;
+  }
+}
+
+/* sideMenu */
+.menu {
+  background: url('../img/splash_dk.jpg') no-repeat 0 0;
+  background-size: 100% 100%;
+  color: $text-knockout-color;
+  @include image-2x('../img/splash_dk_2x.jpg', 100%, 100%);
+    .item {
+      background: transparent;
+      border: 0;
+    }
+  .bar-header {
+    border: 0;
+    background-size: 100% 0px;
+    background-color: rgba(0,0,0,0);
+  }
+}
+
+.sideMenuBlockerCloser {
+  display: none;
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 275px;
+  z-index: 999999;
+  background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==) transparent;
+}
+
+.sideMenuVisible {
+  .screens {
+    -webkit-transform: translate3d(275px, 0, 0);
+    -ms-transform: translate3d(275px, 0, 0);
+    transform: translate3d(275px, 0, 0);
+  }
+  .sideMenuBlockerCloser {
+    display: block;
+  }
+}
+
+/* profileScreen */
 .profileScreen .userListItem {
   margin-top: -1px;
 }

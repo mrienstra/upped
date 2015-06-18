@@ -114,14 +114,14 @@ var FulfillScreen = React.createClass({
               <p>{utils.formatCurrency(otherData.currentAmount)} remaining</p>
             </div>
             <div className="item item-text-wrap item-fulfillform">
-              <p>Indicate how much work (approximate dollar value) you completed below, and include a brief note explaining what you did.</p>
+              <p className="instructions">Indicate how much work (approximate dollar value) you completed below, and include a brief note explaining what you did.</p>
               <div className="row">
                 <div className="col col-12-5">
                   <input type="number" placeholder="$" ref="amountInput"/>
                 </div>
                 <div className="col">
                   <textarea ref="commentTextarea"/>
-                  <button className="button button-small button-positive" onTouchEnd={this.handleFulfillSubmit}>
+                  <button className="button button-small button-assertive" onTouchEnd={this.handleFulfillSubmit}>
                     Charge for work
                   </button>
                 </div>
