@@ -36,9 +36,13 @@ var WelcomeScreen = React.createClass({
     }
   },
   render: function(){
-    var buttonClasses = 'button button-full button-positive';
-    if (this.state.loading) {
-      buttonClasses += ' icon-right ion-load-d';
+    var error;
+    if (this.state.error) {
+      error = (
+        <h4 className="assertive">
+          {this.state.error}
+        </h4>
+      );
     }
 
     return (
@@ -50,9 +54,7 @@ var WelcomeScreen = React.createClass({
           <h1 className="title">Sign Up</h1>
         </div>
         <div className="scroll-content has-header has-footer">
-          <h4 className="assertive">
-            {this.state.error}
-          </h4>
+          {error}
           <div className="list list-topless">
             <label className="item item-input">
               <input ref="firstnameInput" type="text" inputmode="latin-name" placeholder="First Name"/>
