@@ -23,7 +23,7 @@ var WelcomeScreen = React.createClass({
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
         <header className="bar bar-header bar-stable">
-          <h1 className="title"><img src="img/new_logo_lt.png"> </img>Pay With Sushi</h1>
+          <h1 className="title"><span className="logo"></span>Pay With Sushi</h1>
         </header>
         <div className="scroll-content has-header has-footer padding">
           {error}

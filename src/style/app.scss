@@ -140,11 +140,18 @@ a {
   }
 }
 
-.bar-header h1.title img {
-  height: 18px;
+.bar-header h1.title .logo {
+  display: inline-block;
+  height: 1.4rem;
+  width: 1.6rem;
   position: relative;
   top: 3px;
-  padding-right: .1rem;
+  position: relative;
+  left: -.4rem;
+  top: .3rem;
+  background: url('../img/new_logo_lt.png') 50% 50%;
+  background-size: 100% 100%;
+  @include image-2x('../img/new_logo_lt_2x.png', 100%, 100%);
 }
 
 .bar-footer .button-full {
