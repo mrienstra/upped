@@ -48,6 +48,24 @@ var WelcomeScreen = React.createClass({
       buttonClasses += ' icon-right ion-load-d';
     }
 
+    var message;
+    if (this.state.message) {
+      message = (
+        <h4 className="balanced">
+          {this.state.message}
+        </h4>
+      );
+    }
+
+    var error;
+    if (this.state.error) {
+      error = (
+        <h4 className="assertive">
+          {this.state.error}
+        </h4>
+      );
+    }
+
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
         <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
@@ -59,12 +77,8 @@ var WelcomeScreen = React.createClass({
         <div className="scroll-content has-header has-footer">
           <div className="padding">
             <p className="center">Please enter the email you used to sign up, and we'll email you a link to reset your password.</p>
-            <h4 className="balanced">
-              {this.state.message}
-            </h4>
-            <h4 className="assertive">
-              {this.state.error}
-            </h4>
+            {message}
+            {error}
           </div>
           <div className="list list-topless">
             <label className="item item-input">

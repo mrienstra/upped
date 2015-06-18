@@ -25,12 +25,10 @@ var WelcomeScreen = React.createClass({
   },
   handleEmailSignupButton: function(){
     var data = {
-      firstName: React.findDOMNode(this.refs.firstnameInput).value,
-      lastName: React.findDOMNode(this.refs.lastnameInput).value,
       email: React.findDOMNode(this.refs.emailInput).value,
       password: React.findDOMNode(this.refs.passwordInput).value,
     };
-    if (data.firstName && data.lastName && data.email && data.password) {
+    if (data.email && data.password) {
       this.showLoading();
       this.props.handleEmailSignupButton(data, this.onError);
     }
@@ -56,12 +54,6 @@ var WelcomeScreen = React.createClass({
         <div className="scroll-content has-header has-footer">
           {error}
           <div className="list list-topless">
-            <label className="item item-input">
-              <input ref="firstnameInput" type="text" inputmode="latin-name" placeholder="First Name"/>
-            </label>
-            <label className="item item-input">
-              <input ref="lastnameInput" type="text" inputmode="latin-name" placeholder="Last Name"/>
-            </label>
             <label className="item item-input">
               <input ref="emailInput" type="email" placeholder="Email"/>
             </label>
