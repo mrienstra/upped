@@ -6,7 +6,6 @@ var HistoryListItem = require('../component/historyListItem.jsx');
 // Libs
 var _ = require('lodash');
 var classNames = require('classnames');
-var Firebase = require('firebase');
 
 // Mixins
 var ReactFireMixin = require('reactfire');
@@ -25,6 +24,7 @@ var WalletDetailScreen = React.createClass({
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
     'markRead': React.PropTypes.func,
+    'confirmDeduction': React.PropTypes.func,
     'changeScreen': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,
@@ -95,7 +95,7 @@ var WalletDetailScreen = React.createClass({
     }
   },
   handleRedeemChange: function (e) {
-    this.props.changeScreen('redeemScreen', {state: {balance: this.props.balance}});
+    this.props.changeScreen('redeemScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
   },
   handleFulfillChange: function (e) {
     this.props.changeScreen('fulfillScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});

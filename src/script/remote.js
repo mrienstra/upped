@@ -50,7 +50,7 @@ var _remote = {
       if (response.status === 'connected') {
         remote.firebase.auth.loginWithFBAuthResponse(response.authResponse);
       } else {
-        remote.firebase.auth.init();
+        remote.firebase.auth.loginWithFB();
       }
     },
     login: function(){
@@ -207,13 +207,7 @@ var remote = {
       console.log('remote.init: waiting for "deviceready"');
       document.addEventListener('deviceready', _remote.fcp.init, false);
     } else {
-      if (window.FB) {
-        console.log('remote.init: calling _remote.fb.init');
-        _remote.fb.init();
-      } else {
-        console.log('remote.init: waiting for FB');
-        window.fbAsyncInit = _remote.fb.init;
-      }
+      remote.firebase.auth.init();
     }
   },
   login: void 0, // Search for "remote.login" to see usage
