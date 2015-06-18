@@ -123,18 +123,18 @@ var RedeemScreen = React.createClass({
               <h2>{otherData.name}</h2>
               <p>{utils.formatCurrency(selfData.currentAmount)} remaining</p>
             </div>
-            <div className="item item-text-wrap leftalign-with-avatar">
-              <p className="instructions">To redeem, get in touch with {otherData.name}. Chat directly within our app!</p>
-              <div className="item tabs tabs-secondary tabs-icon-left">
-                <a className="tab-item" href="#" onTouchEnd={this.handleChatChange}>
-                  <i className="icon ion-ios-chatboxes-outline"></i>
-                  Chat
-                </a>
-                <a className="tab-item" href="#" onTouchEnd={this.handleProfileChange}>
-                  <i className="icon ion-ios-person"></i>
+            <div className="item item-text-wrap center">
+              To redeem, get in touch with {otherData.name}. Chat directly within our app!
+            </div>
+            <div className="item tabs tabs-secondary tabs-icon-left">
+              <a className="tab-item" href="#" onTouchEnd={this.handleChatChange}>
+                <i className="icon ion-ios-chatboxes-outline"></i>
+                Chat
+              </a>
+              <a className="tab-item" href="#" onTouchEnd={this.handleProfileChange}>
+                <i className="icon ion-ios-person"></i>
                   View Profile
-                </a>
-              </div>
+              </a>
             </div>
             {historyNodes}
           </div>
