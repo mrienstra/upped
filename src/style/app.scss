@@ -142,13 +142,13 @@ a {
 
 .bar-header h1.title .logo {
   display: inline-block;
-  height: 1.4rem;
-  width: 1.6rem;
+  height: 1.2rem;
+  width: 1.4rem;
   position: relative;
   top: 3px;
   position: relative;
   left: -.4rem;
-  top: .3rem;
+  top: .2rem;
   background: url('../img/new_logo_lt.png') 50% 50%;
   background-size: 100% 100%;
   @include image-2x('../img/new_logo_lt_2x.png', 100%, 100%);
