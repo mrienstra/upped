@@ -145,10 +145,8 @@ a {
   height: 1.2rem;
   width: 1.4rem;
   position: relative;
-  top: 3px;
-  position: relative;
   left: -.4rem;
-  top: .2rem;
+  top: 3px;
   background: url('../img/new_logo_lt.png') 50% 50%;
   background-size: 100% 100%;
   @include image-2x('../img/new_logo_lt_2x.png', 100%, 100%);
