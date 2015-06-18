@@ -28,7 +28,7 @@ var FeedbackScreen = React.createClass({
           <h4 className="center">
             How some ideas, problems, or questions? This is a new release, and we want your feedback. Text or call: 831.607.9007
           </h4>
-          <p className="center"><a className="button button-assertive" href="sms://831.607.9007?body=Pay%20With%20Sushi%20feedback:%20">Send Us a Text</a></p>
+          <p className="center"><a className="button button-assertive" href="sms://831.607.9007">Send Us a Text</a></p>
           <p className="center"><a className="button button-assertive" href="tel:831.607.9007">Give Us a Call</a></p>
         </div>
       </div>
