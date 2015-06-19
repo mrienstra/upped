@@ -13,7 +13,7 @@ var settings = {
     }
   },
   firebase: {
-    name: 'glaring-torch-1823'
+    name: (window.location.hostname === 'app.paywithsushi.com') ? 'paywithsushi' : 'glaring-torch-1823',
   },
   points: {
     posts: 20,
