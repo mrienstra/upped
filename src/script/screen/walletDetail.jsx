@@ -39,10 +39,14 @@ var WalletDetailScreen = React.createClass({
     };
   },
   initFirebase: function (props) {
-    this.setState({
-      balance: void 0,
-      history: void 0,
-    });
+    if (this.state.balance || this.state.history) {
+      this.setState({
+        balance: void 0,
+        history: void 0,
+      });
+    }
+
+    if (!props.balanceID) return;
 
     var history = props.getHistory(props.balanceID);
     this.bindAsObject(history, 'history');
@@ -79,7 +83,7 @@ var WalletDetailScreen = React.createClass({
     }
   },
   componentWillMount: function(){
-    console.log('WalletDetailScreen.componentWillMount()', this, arguments);
+    //console.log('WalletDetailScreen.componentWillMount()', this, arguments);
 
     this.initFirebase(this.props);
 
@@ -101,7 +105,7 @@ var WalletDetailScreen = React.createClass({
     this.props.changeScreen('fulfillScreen', {state: {balance: this.props.balance, balanceID: this.props.balanceID}});
   },
   handleNoteSubmit: function(){
-    console.log('handleNoteSubmit', this, arguments);
+    //console.log('handleNoteSubmit', this, arguments);
 
     var note = React.findDOMNode(this.refs.noteTextarea).value;
 
@@ -121,7 +125,7 @@ var WalletDetailScreen = React.createClass({
     }
   },
   render: function(){
-    console.log('WalletDetailScreen.render', this);
+    //console.log('WalletDetailScreen.render', this);
 
     var that = this;
 

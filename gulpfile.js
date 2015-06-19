@@ -15,7 +15,7 @@ var uglify = require('gulp-uglify');
 
 var port = 8000;
 
-var libs = ['react', 'firebase', 'reactfire', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/openfb-32c04deef7-mod.js', '../lib/noTouchendAfterTouchmove.js'];
+var libs = ['react', 'firebase', 'reactfire', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/noTouchendAfterTouchmove.js'];
 
 var cssLibs = 'src/lib/ionic-1.0.0/css/ionic.css';
 

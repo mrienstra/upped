@@ -2,8 +2,6 @@ var _ = require('lodash');
 
 var when = require('when');
 
-var openFB = require('../lib/openfb-32c04deef7-mod.js');
-
 // Modules
 var pubSub = require('./pubSub.js');
 
@@ -112,71 +110,6 @@ var _remote = {
       console.log('_remote.fb.updatePermissions', remote.user.fb);
     }
   },
-  fcp: {
-    init: function(){
-      console.log('_remote.fcp.init');
-
-      facebookConnectPlugin.getLoginStatus(_remote.fcp.getLoginStatusCallback);
-
-      StatusBar.overlaysWebView(false); // Todo: put this somewhere else, doesn't really belong here. org.apache.cordova.statusbar
-    },
-    getLoginStatusCallback: function (response) {
-      console.log('_remote.fcp.getLoginStatusCallback', response);
-
-      if (response.status === 'connected') {
-        remote.firebase.auth.loginWithFBAuthResponse(response.authResponse);
-      } else {
-        remote.login = _remote.fcp.login;
-
-        _remote.utils.dispatchCustomEvent('fbLoginNeeded');
-      }
-    },
-    login: function(){
-      console.log('remote.fcp.login');
-
-      if (settings.useOpenFBLogin) {
-        openFB.init(settings.fb.appId);
-        openFB.login(
-          settings.fb.permissions.initial.join(','),
-          function (response) {
-            openFB.api({
-            path: '/me',
-            params: {fields: 'id'},
-            success: function (response2) {
-              console.log('remote.fcp.login openFB.api "/me"', this, arguments);
-
-              response.authResponse.userID = response2.id;
-
-              _remote.fb.loginCallback(response);
-            },
-            failure: _remote.fcp.loginFailureCallback
-          });
-          },
-          _remote.fcp.loginFailureCallback
-        );
-
-        return;
-      }
-
-      facebookConnectPlugin.login(
-        settings.fb.permissions.initial,
-        _remote.fb.loginCallback, // Done with `fcp`-specific code, switching to `fb`
-        _remote.fcp.loginFailureCallback
-        // Todo: neither callback is invoked when "saying no" to FB login in iOS Simulator.
-      );
-    },
-    loginFailureCallback: function (err) {
-      if (err === 'To use your Facebook account with this app, open Settings > Facebook and make sure this app is turned on.') {
-        // Todo: this error can also mean that there is a problem with the Settings > Facebook account, sometimes deleting it will fix this issue
-        alert(err);
-      } else {
-        console.error('_remote.fcp.loginFailureCallback', this, arguments);
-        alert('Todo: _remote.fcp.loginFailureCallback (' + (settings.useOpenFBLogin  ? 't' : 'f') + '): ' +  err);
-
-        settings.useOpenFBLogin = !settings.useOpenFBLogin;
-      }
-    }
-  },
   utils: {
     dataURItoBlob: function (dataURI) {
       var mime = dataURI.split(';')[0].split(':')[1];
@@ -203,12 +136,7 @@ var remote = {
   init: function () {
     remote.resetUser();
 
-    if (window.cordova) {
-      console.log('remote.init: waiting for "deviceready"');
-      document.addEventListener('deviceready', _remote.fcp.init, false);
-    } else {
-      remote.firebase.auth.init();
-    }
+    remote.firebase.auth.init();
   },
   login: void 0, // Search for "remote.login" to see usage
   logOut: function(){
@@ -228,7 +156,12 @@ var remote = {
         return this.ref;
       },
       onAuth: function (authData) {
-        console.log('remote.firebase.auth.onAuth', authData, remote.firebase.auth.temporarilyIgnoreAuthChanges);
+        console.log(
+          'remote.firebase.auth.onAuth',
+          authData,
+          remote.firebase.auth.temporarilyIgnoreAuthChanges,
+          (authData && _.isEqual(authData, remote.firebase.auth.authData))
+        );
 
         if (remote.firebase.auth.temporarilyIgnoreAuthChanges === true) {
           return;
@@ -256,12 +189,6 @@ var remote = {
           } else {
             remote.login = remote.firebase.auth.loginWithFB.bind(remote.firebase.auth);
             _remote.utils.dispatchCustomEvent('fbLoginNeeded');
-
-            if (window.FB) {
-              _remote.fb.init();
-            } else {
-              window.fbAsyncInit = _remote.fb.init;
-            }
           }
         } else {
           if (_.isEqual(authData, remote.firebase.auth.authData)) {
@@ -278,10 +205,6 @@ var remote = {
         var ref = this.getRef();
 
         ref.onAuth(this.onAuth);
-
-        _.delay(function(){
-          remote.firebase.auth.onAuth(ref.getAuth());
-        }, 5000);
       },
       changePassword: function (email, oldPassword, newPassword, onError, onSuccess) {
         var ref = this.getRef();
@@ -312,9 +235,9 @@ var remote = {
         this.changePassword(email, token, newPassword, onError, onSuccess);
       },
       postLogin2: function (uid) {
-        var ref = remote.firebase.userData.getById(uid);
+        var userDataRef = remote.firebase.userData.getById(uid);
 
-        ref.on('value', function(snapshot) {
+        userDataRef.on('value', function(snapshot) {
           var val = snapshot.val();
 
           if (val === null) {
@@ -365,11 +288,23 @@ var remote = {
         });
       },
       loginWithFB: function(){
+        var that = this;
+
         var ref = this.getRef();
 
-        ref.authWithOAuthRedirect('facebook', function (error) {
-          // Todo: handle
-          console.warn('Login Failed!', error);
+        ref.authWithOAuthPopup('facebook', function(error, authData) {
+          if (error) {
+            if (error.code === 'TRANSPORT_UNAVAILABLE') {
+              ref.authWithOAuthRedirect('facebook', function (error) {
+                // Todo: handle
+                console.warn('Login Failed!', error);
+              });
+            } else {
+              console.warn('Login Failed', error);
+            }
+          } else {
+            that.postLogin(authData);
+          }
         });
       },
       loginWithFBAuthResponse: function (authResponse, attemptCount) {

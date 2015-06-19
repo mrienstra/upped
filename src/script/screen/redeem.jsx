@@ -50,9 +50,13 @@ var RedeemScreen = React.createClass({
     e.stopPropagation();
   },
   initFirebase: function (props) {
-    this.setState({
-      history: void 0,
-    });
+    if (this.state.history) {
+      this.setState({
+        history: void 0,
+      });
+    }
+
+    if (!props.balanceID) return;
 
     var history = props.getHistory(props.balanceID);
     this.bindAsObject(history, 'history');
@@ -66,7 +70,7 @@ var RedeemScreen = React.createClass({
     }
   },
   render: function(){
-    console.log('RedeemScreen.render', this);
+    //console.log('RedeemScreen.render', this);
 
     var that = this;
 

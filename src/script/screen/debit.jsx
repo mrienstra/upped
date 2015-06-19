@@ -73,7 +73,7 @@ var DebitScreen = React.createClass({
     }
   },
   componentWillMount: function(){
-    console.log('DebitScreen.componentWillMount()', this, arguments);
+    //console.log('DebitScreen.componentWillMount()', this, arguments);
 
     this.initFirebase(this.props);
 
@@ -95,7 +95,7 @@ var DebitScreen = React.createClass({
     this.setState({notesValue: value});
   },
   handleDeductAndOrNoteSubmit: function(){
-    console.log('handleDeductAndOrNoteSubmit', this, arguments);
+    //console.log('handleDeductAndOrNoteSubmit', this, arguments);
 
     var amount = parseFloat(this.state.amountValue);
 
@@ -121,7 +121,7 @@ var DebitScreen = React.createClass({
     }
   },
   render: function(){
-    console.log('DebitScreen.render', this);
+    //console.log('DebitScreen.render', this);
 
     var balance = this.state.balance || this.props.balance;
 

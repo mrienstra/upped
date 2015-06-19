@@ -34,7 +34,7 @@ var ProfileScreen = React.createClass({
     this.initFirebase(nextProps);
   },
   render: function(){
-    console.log('ProfileScreen.render', this);
+    //console.log('ProfileScreen.render', this);
 
     if (!this.state.userData) {
       return (

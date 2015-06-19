@@ -36,7 +36,7 @@ var WelcomeScreen = React.createClass({
   },
   handleEmailForgotButton: function(){
     var email = React.findDOMNode(this.refs.emailInput).value;
-    console.log('foo', email);
+
     if (email) {
       this.showLoading();
       this.props.doEmailForgot(email, this.onError, this.onSuccess);

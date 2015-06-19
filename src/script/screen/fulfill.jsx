@@ -37,7 +37,7 @@ var FulfillScreen = React.createClass({
     };
   },
   handleFulfillSubmit: function(){
-    console.log('handleFulfillSubmit', this, arguments);
+    //console.log('handleFulfillSubmit', this, arguments);
 
     var amount = parseFloat(React.findDOMNode(this.refs.amountInput).value);
     var comment = React.findDOMNode(this.refs.commentTextarea).value;
@@ -59,10 +59,14 @@ var FulfillScreen = React.createClass({
     }
   },
   initFirebase: function (props) {
-    this.setState({
-      balance: void 0,
-      history: void 0,
-    });
+    if (this.state.balance || this.state.history) {
+      this.setState({
+        balance: void 0,
+        history: void 0,
+      });
+    }
+
+    if (!props.balanceID) return;
 
     var history = props.getHistory(props.balanceID);
     this.bindAsObject(history, 'history');
@@ -71,7 +75,7 @@ var FulfillScreen = React.createClass({
     this.bindAsObject(balance, 'balance');
   },
   componentWillMount: function(){
-    console.log('FulfillScreen.componentWillMount()', this, arguments);
+    //console.log('FulfillScreen.componentWillMount()', this, arguments);
 
     this.initFirebase(this.props);
   },
@@ -81,7 +85,7 @@ var FulfillScreen = React.createClass({
     }
   },
   render: function(){
-    console.log('FulfillScreen.render', this);
+    //console.log('FulfillScreen.render', this);
 
     var that = this;
 

@@ -9,7 +9,7 @@ var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 var WelcomeScreen = React.createClass({
   mixins: [ScreenTransitionMixin],
   render: function(){
-    console.log('WelcomeScreen.render', this, arguments);
+    //console.log('WelcomeScreen.render', this, arguments);
 
     var error;
     if (this.props.errorMessage) {

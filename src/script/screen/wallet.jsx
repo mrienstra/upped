@@ -128,7 +128,7 @@ var BalanceCard = React.createClass({
 
 var WalletList = React.createClass({
   render: function(){
-    console.log('WalletList.render', this)
+    //console.log('WalletList.render', this)
 
     var that = this;
 
@@ -171,7 +171,7 @@ var WalletScreen = React.createClass({
     this.bindAsObject(balancesRef, 'walletItems');
   },
   render: function(){
-    console.log('WalletScreen.render()', this, arguments);
+    //console.log('WalletScreen.render()', this, arguments);
 
     return (
       <div className={classNames.apply(null, this.state.classNames)}>
