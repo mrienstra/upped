@@ -163,7 +163,7 @@ var authInit = function (e, afterLogOut) {
       var doEmailLogin = function (data, onError) {
         console.log('doEmailLogin', this, arguments);
 
-        window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+        window.addEventListener('firebaseLoginSuccess', continuePastWelcomeScreen);
 
         remote.firebase.auth.passwordLogin(data.email, data.password, onError);
       };
@@ -177,7 +177,7 @@ var authInit = function (e, afterLogOut) {
       var handleEmailSignupButton = function (data, onError) {
         console.log('handleEmailSignupButton', this, arguments);
 
-        window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+        window.addEventListener('firebaseLoginSuccess', continuePastWelcomeScreen);
 
         remote.firebase.auth.passwordSignup(data, onError);
       };
@@ -193,7 +193,7 @@ var authInit = function (e, afterLogOut) {
             remote.login();
           };
           window.addEventListener('fbLoginNeeded', doFbLogin);
-          window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+          window.addEventListener('firebaseLoginSuccess', continuePastWelcomeScreen);
 
           remote.init();
         } else {
@@ -240,7 +240,7 @@ var continuePastWelcomeScreen = function(){
   console.log('continuePastWelcomeScreen');
 
   window.removeEventListener('fbLoginNeeded', authInit);
-  window.removeEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+  window.removeEventListener('firebaseLoginSuccess', continuePastWelcomeScreen);
 
   // todo: remove below testing code; make FTU experience more "welcoming"!
   if (remote.user.ftu) console.log ('new user!');
@@ -253,7 +253,7 @@ var showFirstScreen = function(){
   console.log('showFirstScreen');
 
   window.addEventListener('fbLoginNeeded', authInit);
-  window.addEventListener('fbAndParseLoginSuccess', continuePastWelcomeScreen);
+  window.addEventListener('firebaseLoginSuccess', continuePastWelcomeScreen);
 
   remote.init();
 }

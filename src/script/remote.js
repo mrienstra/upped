@@ -185,7 +185,7 @@ var remote = {
                 'initialScreen': 'resetPasswordScreen',
               });
               _.delay(then);
-            });
+            }, 'resetPassword A');
           } else {
             remote.login = remote.firebase.auth.loginWithFB.bind(remote.firebase.auth);
             _remote.utils.dispatchCustomEvent('fbLoginNeeded');
@@ -196,7 +196,7 @@ var remote = {
           }
 
           console.log('remote.firebase.auth.init good to go!', authData);
-          remote.firebase.auth.postLogin(authData);
+          remote.firebase.auth.postLogin(authData, 'existingSession');
         }
       },
       init: function(){
@@ -229,12 +229,12 @@ var remote = {
         var token = matches[2];
 
         var onSuccess = function (newPassword) {
-          remote.firebase.auth.passwordLogin(email, newPassword, onError);
+          remote.firebase.auth.passwordLogin(email, newPassword, onError, void 0, 'resetPassword B');
         };
 
         this.changePassword(email, token, newPassword, onError, onSuccess);
       },
-      postLogin2: function (uid) {
+      postLogin2: function (uid, authFlow) {
         var userDataRef = remote.firebase.userData.getById(uid);
 
         userDataRef.on('value', function(snapshot) {
@@ -247,8 +247,8 @@ var remote = {
             remote.user.userData = val;
             remote.user.userData.id = uid;
 
-            _remote.utils.dispatchCustomEvent('fbAndParseLoginSuccess');
-            ga('send', 'event', 'session', 'login', 'fbAndParseLoginSuccess');
+            _remote.utils.dispatchCustomEvent('firebaseLoginSuccess');
+            ga('send', 'event', 'session', 'firebaseLoginSuccess: ' + authFlow);
           }
         }, function (errorObject) {
           // todo: handle
@@ -256,7 +256,7 @@ var remote = {
           ga('send', 'event', 'userData', 'get ' + user.uid, 'error: ' + errorObject.code);
         });
       },
-      postLogin: function (authData) {
+      postLogin: function (authData, authFlow) {
         remote.firebase.auth.authData = authData;
 
         var that = this;
@@ -271,7 +271,7 @@ var remote = {
               ref.child('users/' + authData.uid).set({
                 'uid': uid,
               });
-              that.postLogin2(uid);
+              that.postLogin2(uid, authFlow);
             } else {
               // Unknown user!
               // Todo: get name from FB and use it to guess?
@@ -279,7 +279,7 @@ var remote = {
               alert('Hmm, we weren\'t able to figure out who you are...');
             }
           } else {
-            that.postLogin2(user.uid);
+            that.postLogin2(user.uid, authFlow);
           }
         }, function (errorObject) {
           // todo: handle
@@ -303,7 +303,7 @@ var remote = {
               console.warn('Login Failed', error);
             }
           } else {
-            that.postLogin(authData);
+            that.postLogin(authData, 'facebookPopup');
           }
         });
       },
@@ -319,11 +319,11 @@ var remote = {
             console.warn('Login Failed!', error);
           } else {
             console.log('Authenticated successfully with payload:', authData);
-            that.postLogin(authData);
+            that.postLogin(authData, 'facebookToken');
           }
         });
       },
-      passwordLogin: function (email, password, onError, onSuccess) {
+      passwordLogin: function (email, password, onError, onSuccess, authFlow) {
         console.log('remote.firebase.auth.passwordLogin', this, arguments);
 
         var that = this;
@@ -342,7 +342,7 @@ var remote = {
             if (onSuccess) {
               onSuccess();
             } else {
-              that.postLogin(authData);
+              that.postLogin(authData, authFlow);
             }
           }
         });
@@ -363,7 +363,7 @@ var remote = {
             onError && onError(error.message || error);
           } else {
             console.log('Successfully created user account with uid:', userData.uid);
-            that.passwordLogin(data.email, data.password);
+            that.passwordLogin(data.email, data.password, void 0, void 0, 'passwordSignup');
           }
         });
       },
@@ -429,6 +429,10 @@ var remote = {
 
           history.action = 'subtracted';
           history.amount = amount;
+
+          ga('send', 'event', 'deductAndOrAddNote', 'deduct', void 0, amount);
+        } else {
+          ga('send', 'event', 'deductAndOrAddNote', 'note');
         }
 
         if (note) history.note = note;
@@ -447,6 +451,8 @@ var remote = {
         deductionRef.update({
           confirmed: 1,
         });
+
+        ga('send', 'event', 'confirm', 'confirmDeduction');
       },
       markRead: function (balanceID, selfUID) {
         var balanceSelfDataRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID + '/' + selfUID + '_data');

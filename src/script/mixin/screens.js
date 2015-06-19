@@ -48,6 +48,8 @@ var ScreensMixin = {
       modifiedState[previousScreen].transition = {type: 'depart', direction: 'right'};
       modifiedState[newScreen].transition = {type: 'arrive', direction: 'left'};
       transition = true;
+
+      ga('send', 'event', 'navigation', 'back to ' + newScreen);
     } else if (options && options.state && options.state.fromMenu) {
       // Clear stack
       modifiedState.screens = {
@@ -56,6 +58,8 @@ var ScreensMixin = {
       };
 
       modifiedState[previousScreen].visible = false;
+
+      ga('send', 'event', 'navigation', 'fromMenu to ' + newScreen);
     } else if (this.state.screens.stack.length > this.state.screens.i + 1) {
       // Discard "forward" stack
       modifiedState.screens = {
@@ -66,6 +70,8 @@ var ScreensMixin = {
       modifiedState[previousScreen].transition = {type: 'depart', direction: 'left'};
       modifiedState[newScreen].transition = {type: 'arrive', direction: 'right'};
       transition = true;
+
+      ga('send', 'event', 'navigation', 'to ' + newScreen);
     } else {
       // Simple "forward"
       modifiedState.screens = {
@@ -76,6 +82,8 @@ var ScreensMixin = {
       modifiedState[previousScreen].transition = {type: 'depart', direction: 'left'};
       modifiedState[newScreen].transition = {type: 'arrive', direction: 'right'};
       transition = true;
+
+      ga('send', 'event', 'navigation', 'to ' + newScreen);
     }
 
     if (this.state.sideMenuVisible)
