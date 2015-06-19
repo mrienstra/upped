@@ -10,17 +10,25 @@ var dragging = false;
 
 var body = document.querySelector('body');
 
-body.addEventListener('touchstart', function(){
-  dragging = 0;
-}, false);
+var ongoingTouches = {};
 
-body.addEventListener('touchmove', function(){
-  dragging++;
+body.addEventListener('touchstart', function (e) {
+  var i, l, touch;
+  for (i = 0, l = e.changedTouches.length; i < l; i++) {
+    touch = e.changedTouches[i];
+    ongoingTouches[touch.identifier] = {x: touch.pageX, y: touch.pageY};
+  };
 }, false);
 
 body.addEventListener('touchend', function (e) {
-  if (dragging > 1) {
-    console.log('Ignoring drag', dragging);
-    e.stopPropagation();
-  }
+  var i, l, touch, distance;
+  for (i = 0, l = e.changedTouches.length; i < l; i++) {
+    touch = e.changedTouches[i];
+    distance = Math.sqrt(Math.pow(touch.pageX - ongoingTouches[touch.identifier].x, 2) + Math.pow(touch.pageY - ongoingTouches[touch.identifier].y, 2));
+    if (distance > 15) {
+      console.log('Ignoring drag', distance);
+      e.stopPropagation();
+    }
+    delete ongoingTouches[touch.identifier];
+  };
 }, false);
