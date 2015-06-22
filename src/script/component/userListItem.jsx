@@ -14,13 +14,13 @@ var UserListItem = React.createClass({
   render: function() {
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
-    var skills = this.props.user.skills.map(function (name, i) {
+    var skills = this.props.user.skills ? this.props.user.skills.map(function (name, i) {
       var category;
       if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
         name = category.name;
       }
       return <div key={i} className="item">{name}</div>;
-    });
+    }) : void 0;
 
     return (
       <div className="list stackListItem userListItem" onTouchEnd={this.handleToggleDetails}>
