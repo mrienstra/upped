@@ -23,7 +23,6 @@ var FulfillScreen = React.createClass({
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
     'doDeduct': React.PropTypes.func,
-    'confirmDeduction': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,
     'visible': React.PropTypes.bool,
@@ -52,7 +51,7 @@ var FulfillScreen = React.createClass({
     var otherData = balance[otherUID + '_data'];
 
     if (amount && amount > 0 && amount <= otherData.currentAmount && comment) {
-      this.props.doDeduct(this.props.balanceID, comment, otherUID, otherData.unread, otherData.currentAmount, amount);
+      this.props.doDeduct(this.props.balanceID, comment, otherUID, otherData.currentAmount, amount);
 
       React.findDOMNode(this.refs.amountInput).value = '';
       React.findDOMNode(this.refs.commentTextarea).value = '';
@@ -119,7 +118,7 @@ var FulfillScreen = React.createClass({
       if (history.action === 'opened' || (isMine && history.amount)) {
         var photoURL = (history.uid) ? balance[history.uid + '_data'].photoURL : 'img/new_logo_dark.png';
         historyNodes.push(
-          <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={isMine} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
+          <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={isMine} />
         );
       }
     });

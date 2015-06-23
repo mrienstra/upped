@@ -23,7 +23,7 @@ var WalletDetailScreen = React.createClass({
     'balance': React.PropTypes.object,
     'get': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
-    'markRead': React.PropTypes.func,
+    'markHistoryItemRead': React.PropTypes.func,
     'confirmDeduction': React.PropTypes.func,
     'changeScreen': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
@@ -115,9 +115,8 @@ var WalletDetailScreen = React.createClass({
       var otherUID = _.find(_.keys(balance), function (val) {
         return val !== selfDataKey && /_data$/.test(val);
       }).split('_data')[0];
-      var otherData = balance[otherUID + '_data'];
 
-      this.props.addNote(this.props.balanceID, note, otherUID, otherData.unread);
+      this.props.addNote(this.props.balanceID, note, otherUID);
 
       React.findDOMNode(this.refs.noteTextarea).value = '';
 
@@ -153,18 +152,19 @@ var WalletDetailScreen = React.createClass({
       return key !== selfDataKey && /_data$/.test(key);
     });
 
-    if (selfData.unread) { // todo: move, doesn't really belong in render
-      _.defer(function(){
-        that.props.markRead(that.props.balanceID, that.props.selfUID);
-      });
-    }
-
     var historyNodes = [];
     _.forIn(this.state.history, function (history, key) {
       var photoURL = (history.uid) ? balance[history.uid + '_data'].photoURL : 'img/new_logo_dark.png';
+      var isMine = that.props.selfUID === history.uid;
       historyNodes.push(
-        <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={that.props.selfUID === history.uid} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
+        <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={isMine} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
       );
+
+      if (that.props.visible && !isMine && !history.read) {
+        _.defer(function(){
+          that.props.markHistoryItemRead(that.props.selfUID, that.props.balanceID, key);
+        });
+      }
     });
     historyNodes.reverse();
 

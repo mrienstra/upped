@@ -79,11 +79,11 @@ var appInit = function () {
           <div className="screens">
             <WalletScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} changeScreen={this.changeScreen} {...this.state.walletScreen}/>
 
-              <WalletDetailScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} markRead={remote.firebase.balance.markRead} addNote={remote.firebase.balance.deductAndOrAddNote} confirmDeduction={remote.firebase.balance.confirmDeduction} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.walletDetailScreen}/>
+              <WalletDetailScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} markHistoryItemRead={remote.firebase.balance.markHistoryItemRead} addNote={remote.firebase.balance.deductAndOrAddNote} confirmDeduction={remote.firebase.balance.confirmDeduction} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.walletDetailScreen}/>
 
-                <RedeemScreen selfUID={remote.user.userData.id} handleBack={this.backToPreviousScreen} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} getHistory={remote.firebase.balance.getHistory} confirmDeduction={remote.firebase.balance.confirmDeduction} changeScreen={this.changeScreen} {...this.state.redeemScreen}/>
+                <RedeemScreen selfUID={remote.user.userData.id} handleBack={this.backToPreviousScreen} handleProfileChange={this.changeScreen.bind(null, 'profileScreen')} getHistory={remote.firebase.balance.getHistory} markHistoryItemRead={remote.firebase.balance.markHistoryItemRead} confirmDeduction={remote.firebase.balance.confirmDeduction} changeScreen={this.changeScreen} {...this.state.redeemScreen}/>
 
-                <FulfillScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} doDeduct={remote.firebase.balance.deductAndOrAddNote} confirmDeduction={remote.firebase.balance.confirmDeduction} handleBack={this.backToPreviousScreen} {...this.state.fulfillScreen}/>
+                <FulfillScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} doDeduct={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.fulfillScreen}/>
 
             <ProfileScreen selfUserData={remote.user.userData} get={remote.firebase.userData.getById} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
 

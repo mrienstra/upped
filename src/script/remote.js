@@ -408,11 +408,12 @@ var remote = {
 
         return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + historyID);
       },
-      deductAndOrAddNote: function (balanceID, note, otherUID, otherUnread, currentAmount, amount) {
+      deductAndOrAddNote: function (balanceID, note, otherUID, currentAmount, amount) {
         console.log('remote.firebase.balance.deductAndOrAddNote', this, arguments);
 
         var balanceRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID);
         var balanceOtherDataRef = balanceRef.child(otherUID + '_data');
+        var balanceOtherUnreadRef = balanceOtherDataRef.child('unread');
         var historyRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + balanceID);
 
         var history = {
@@ -420,12 +421,10 @@ var remote = {
           timestamp: Firebase.ServerValue.TIMESTAMP,
         };
 
-        var otherDataRefUpdate = {
-          unread: otherUnread + 1
-        };
-
         if (currentAmount > 0 && amount > 0 && amount <= currentAmount) {
-          otherDataRefUpdate.currentAmount = currentAmount - amount;
+          balanceOtherDataRef.update({
+            currentAmount: currentAmount - amount,
+          });
 
           history.action = 'subtracted';
           history.amount = amount;
@@ -441,7 +440,9 @@ var remote = {
           updated: Firebase.ServerValue.TIMESTAMP,
         });
 
-        balanceOtherDataRef.update(otherDataRefUpdate); // todo: consider switching to `transaction` for atomicity
+        balanceOtherUnreadRef.transaction(function(currentValue) {
+          return currentValue + 1;
+        });
 
         historyRef.push(history);
       },
@@ -454,11 +455,20 @@ var remote = {
 
         ga('send', 'event', 'confirm', 'confirmDeduction');
       },
-      markRead: function (balanceID, selfUID) {
-        var balanceSelfDataRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID + '/' + selfUID + '_data');
+      markHistoryItemRead: function (selfUID, balanceID, historyItemID) {
+        var historyItemRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/histories/' + balanceID + '/' + historyItemID);
 
-        balanceSelfDataRef.update({
-          unread: 0,
+        historyItemRef.update({
+          read: 1,
+        });
+
+        var balanceSelfUnreadRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/balances/' + balanceID + '/' + selfUID + '_data/unread');
+
+        balanceSelfUnreadRef.transaction(function(currentValue) {
+          var newValue = currentValue - 1;
+          if (newValue < 0) newValue = 0; // just in case
+
+          return newValue;
         });
       },
     },

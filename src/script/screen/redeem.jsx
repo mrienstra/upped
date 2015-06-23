@@ -22,6 +22,7 @@ var RedeemScreen = React.createClass({
     'handleProfileChange': React.PropTypes.func,
     'changeScreen': React.PropTypes.func,
     'getHistory': React.PropTypes.func,
+    'markHistoryItemRead': React.PropTypes.func,
     'confirmDeduction': React.PropTypes.func,
     'handleBack': React.PropTypes.func,
     'selfUID': React.PropTypes.string,
@@ -106,6 +107,10 @@ var RedeemScreen = React.createClass({
         historyNodes.push(
           <HistoryListItem key={key} historyItemID={key} history={history} photoURL={photoURL} isMine={isMine} confirmDeduction={that.props.confirmDeduction.bind(null, that.props.balanceID, key)} />
         );
+
+        if (that.props.visible && !history.read) {
+          that.props.markHistoryItemRead(that.props.selfUID, that.props.balanceID, key);
+        }
       }
     });
     historyNodes.reverse();
