@@ -28,19 +28,29 @@ var appInit = function () {
   var App = React.createClass({
     mixins: [ScreensMixin],
     getInitialState: function(){
+      var initialScreen, initialStack, balanceID;
+      if (window.location.hash && window.location.hash.substring(0, 3) === '#w=') {
+        initialScreen = 'walletDetailScreen';
+        initialStack = ['walletScreen', 'walletDetailScreen'];
+        balanceID = window.location.hash.substring(3);
+      } else {
+        initialScreen = 'walletScreen';
+        initialStack = ['walletScreen'];
+      }
+
       return {
         screens: {
-          stack: ['walletScreen'],
-          i: 0,
+          stack: initialStack,
+          i: initialStack.indexOf(initialScreen),
         },
         sideMenuVisible: false,
         walletScreen: {
-          visible: true,
+          visible: (initialScreen === 'walletScreen') ? true : false,
         },
         walletDetailScreen: {
-          visible: false,
+          visible: (initialScreen === 'walletDetailScreen') ? true : false,
           balance: void 0,
-          balanceID: void 0,
+          balanceID: (initialScreen === 'walletDetailScreen' && balanceID) ? balanceID : void 0,
         },
         redeemScreen: {
           visible: false,
