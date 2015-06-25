@@ -14,7 +14,7 @@ var UserListItem = React.createClass({
   render: function() {
     var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
 
-    var skills = this.props.user.skills ? this.props.user.skills.map(function (name, i) {
+    var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
       var category;
       if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
         name = category.name;
@@ -35,6 +35,14 @@ var UserListItem = React.createClass({
           <h3>
             <i className="icon ion-earth"></i> {this.props.user.location}
           </h3>
+        </div>
+        <div className="item">
+          <div className="list">
+            <div className="item item-divider">
+              <i className="icon ion-planet"></i> Super Powers
+            </div>
+            {keywords}
+          </div>
         </div>
       </div>
     );

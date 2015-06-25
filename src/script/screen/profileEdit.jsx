@@ -12,7 +12,12 @@ var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 
 var ProfileEditScreen = React.createClass({
   mixins: [ScreenTransitionMixin],
-  editableProperties: ['name', 'statement', 'location', 'skills'],
+  propTypes: {
+    userData: React.PropTypes.object,
+    saveUserDataChanges: React.PropTypes.func,
+    handleBack: React.PropTypes.func,
+  },
+  editableProperties: ['name', 'sushi', 'location', 'keywords'],
   getInitialState: function() {
     if (this.props.userData) {
       return this.transferEditablePropsToStateObj(this.props.userData);
@@ -34,8 +39,8 @@ var ProfileEditScreen = React.createClass({
 
     return stateObj;
   },
-  updateUserDataSkills: function (userDataSkills) {
-    this.setState({skills: userDataSkills});
+  updateUserDataKeywords: function (userDataKeywords) {
+    this.setState({keywords: userDataKeywords});
   },
   handleDone: function (e) {
     var that = this;
@@ -55,45 +60,42 @@ var ProfileEditScreen = React.createClass({
 
     this.props.handleBack(e);
   },
-  onChange: function (e) {
-    console.log('onChange', this, arguments);
-    if (e.target.classList.contains('name')) {
+  onChange: function (propName, e) {
+    if (propName === 'name') {
       this.setState({name: e.target.value.substr(0, 48)});
-    } else if (e.target.parentNode.classList.contains('statement')) {
-      this.setState({statement: e.target.value.substr(0, 140)});
-    } else if (e.target.parentNode.classList.contains('location')) {
-      this.setState({statement: e.target.value.substr(0, 48)});
-    } else if (e.target.parentNode.parentNode.parentNode.classList.contains('skills')) {
-      var editedSkills = this.state.skills.concat();
-      var skillIndex = [].indexOf.call(e.target.parentNode.parentNode.childNodes, e.target.parentNode);
-      if (skillIndex !== -1) {
-        editedSkills[skillIndex] = e.target.value.substr(0, 48);
-        this.setState({skills: editedSkills});
+    } else if (propName === 'sushi') {
+      this.setState({sushi: e.target.value.substr(0, 140)});
+    } else if (propName === 'location') {
+      this.setState({location: e.target.value.substr(0, 48)});
+    } else if (propName === 'keywords') {
+      var editedKeywords = this.state.keywords.concat();
+      var keywordIndex = [].indexOf.call(e.target.parentNode.parentNode.parentNode.childNodes, e.target.parentNode.parentNode);
+      if (keywordIndex !== -1) {
+        editedKeywords[keywordIndex] = e.target.value.substr(0, 48);
+        this.setState({keywords: editedKeywords});
       } else {
         console.error('WTF', this, arguments);
       }
     }
   },
-  deleteSkill: function (e) {
-    var editedSkills = this.state.skills.concat();
-    var skillIndex = [].indexOf.call(e.target.parentNode.parentNode.childNodes, e.target.parentNode);
-    if (skillIndex !== -1) {
-      console.log('deleteSkill', skillIndex, editedSkills[skillIndex]);
-      editedSkills.splice(skillIndex, 1);
-      this.setState({skills: editedSkills});
+  deleteKeyword: function (e) {
+    var editedKeywords = this.state.keywords.concat();
+    var keywordIndex = [].indexOf.call(e.target.parentNode.parentNode.childNodes, e.target.parentNode);
+    if (keywordIndex !== -1) {
+      console.log('deleteKeyword', keywordIndex, editedKeywords[keywordIndex]);
+      editedKeywords.splice(keywordIndex, 1);
+      this.setState({keywords: editedKeywords});
     } else {
       console.error('WTF', this, arguments);
     }
   },
-  addSkill: function(){
-    console.log('addSkill');
-    this.props.handleSelectSkillsChange(this.state.skills, this.updateUserDataSkills);
-    /*var editedSkills = this.state.skills.concat();
-    editedSkills.push('');
-    this.setState({skills: editedSkills});*/
+  addKeyword: function(){
+    var editedKeywords = (this.state.keywords || []).concat();
+    editedKeywords.push('');
+    this.setState({keywords: editedKeywords});
   },
   render: function(){
-    console.log('ProfileEditScreen.render', this);
+    //console.log('ProfileEditScreen.render', this);
     var that = this;
 
     if (!this.props.userData) {
@@ -106,26 +108,38 @@ var ProfileEditScreen = React.createClass({
 
     var img = this.props.userData.photoURL ? <img src={this.props.userData.photoURL}/> : '';
 
-    var skills;
-    if (this.state.skills && this.state.skills.length) {
-      skills = this.state.skills.map(function (name, i) {
+    var keywords = [];
+    if (this.state.keywords && this.state.keywords.length) {
+      keywords = this.state.keywords.map(function (name, i) {
         var category;
         if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
           name = category.name;
         }
 
         var deleteButton;
-        if (that.state.skills.length > 1) {
-          deleteButton = <span className="delete icon icon-close" onTouchEnd={that.deleteSkill}/>;
+        if (that.state.keywords.length > 1) {
+          deleteButton = (
+            <button className="button button-clear icon ion-ios-close-outline" onTouchEnd={that.deleteKeyword}/>
+          );
         }
-        return <li key={i}><input type="text" value={name} onChange={that.onChange}/>{deleteButton}</li>;
-      });
-
-      if (skills.length < 5) {
-        skills.push(
-          <li key={skills.length} onTouchEnd={that.addSkill}><span className="icon icon-plus"></span> Add</li>
+        return (
+          <div key={i} className="item-input">
+            <label className="item-input-wrapper">
+              <input type="text" placeholder="Keyword" value={name} onChange={that.onChange.bind(that, 'keywords')}/>
+            </label>
+            {deleteButton}
+          </div>
         );
-      }
+      });
+    }
+
+    if (keywords.length < 5) {
+      keywords.push(
+        <a key={keywords.length} className="item item-icon-left" href="#" onTouchEnd={that.addKeyword}>
+          <i className="icon ion-ios-plus-outline"></i>
+          Add
+        </a>
+      );
     }
 
     return (
@@ -133,24 +147,32 @@ var ProfileEditScreen = React.createClass({
         <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
           <div className="buttons left-buttons">
             <div>
-              <button className="button" onTouchEnd={this.handleDone}>Done</button>
+              <button className="button button-icon icon ion-chevron-left" onTouchEnd={this.handleDone}></button>
             </div>
           </div>
           <h1 className="title">Edit Profile</h1>
         </div>
 
         <div className="scroll-content overflow-scroll has-header">
-          <div className="userListItem">
-            {img}
-            <div className="details show">
-              <div className="nameAndSkillCount"><input className="name" type="text" value={this.state.name} onChange={this.onChange}/></div>
-              <div className="statement"><textarea type="text" value={this.state.statement} onChange={this.onChange}/></div>
-              <div className="location"><input type="text" value={this.state.location} onChange={this.onChange}/></div>
-              <div className="skills">
-                <h4><span className="icon ion-ios7-bolt"></span> Super Powers</h4>
-                <ul>
-                  {skills}
-                </ul>
+          <div className="list">
+            <div className="item item-image">
+              {img}
+            </div>
+            <label className="item item-input">
+              <input type="text" inputmode="latin-name" placeholder="Name" value={this.state.name} onChange={this.onChange.bind(this, 'name')}/>
+            </label>
+            <label className="item item-input location">
+              <input type="text" placeholder="Location" value={this.state.location} onChange={this.onChange.bind(this, 'location')}/>
+            </label>
+            <label className="item item-input sushi">
+              <textarea placeholder="Sushi" value={this.state.sushi} onChange={this.onChange.bind(this, 'sushi')}/>
+            </label>
+            <div className="item">
+              <div className="keywords">
+                <h4><span className="icon ion-ios7-bolt"></span> Keywords</h4>
+                <div className="list">
+                  {keywords}
+                </div>
               </div>
             </div>
           </div>

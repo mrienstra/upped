@@ -23,6 +23,8 @@ var appInit = function () {
 
   var ProfileScreen = require('./screen/profile.jsx');
 
+    var ProfileEditScreen = require('./screen/profileEdit.jsx');
+
   var FeedbackScreen = require('./screen/feedback.jsx');
 
   var App = React.createClass({
@@ -70,6 +72,10 @@ var appInit = function () {
           matched: void 0,
           cssClass: 'profileScreen',
         },
+        profileEditScreen: {
+          visible: false,
+          cssClass: 'profileEditScreen',
+        },
         feedbackScreen: {
           visible: false,
           cssClass: 'loginScreen feedbackScreen',
@@ -95,7 +101,9 @@ var appInit = function () {
 
                 <FulfillScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} doDeduct={remote.firebase.balance.deductAndOrAddNote} handleBack={this.backToPreviousScreen} {...this.state.fulfillScreen}/>
 
-            <ProfileScreen selfUserData={remote.user.userData} get={remote.firebase.userData.getById} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
+            <ProfileScreen selfUserData={remote.user.userData} get={remote.firebase.userData.getById} handleEdit={this.changeScreen.bind(null, 'profileEditScreen')} showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.profileScreen}/>
+
+              <ProfileEditScreen userData={remote.user.userData} saveUserDataChanges={remote.firebase.userData.saveChanges} handleBack={this.backToPreviousScreen} {...this.state.profileEditScreen}/>
 
             <FeedbackScreen showSideMenu={this.showSideMenu} {...this.state.feedbackScreen}/>
           </div>
@@ -267,6 +275,14 @@ var showFirstScreen = function(){
 
   remote.init();
 }
+
+var respondToHashChange = function(){
+  if (window.location.hash && window.location.hash.substring(0, 3) === '#w=' && remote.user.userData) {
+    appInit();
+  }
+};
+
+window.addEventListener('hashchange', respondToHashChange, false);
 
 // Init
 

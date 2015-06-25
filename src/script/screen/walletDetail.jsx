@@ -188,7 +188,7 @@ var WalletDetailScreen = React.createClass({
             <div className="item item-text-wrap">
               <div className="row">
                 <div className="col amount">
-                  <h2>{utils.formatCurrency(otherData.currentAmount)}</h2>
+                  <h2>{utils.formatCurrency(selfData.currentAmount)}</h2>
                   <span>remaining</span>
                 </div>
                 <div className="col col-75">
@@ -197,7 +197,7 @@ var WalletDetailScreen = React.createClass({
               </div>
               <div className="row">
                 <div className="col amount">
-                  <h2>{utils.formatCurrency(selfData.currentAmount)}</h2>
+                  <h2>{utils.formatCurrency(otherData.currentAmount)}</h2>
                   <span>remaining</span>
                 </div>
                 <div className="col col-75">

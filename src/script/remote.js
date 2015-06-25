@@ -476,6 +476,11 @@ var remote = {
       getById: function (udid) {
         return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/userData/' + udid);
       },
+      saveChanges: function (changedData) {
+        var userDataRef = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/userData/' + remote.user.userData.id);
+
+        userDataRef.update(changedData);
+      },
     },
   },
   resetUser: function(){

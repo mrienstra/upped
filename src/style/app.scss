@@ -374,3 +374,15 @@ html, body, .container, .sideMenuWrapper {
 .profileScreen .userListItem {
   margin-top: -1px;
 }
+
+.profileEditScreen {
+  .scroll-content > .list {
+    margin-top: -1px;
+  }
+  textarea {
+    height: 50px;
+    resize: none;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+}
