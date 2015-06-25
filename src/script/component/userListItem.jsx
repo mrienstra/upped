@@ -39,7 +39,7 @@ var UserListItem = React.createClass({
         <div className="item">
           <div className="list">
             <div className="item item-divider">
-              <i className="icon ion-planet"></i> Super Powers
+              <i className="icon ion-planet"></i> Keywords
             </div>
             {keywords}
           </div>
