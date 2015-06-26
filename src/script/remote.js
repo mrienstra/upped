@@ -247,6 +247,12 @@ var remote = {
             remote.user.userData = val;
             remote.user.userData.id = uid;
 
+            if (!val.hasLoggedIn) {
+              userDataRef.update({
+                hasLoggedIn: 1
+              });
+            }
+
             _remote.utils.dispatchCustomEvent('firebaseLoginSuccess');
             ga('send', 'event', 'session', 'firebaseLoginSuccess: ' + authFlow);
           }
@@ -264,10 +270,15 @@ var remote = {
         var ref = this.getRef();
 
         ref.child('users/' + authData.uid).on('value', function (snapshot) {
-          var user = snapshot.val();
-          if (user === null) {
-            if (document.location.search.substring(0, 6) === '?udid=') {
-              var uid = document.location.search.substring(6);
+          var val = snapshot.val();
+          var uid;
+          if (val === null) {
+            if (document.location.search.substring(0, 3) === '?u=') {
+              uid = document.location.search.substring(3);
+            } else if (document.location.search.substring(0, 6) === '?udid=') {
+              uid = document.location.search.substring(6);
+            }
+            if (uid) {
               ref.child('users/' + authData.uid).set({
                 'uid': uid,
               });
@@ -279,7 +290,7 @@ var remote = {
               alert('Hmm, we weren\'t able to figure out who you are...');
             }
           } else {
-            that.postLogin2(user.uid, authFlow);
+            that.postLogin2(val.uid, authFlow);
           }
         }, function (errorObject) {
           // todo: handle
