@@ -60,6 +60,13 @@ var ScreenTransitionMixin = {
       _.defer(this.blurInputs);
     }
   },
+  shouldComponentUpdate: function (nextProps, nextState) {
+    if (!this.props.visible && !nextProps.visible) {
+      return false;
+    } else {
+      return true;
+    }
+  },
   componentDidUpdate: function(){
     var that = this;
 
