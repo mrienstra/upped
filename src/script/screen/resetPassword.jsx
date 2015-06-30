@@ -52,10 +52,10 @@ var ResetPasswordScreen = React.createClass({
           {error}
           <div className="list list-topless">
             <label className="item item-input">
-              <input ref="newPasswordInput" type="password" placeholder="New Password"/>
+              <input ref="newPasswordInput" type="password" placeholder="New Password" disabled={!this.props.visible}/>
             </label>
             <label className="item item-input">
-              <input ref="newPasswordConfirmInput" type="password" placeholder="Confirm New Password"/>
+              <input ref="newPasswordConfirmInput" type="password" placeholder="Confirm New Password" disabled={!this.props.visible}/>
             </label>
           </div>
           <div className="padding">

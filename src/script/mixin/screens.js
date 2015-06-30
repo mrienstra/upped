@@ -1,7 +1,14 @@
 // Libs
 var _ = require('lodash');
 
+var lastModifiedState, lastPreviousScreen, nextTransitionClasses;
+
 var ScreensMixin = {
+  getInitialState: function(){
+    return {
+      transitionClasses: '',
+    };
+  },
   changeScreen: function (newScreen, options) {
     var back = !!(options && options.back);
 
@@ -45,6 +52,8 @@ var ScreensMixin = {
         i: this.state.screens.i - 1
       };
 
+      modifiedState.transitionClasses = ' rs-showRight rs-notransition';
+      nextTransitionClasses = ' rs-showCenter rs-transition';
       modifiedState[previousScreen].transition = {type: 'depart', direction: 'right'};
       modifiedState[newScreen].transition = {type: 'arrive', direction: 'left'};
       transition = true;
@@ -67,6 +76,8 @@ var ScreensMixin = {
         i: this.state.screens.i + 1
       };
 
+      modifiedState.transitionClasses = ' rs-showLeft rs-notransition';
+      nextTransitionClasses = ' rs-showCenter rs-transition';
       modifiedState[previousScreen].transition = {type: 'depart', direction: 'left'};
       modifiedState[newScreen].transition = {type: 'arrive', direction: 'right'};
       transition = true;
@@ -79,6 +90,8 @@ var ScreensMixin = {
         i: this.state.screens.i + 1
       };
 
+      modifiedState.transitionClasses = ' rs-showLeft rs-notransition';
+      nextTransitionClasses = ' rs-showCenter rs-transition';
       modifiedState[previousScreen].transition = {type: 'depart', direction: 'left'};
       modifiedState[newScreen].transition = {type: 'arrive', direction: 'right'};
       transition = true;
@@ -91,13 +104,11 @@ var ScreensMixin = {
 
     this.setState(modifiedState);
 
-    if (transition) {
-      _.delay(function(){
-        modifiedState[previousScreen].transition = void 0;
-        modifiedState[previousScreen].visible = false;
-        modifiedState[newScreen].transition = void 0;
-        that.setState(modifiedState);
-      }, 260); // Important: keep this delay in sync with `.rs-transition` duration
+    lastPreviousScreen = previousScreen;
+    lastModifiedState = modifiedState;
+
+    if (['INPUT', 'TEXTAREA'].indexOf(document.activeElement.tagName) !== -1) {
+      document.activeElement.blur();
     }
   },
   backToPreviousScreen: function(){
@@ -110,6 +121,28 @@ var ScreensMixin = {
     e.preventDefault();
 
     this.setState({sideMenuVisible: false});
+  },
+  componentDidUpdate: function(){
+    var that = this;
+
+    if (nextTransitionClasses) {
+      _.defer(function(){
+        var transitionClasses = nextTransitionClasses;
+        nextTransitionClasses = '';
+        that.setState({
+          transitionClasses: transitionClasses,
+        });
+
+        _.delay(function(){
+          var currentScreen = that.state.screens.stack[that.state.screens.i];
+          lastModifiedState.transitionClasses = '';
+          lastModifiedState[lastPreviousScreen].transition = void 0;
+          lastModifiedState[lastPreviousScreen].visible = false;
+          lastModifiedState[currentScreen].transition = void 0;
+          that.setState(lastModifiedState);
+        }, 260); // Important: keep this delay in sync with `.rs-transition` duration
+      });
+    }
   },
 };
 

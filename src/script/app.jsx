@@ -92,7 +92,7 @@ var appInit = function () {
         <div className={this.state.sideMenuVisible ? 'sideMenuWrapper sideMenuVisible' : 'sideMenuWrapper'}>
           <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
-          <div className="screens">
+          <div className={'screens' + this.state.transitionClasses}>
             <WalletScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} changeScreen={this.changeScreen} {...this.state.walletScreen}/>
 
               <WalletDetailScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} markHistoryItemRead={remote.firebase.balance.markHistoryItemRead} addNote={remote.firebase.balance.deductAndOrAddNote} confirmDeduction={remote.firebase.balance.confirmDeduction} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.walletDetailScreen}/>
@@ -221,7 +221,7 @@ var authInit = function (e, afterLogOut) {
 
       return (
         <div>
-          <div className="screens">
+          <div className={'screens authFlowScreens' + this.state.transitionClasses}>
             <WelcomeScreen handleEmailSignupChange={this.changeScreen.bind(null, 'emailSignupScreen')} handleEmailLoginChange={this.changeScreen.bind(null, 'emailLoginScreen')} handleFBLoginButton={handleFBLoginButton} {...this.state.welcomeScreen}/>
 
               <EmailSignupScreen handleEmailSignupButton={handleEmailSignupButton} handleEmailLoginChange={this.changeScreen.bind(null, 'emailLoginScreen')} handleBack={this.backToPreviousScreen} {...this.state.emailSignupScreen}/>

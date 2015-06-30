@@ -125,7 +125,7 @@ var ProfileEditScreen = React.createClass({
         return (
           <div key={i} className="item-input">
             <label className="item-input-wrapper">
-              <input type="text" placeholder="Keyword" value={name} onChange={that.onChange.bind(that, 'keywords')}/>
+              <input type="text" placeholder="Keyword" value={name} onChange={that.onChange.bind(that, 'keywords')} disabled={!that.props.visible}/>
             </label>
             {deleteButton}
           </div>
@@ -159,13 +159,13 @@ var ProfileEditScreen = React.createClass({
               {img}
             </div>
             <label className="item item-input">
-              <input type="text" inputmode="latin-name" placeholder="Name" value={this.state.name} onChange={this.onChange.bind(this, 'name')}/>
+              <input type="text" inputmode="latin-name" placeholder="Name" value={this.state.name} onChange={this.onChange.bind(this, 'name')} disabled={!this.props.visible}/>
             </label>
             <label className="item item-input location">
-              <input type="text" placeholder="Location" value={this.state.location} onChange={this.onChange.bind(this, 'location')}/>
+              <input type="text" placeholder="Location" value={this.state.location} onChange={this.onChange.bind(this, 'location')} disabled={!this.props.visible}/>
             </label>
             <label className="item item-input sushi">
-              <textarea placeholder="Sushi" value={this.state.sushi} onChange={this.onChange.bind(this, 'sushi')}/>
+              <textarea placeholder="Sushi" value={this.state.sushi} onChange={this.onChange.bind(this, 'sushi')} disabled={!this.props.visible}/>
             </label>
             <div className="item">
               <div className="keywords">

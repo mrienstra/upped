@@ -220,7 +220,7 @@ var WalletDetailScreen = React.createClass({
             </div>
             <div className="item item-avatar item-commentform">
               <img src={selfData.photoURL}/>
-              <textarea ref="noteTextarea"/>
+              <textarea ref="noteTextarea" disabled={!this.props.visible}/>
               <button className="button button-small button-assertive" onTouchEnd={this.handleNoteSubmit}>
                 Add Comment
               </button>

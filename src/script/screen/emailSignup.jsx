@@ -55,10 +55,10 @@ var WelcomeScreen = React.createClass({
           {error}
           <div className="list list-topless">
             <label className="item item-input">
-              <input ref="emailInput" type="email" placeholder="Email"/>
+              <input ref="emailInput" type="email" placeholder="Email" disabled={!this.props.visible}/>
             </label>
             <label className="item item-input">
-              <input ref="passwordInput" type="password" placeholder="Password"/>
+              <input ref="passwordInput" type="password" placeholder="Password" disabled={!this.props.visible}/>
             </label>
           </div>
           <div className="padding">

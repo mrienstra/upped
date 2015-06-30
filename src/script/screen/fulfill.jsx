@@ -145,10 +145,10 @@ var FulfillScreen = React.createClass({
               <p className="instructions">Indicate the dollar value (in goods or services) you provided, and include a brief note explaining what you did. {otherData.name} will be given a chance to confirm this transaction.</p>
               <div className="row">
                 <div className="col col-12-5">
-                  <input type="number" placeholder="$" ref="amountInput"/>
+                  <input type="number" placeholder="$" ref="amountInput" disabled={!this.props.visible}/>
                 </div>
                 <div className="col">
-                  <textarea ref="commentTextarea"/>
+                  <textarea ref="commentTextarea" disabled={!this.props.visible}/>
                   <button className="button button-small button-assertive" onTouchEnd={this.handleFulfillSubmit}>
                     Submit Charge
                   </button>
