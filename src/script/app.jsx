@@ -13,6 +13,8 @@ var reactDomRoot = document.querySelector('.container');
 var appInit = function () {
   var SideMenu = require('./component/sideMenu.jsx');
 
+  var HeroesScreen = require('./screen/heroes.jsx');
+
   var WalletScreen = require('./screen/wallet.jsx');
 
     var WalletDetailScreen = require('./screen/walletDetail.jsx');
@@ -33,11 +35,11 @@ var appInit = function () {
       var initialScreen, initialStack, balanceID;
       if (window.location.hash && window.location.hash.substring(0, 3) === '#w=') {
         initialScreen = 'walletDetailScreen';
-        initialStack = ['walletScreen', 'walletDetailScreen'];
+        initialStack = ['walletScreen', initialScreen];
         balanceID = window.location.hash.substring(3);
       } else {
-        initialScreen = 'walletScreen';
-        initialStack = ['walletScreen'];
+        initialScreen = 'heroesScreen'; //'walletScreen';
+        initialStack = [initialScreen];
       }
 
       return {
@@ -46,6 +48,9 @@ var appInit = function () {
           i: initialStack.indexOf(initialScreen),
         },
         sideMenuVisible: false,
+        heroesScreen: {
+          visible: (initialScreen === 'heroesScreen') ? true : false,
+        },
         walletScreen: {
           visible: (initialScreen === 'walletScreen') ? true : false,
         },
@@ -93,6 +98,8 @@ var appInit = function () {
           <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
           <div className={'screens' + this.state.transitionClasses}>
+            <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.firebase.userData.getAll.bind(remote.firebase.userData)} handleChoice={remote.firebase.choice.set} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
+
             <WalletScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} changeScreen={this.changeScreen} {...this.state.walletScreen}/>
 
               <WalletDetailScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} markHistoryItemRead={remote.firebase.balance.markHistoryItemRead} addNote={remote.firebase.balance.deductAndOrAddNote} confirmDeduction={remote.firebase.balance.confirmDeduction} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.walletDetailScreen}/>

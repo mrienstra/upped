@@ -17,7 +17,7 @@ var port = 8000;
 
 var libs = ['react', 'firebase', 'reactfire', 'moment', 'lodash', 'when', 'pubsub-js', '../lib/noTouchendAfterTouchmove.js'];
 
-var cssLibs = 'src/lib/ionic-1.0.0/css/ionic.css';
+var cssLibs = 'src/lib/{ionic-1.0.0/css/ionic,swipe-stack-0.1}.css';
 
 var mainJsFile = 'src/script/main.js';
 var mainSassFile = 'src/style/main.scss';
@@ -47,7 +47,7 @@ var path = {
   },
   font: {
     in: 'src/lib/**/*.{ttf,woff,eot,svg}',
-    outDev: 'build/fonts',
+    outDev: 'build/css/ionic-1.0.0/fonts',
     outProd: 'build/lib/ionic-1.0.0/fonts'
   },
 }

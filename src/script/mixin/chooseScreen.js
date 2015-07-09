@@ -16,21 +16,11 @@ var ChooseScreenMixin = {
       match: void 0
     };
   },
-  handlePromise: function (itemsPromise) {
-    itemsPromise.then(
-      this.handlePromiseThen,
-      function (response) {
-        alert('ChooseScreen itemsPromise failed!');
-        console.warn('bad', response);
-      }
-    );
-  },
   componentWillMount: function(){
     console.log('ChooseScreen.componentWillMount', this, arguments);
 
-    var itemsPromise = this.props.getItems();
-
-    this.handlePromise(itemsPromise);
+    var itemsRef = this.props.getItems();
+    this.bindAsObject(itemsRef, 'items');
 
     pubSub.unsubscribe(this.props.pubSubDomain + '.currentIndex', this.updateCurrentIndex);
     pubSub.subscribe(this.props.pubSubDomain + '.currentIndex', this.updateCurrentIndex);

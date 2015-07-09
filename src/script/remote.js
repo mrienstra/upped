@@ -483,7 +483,23 @@ var remote = {
         });
       },
     },
+    choice: {
+      set: function (chosenId, choice) {
+        console.log('remote.firebase.choice.set', this, arguments);
+
+        var ref = new Firebase('https://' + settings.firebase.name + '.firebaseio.com/choices');
+
+        ref.push({
+          chooser: remote.user.userData.id,
+          chosen: chosenId,
+          choice: choice,
+        });
+      },
+    },
     userData: {
+      getAll: function (udid) {
+        return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/userData');
+      },
       getById: function (udid) {
         return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/userData/' + udid);
       },

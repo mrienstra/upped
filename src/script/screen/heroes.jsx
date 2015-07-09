@@ -6,6 +6,7 @@ var classNames = require('classnames');
 
 // Mixins
 var ChooseScreenMixin = require('../mixin/chooseScreen.js');
+var ReactFireMixin = require('reactfire');
 var ScreenTransitionMixin = require('../mixin/screenTransition.js');
 var SwipeStackSliderMixin = require('../mixin/swipeStackSlider.js');
 
@@ -17,6 +18,12 @@ var UserListItem = require('../component/userListItem.jsx');
 
 var UserList = React.createClass({
   mixins: [SwipeStackSliderMixin],
+  propTypes: {
+    'buttonsToTop': React.PropTypes.bool,
+    'handleChoice': React.PropTypes.func,
+    'name': React.PropTypes.string,
+    'users': React.PropTypes.object,
+  },
   componentDidMount: function(){
     var that = this;
     this.swipeStackCallback = function (index, direction) {
@@ -48,16 +55,15 @@ var UserList = React.createClass({
     this.sliderInit(window, document, slider, btnNext, btnPrev);
   },
   render: function() {
-    var userNodes = this.props.users.map(function (user, index) {
-      return <UserListItem key={index} index={index} user={user}></UserListItem>;
+    var userNodes = [];
+    _.forEach(this.props.users, function (user, key) {
+      userNodes.push(
+        <UserListItem key={key} index={key} user={user}></UserListItem>
+      );
     });
 
     return (
-      <div className="content content-main">
-        <div className="subhead">
-          <h3>{this.props.name}</h3>
-        </div>
-
+      <div>
         <div className="slider" data-slider>
           <div className="slides">
             {userNodes}
@@ -74,7 +80,7 @@ var UserList = React.createClass({
 });
 
 var HeroesScreen = React.createClass({
-  mixins: [ChooseScreenMixin, ScreenTransitionMixin],
+  mixins: [ReactFireMixin, ChooseScreenMixin, ScreenTransitionMixin],
   propTypes: {
     remote: React.PropTypes.object.isRequired,
     getItems: React.PropTypes.func.isRequired, // for mixin
@@ -82,36 +88,6 @@ var HeroesScreen = React.createClass({
     handleMatchesChange: React.PropTypes.func.isRequired, // for mixin
     showSideMenu: React.PropTypes.func.isRequired,
     visible: React.PropTypes.bool.isRequired
-  },
-  handlePromiseThen: function (users) {
-    console.log('HeroesScreen usersPromise success handlePromiseThen', users, this.props.remote.choices, this.pendingUsers);
-
-    var choices = this.props.remote.choices;
-
-    window.removeEventListener('getParseChoicesSuccess', this.handlePromiseThen);
-    if (!choices) {
-      this.pendingUsers = users;
-      window.addEventListener('getParseChoicesSuccess', this.handlePromiseThen);
-      console.log('HeroesScreen.handlePromiseThen: Waiting for getParseChoicesSuccess...');
-      return;
-    } else if (users  instanceof window.Event) {
-      users = this.pendingUsers;
-    }
-
-    users = users.filter(function (user) {
-      return (
-        !_.contains(choices.unchosenOnes, user.id) && // Don't show people we've already unchosen
-        !_.contains(choices.chosenOnes, user.id) // Don't show people we've already chosen
-      );
-    });
-
-    users = _.sortBy(users, function (user) {
-      return !_.contains(choices.chosenBy, user.id); // Show `chosenBy` people first
-    });
-
-    this.setState({
-      items: users
-    });
   },
   render: function(){
     var that = this;
@@ -142,22 +118,29 @@ var HeroesScreen = React.createClass({
 
     return (
       <div className={classNames.apply(null, ['heroes'].concat(this.state.classNames))}>
-        {matchOverlay}
-
-        <header className="bar bar-nav">
-          <a className="btn btn-link btn-nav pull-left" onTouchEnd={this.props.showSideMenu}><span className="icon icon-bars"></span></a>
-        </header>
-
-        <div className="loadingOverlay">
-          <p><span className="icon ion-ios7-reloading"></span></p>
+        <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
+          <div className="buttons left-buttons">
+            <div>
+              <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>
+            </div>
+          </div>
+          <h1 className="title">Heroes</h1>
         </div>
 
-        {userList}
+        <div className="scroll-content overflow-scroll has-header">
+          {matchOverlay}
 
-        <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
-          <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
-          <button onTouchEnd={this.handleToggleDetails} className="icon icon-button button-info"></button>
-          <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
+          <div className="loadingOverlay">
+            <p><span className="icon ion-ios7-reloading"></span></p>
+          </div>
+
+          {userList}
+
+          <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
+            <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
+            <button onTouchEnd={this.handleToggleDetails} className="icon icon-button button-info"></button>
+            <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
+          </div>
         </div>
       </div>
     );
