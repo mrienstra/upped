@@ -407,61 +407,52 @@ html, body, .container, .sideMenuWrapper {
 }
 
 /* heroesScreen */
-.round-buttons {
-  position: absolute;
-  bottom: 0;
-  z-index: 1;
-  height: 10rem;
-  width: 100%;
-  border: 0;
-  background: $buttons-bg-color;
-  .icon, button {
-    width: 7.5rem;
-    height: 7.5rem;
-    margin: 1.4rem;
+.heroes, .profileScreen {
+  .bar-header .right-buttons, .bar-footer {
+    -webkit-transition-duration: 250ms;
+    transition-duration: 250ms;
+    -webkit-transition-timing-function: cubic-bezier(0.36, 0.66, 0.04, 1);
+    transition-timing-function: cubic-bezier(0.36, 0.66, 0.04, 1);
   }
-  .icon-button {
-    width: 7.5rem;
-    height: 7.5rem;
+  .bar-header .right-buttons {
+    -webkit-transition-property: -webkit-transform;
+    transition-property: transform;
+    -webkit-transform: translate(0, -40px);
+    transform: translate(0, -40px);
   }
-  .button-yes {
-    background: url('../img/button_yes_big.png') no-repeat 0 0;
-    @include image-2x('../img/button_yes_big_2x.png', 7.5rem, 7.5rem);
-    background-size: 7.5rem, 7.5rem;
+  &.buttonsToTop .bar-header .right-buttons {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
   }
-  .button-no {
-    background: url('../img/button_no_big.png') no-repeat 0 0;
-    @include image-2x('../img/button_no_big_2x.png', 7.5rem, 7.5rem);
-    background-size: 7.5rem, 7.5rem;
+
+  .stackListItem {
+    background: #fff;
+    > .list:first-child {
+      position: absolute;
+      bottom: 44px;
+      margin-bottom: 0;
+    }
+    > .list:last-child {
+      position: absolute;
+      top: calc(100% - 44px);
+      margin-top: -1px;
+      width: 100%;
+    }
   }
-  .button-info {
+
+  &.buttonsToTop .slider .slides {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .bar-footer {
+    -webkit-transition-property: height, padding;
+    transition-property: height, padding;
+    z-index: 100;
+  }
+  &.buttonsToTop .bar-footer {
+    height: 0;
     padding: 0;
-    width: 6.5rem;
-    height: 6.5rem;
-    border: 0;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin: -3.5rem 0 0 -3.5rem;
-    background: url('../img/button_info_big.png') no-repeat 0 0;
-    @include image-2x('../img/button_info_big_2x.png', 6.5rem, 6.5rem);
-    background-size: 7.5rem, 7.5rem;
-  }
-  &.top {
-    top: 0.8rem;
-    right: 1rem;
-    bottom: initial;
-    width: 3.9em;
-    background: transparent;
-    z-index: 10;
-    .icon {
-      width: 2.75rem;
-      height: 2.75rem;
-      background-size: 2.75rem, 2.75rem;
-      margin: 0;
-    }
-    button {
-      display: none;
-    }
   }
 }

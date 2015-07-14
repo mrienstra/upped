@@ -26,11 +26,6 @@
   height: 100%;
 }
 
-/*  Add a margin-bottom to each slide */
-.slides > div {
-  margin-bottom: 0.3125em;
-}
-
 /*  When HTML5 JS features supported, set width to 100%
  *  and float slides to the left. */
 .js-slider .slides > div {

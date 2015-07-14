@@ -91,7 +91,7 @@ var appInit = function () {
       /*window.t = this;
       window.remote = remote;*/
 
-      console.log('App.render', this, this.state.screens);
+      console.log('appInit App.render', this, this.state.screens);
 
       return (
         <div className={this.state.sideMenuVisible ? 'sideMenuWrapper sideMenuVisible' : 'sideMenuWrapper'}>
@@ -180,10 +180,7 @@ var authInit = function (e, afterLogOut) {
       }
     },
     render: function(){
-      /*window.t = this;
-      window.remote = remote;*/
-
-      console.log('App.render', this, this.state.screens);
+      console.log('authInit App.render', this, this.state.screens);
 
       var doEmailLogin = function (data, onError) {
         console.log('doEmailLogin', this, arguments);
@@ -251,6 +248,65 @@ var authInit = function (e, afterLogOut) {
   );
 };
 
+var newInit = function (params) {
+  var SideMenu = require('./component/sideMenu.jsx');
+
+  var HeroesScreen = require('./screen/heroes.jsx');
+
+  var FeedbackScreen = require('./screen/feedback.jsx');
+
+  remote.resetUser();
+  remote.user.userData = params;
+
+  var App = React.createClass({
+    mixins: [ScreensMixin],
+    getInitialState: function(){
+      var initialScreen = 'heroesScreen';
+      var initialStack = [initialScreen];
+
+      return {
+        screens: {
+          stack: initialStack,
+          i: initialStack.indexOf(initialScreen),
+        },
+        sideMenuVisible: false,
+        heroesScreen: {
+          visible: true,
+          name: params.name,
+          phrase: params.phrase,
+        },
+        feedbackScreen: {
+          visible: false,
+          cssClass: 'loginScreen feedbackScreen',
+        },
+      }
+    },
+    render: function(){
+      console.log('newInit App.render', this, this.state.screens);
+
+      return (
+        <div className={this.state.sideMenuVisible ? 'sideMenuWrapper sideMenuVisible' : 'sideMenuWrapper'}>
+          <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
+
+          <div className={'screens' + this.state.transitionClasses}>
+            <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.firebase.profiles.getAll.bind(remote.firebase.profiles)} handleChoice={remote.firebase.choice.set} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
+
+            <FeedbackScreen showSideMenu={this.showSideMenu} {...this.state.feedbackScreen}/>
+          </div>
+
+          <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>
+        </div>
+      );
+    }
+  });
+
+  React.render(
+    <App/>
+    ,
+    reactDomRoot
+  );
+};
+
 // Todo: seems to be a small memory leak when repeatedly logging out then back in
 var handleLogOut = function(){
   console.log('handleLogOut');
@@ -276,6 +332,17 @@ var continuePastWelcomeScreen = function(){
 
 var showFirstScreen = function(){
   console.log('showFirstScreen');
+
+  var params = window.location.search && window.location.search.match(/^\?id=(.+)&name=(.+)&phrase=(.+)$/);
+
+  if (params && params.length === 4) {
+    newInit({
+      id: decodeURIComponent(params[1]),
+      name: decodeURIComponent(params[2]),
+      phrase: decodeURIComponent(params[3]),
+    });
+    return;
+  }
 
   window.addEventListener('fbLoginNeeded', authInit);
   window.addEventListener('firebaseLoginSuccess', continuePastWelcomeScreen);

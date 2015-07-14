@@ -12,7 +12,24 @@ var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');
 var UserListItem = React.createClass({
   mixins: [ToggleStackListItemMixin],
   render: function() {
-    var img = this.props.user.photoURL ? <img src={this.props.user.photoURL}/> : '';
+    var thisStyle;
+    if (!this.props.delayImageLoad && this.props.user.photoURL) {
+      thisStyle = {
+        background: '#fff url(' + this.props.user.photoURL + ') no-repeat',
+        backgroundSize: 'contain',
+      };
+    };
+
+    var secondItem;
+    if (this.props.user.phrase && this.props.phrase) {
+      secondItem = (
+        <p>Offering: <b>{this.props.user.phrase}</b> for <b>{this.props.phrase}</b></p>
+      );
+    } else {
+      secondItem = (
+        <p>Stars?</p>
+      );
+    }
 
     var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
       var category;
@@ -23,26 +40,25 @@ var UserListItem = React.createClass({
     }) : void 0;
 
     return (
-      <div className="list stackListItem userListItem" onTouchEnd={this.handleToggleDetails}>
-        <div className="item item-image">
-          {img}
-        </div>
-        <div className="item item-divider item-text-wrap">
-          <h2>{this.props.user.name}</h2>
-          <h3>{this.props.user.sushi}</h3>
-        </div>
-        <div className={'item' + (this.state.expanded ? ' show' : '')}>
-          <h3>
-            <i className="icon ion-earth"></i> {this.props.user.location}
-          </h3>
-        </div>
-        <div className="item">
-          <div className="list">
-            <div className="item item-divider">
-              <i className="icon ion-planet"></i> Keywords
-            </div>
-            {keywords}
+      <div className="stackListItem userListItem" onTouchEnd={this.handleToggleDetails} style={thisStyle}>
+        <div className="list">
+          <div className="item item-divider item-text-wrap">
+            <h2>{this.props.user.name}</h2>
+            {secondItem}
           </div>
+          <div ref="lastVisibleItem" className="item item-text-wrap item-icon-right">
+            {this.props.user.sushi}
+            <i className="icon ion-chevron-right"></i>
+          </div>
+        </div>
+        <div className="list">
+          <div className="item">
+            <i className="icon ion-earth"></i> {this.props.user.location}
+          </div>
+          <div className="item item-divider">
+            <i className="icon ion-planet"></i> Keywords
+          </div>
+          {keywords}
         </div>
       </div>
     );

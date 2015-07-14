@@ -496,8 +496,13 @@ var remote = {
         });
       },
     },
+    profiles: {
+      getAll: function(){
+        return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/profiles');
+      },
+    },
     userData: {
-      getAll: function (udid) {
+      getAll: function(){
         return new Firebase('https://' + settings.firebase.name + '.firebaseio.com/userData');
       },
       getById: function (udid) {

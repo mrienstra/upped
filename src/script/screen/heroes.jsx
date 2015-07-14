@@ -24,6 +24,11 @@ var UserList = React.createClass({
     'name': React.PropTypes.string,
     'users': React.PropTypes.object,
   },
+  getInitialState: function(){
+    return {
+      imagesToLoad: 2,
+    };
+  },
   componentDidMount: function(){
     var that = this;
     this.swipeStackCallback = function (index, direction) {
@@ -31,9 +36,11 @@ var UserList = React.createClass({
 
       pubSub.publish('heroes.currentIndex', {index: index + 1});
 
-      var targetUser = that.props.users[index];
+      that.setState({imagesToLoad: that.state.imagesToLoad + 1});
+
+      var targetUser = that.props.users[that.keys[index]];
       var choice = direction === 'left' ? 0 : 1;
-      var match = that.props.handleChoice(targetUser.id, choice);
+      var match = that.props.handleChoice(targetUser.id || targetUser.textID, choice);
 
       if (match) {
         console.log('UserList swipeStackCallback match', match);
@@ -54,25 +61,29 @@ var UserList = React.createClass({
     var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
     this.sliderInit(window, document, slider, btnNext, btnPrev);
   },
+  componentWillReceiveProps: function (nextProps) {
+    if (this.props.buttonsToTop && !nextProps.buttonsToTop) {
+      React.findDOMNode(this.refs.scrollable).scrollTop = 0;
+    }
+  },
   render: function() {
+    var that = this;
     var userNodes = [];
+    this.keys = [];
+    var i = 0;
     _.forEach(this.props.users, function (user, key) {
+      that.keys.push(key);
+      var delayImageLoad = i >= that.state.imagesToLoad ? true : false;
       userNodes.push(
-        <UserListItem key={key} index={key} user={user}></UserListItem>
+        <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad}></UserListItem>
       );
+      i++;
     });
 
     return (
-      <div>
-        <div className="slider" data-slider>
-          <div className="slides">
-            {userNodes}
-          </div>
-        </div>
-
-        <div className="done">
-          <h3>Galaxy Explored</h3>
-          <p>You’ve seen all our hero profiles. We’ll reach out if you score any mutual matches.</p>
+      <div className="slider" data-slider>
+        <div ref="scrollable" className="slides">
+          {userNodes}
         </div>
       </div>
     );
@@ -91,6 +102,9 @@ var HeroesScreen = React.createClass({
   },
   render: function(){
     var that = this;
+
+    var theseClassNames = ['heroes'].concat(this.state.classNames);
+    if (this.state.buttonsToTop) theseClassNames.push('buttonsToTop');
 
     var matchOverlay;
     if (this.state.match) {
@@ -113,18 +127,24 @@ var HeroesScreen = React.createClass({
         </div>
       );
     } else {
-      userList = <UserList users={this.state.items} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></UserList>
+      userList = <UserList users={this.state.items} phrase={this.props.phrase} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop}></UserList>
     }
 
     return (
-      <div className={classNames.apply(null, ['heroes'].concat(this.state.classNames))}>
+      <div className={classNames.apply(null, theseClassNames)}>
         <div className="bar-stable bar bar-header nav-bar disable-user-behavior">
           <div className="buttons left-buttons">
             <div>
               <button className="button button-icon icon ion-navicon" onTouchEnd={this.props.showSideMenu}></button>
             </div>
           </div>
-          <h1 className="title">Heroes</h1>
+          <h1 className="title">Discover</h1>
+            <div className="buttons right-buttons">
+              <div>
+                <button data-slider-nav-prev className="button button-icon icon ion-close"></button>
+                <button data-slider-nav-next className="button button-icon icon ion-heart"></button>
+              </div>
+            </div>
         </div>
 
         <div className="scroll-content overflow-scroll has-header">
@@ -136,11 +156,16 @@ var HeroesScreen = React.createClass({
 
           {userList}
 
-          <div className={'round-buttons' + (this.state.hideButtons ? ' hide' : '') + (this.state.buttonsToTop ? ' top' : '')}>
-            <a data-slider-nav-prev className="icon icon-button button-no pull-left"></a>
-            <button onTouchEnd={this.handleToggleDetails} className="icon icon-button button-info"></button>
-            <a data-slider-nav-next className="icon icon-button button-yes pull-right"></a>
+          <div className="done">
+            <h3>Galaxy Explored</h3>
+            <p>You’ve seen all our hero profiles. We’ll reach out if you score any mutual matches.</p>
           </div>
+        </div>
+
+        <div ref="footer" className="bar bar-footer bar-stable">
+          <button data-slider-nav-prev className="button button-icon icon ion-close"></button>
+          <button onTouchEnd={this.handleToggleDetails} className="button button-clear" style={{margin: "0 auto"}}>More</button>
+          <button data-slider-nav-next className="button button-icon icon ion-heart"></button>
         </div>
       </div>
     );
