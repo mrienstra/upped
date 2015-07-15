@@ -493,6 +493,7 @@ var remote = {
           chooser: remote.user.userData.id,
           chosen: chosenId,
           choice: choice,
+          timestamp: Firebase.ServerValue.TIMESTAMP,
         });
       },
     },

@@ -408,6 +408,21 @@ html, body, .container, .sideMenuWrapper {
 
 /* heroesScreen */
 .heroes, .profileScreen {
+  .choiceCount {
+    position: absolute;
+    right: 13px;
+    bottom: 0;
+    top: 0;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 44px;
+    opacity: 1;
+     -webkit-transition: opacity .25s ease-in-out;
+     transition: opacity .25s ease-in-out;
+  }
+  &.buttonsToTop .choiceCount {
+    opacity: 0.001;
+  }
   .bar-header .right-buttons, .bar-footer {
     -webkit-transition-duration: 250ms;
     transition-duration: 250ms;
@@ -415,6 +430,7 @@ html, body, .container, .sideMenuWrapper {
     transition-timing-function: cubic-bezier(0.36, 0.66, 0.04, 1);
   }
   .bar-header .right-buttons {
+    z-index: 1;
     -webkit-transition-property: -webkit-transform;
     transition-property: transform;
     -webkit-transform: translate(0, -40px);
@@ -432,12 +448,33 @@ html, body, .container, .sideMenuWrapper {
       bottom: 44px;
       margin-bottom: 0;
     }
-    > .list:last-child {
+    > .list:nth-child(2) {
       position: absolute;
       top: calc(100% - 44px);
       margin-top: -1px;
       width: 100%;
     }
+    .proposedAmount {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border-radius: 50%;
+      background: #fff;
+      width: 80px;
+      height: 80px;
+      padding: 20px 10px 0 10px;
+      text-align: center;
+      border: solid 2px rgba(125, 125, 125, 0.5);
+      b {
+        font-size: 25px;
+      }
+    }
+  }
+  &.buttonsToTop .stackListItem > .list {
+    position: relative;
+  }
+  &.buttonsToTop .stackListItem > .list:first-child {
+    bottom: auto;
   }
 
   &.buttonsToTop .slider .slides {
@@ -454,5 +491,17 @@ html, body, .container, .sideMenuWrapper {
   &.buttonsToTop .bar-footer {
     height: 0;
     padding: 0;
+  }
+
+  .overlay {
+    z-index: 101;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    margin: 5px;
+    text-align: center;
   }
 }

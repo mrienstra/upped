@@ -11,6 +11,28 @@ var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');
 
 var UserListItem = React.createClass({
   mixins: [ToggleStackListItemMixin],
+  getInitialState: function(){
+    return {
+      imageHeight: 0,
+    };
+  },
+  setMarginTop: function(){
+    var that = this;
+    if (!this.props.buttonsToTop && this.props.contentTop) {
+      var imageHeight = React.findDOMNode(this.refs.positionedList).getBoundingClientRect().top - this.props.contentTop;
+      if (imageHeight !== this.state.imageHeight) {
+        _.defer(function(){
+          that.setState({'imageHeight': imageHeight});
+        });
+      }
+    }
+  },
+  componentDidMount: function(){
+    this.setMarginTop();
+  },
+  componentDidUpdate: function(){
+    this.setMarginTop();
+  },
   render: function() {
     var thisStyle;
     if (!this.props.delayImageLoad && this.props.user.photoURL) {
@@ -19,6 +41,11 @@ var UserListItem = React.createClass({
         backgroundSize: 'contain',
       };
     };
+
+    var positionedListStyle;
+    if (this.props.buttonsToTop) {
+      positionedListStyle = {top: this.state.imageHeight};
+    }
 
     var secondItem;
     if (this.props.user.phrase && this.props.phrase) {
@@ -31,6 +58,18 @@ var UserListItem = React.createClass({
       );
     }
 
+    var sushi, more;
+    if (this.props.buttonsToTop || this.props.user.sushi.length < 140) {
+      sushi = this.props.user.sushi;
+    } else {
+      sushi = this.props.user.sushi.substring(0,140) + '…';
+    }
+    if (!this.props.buttonsToTop) {
+      more = (
+        <i className="icon ion-chevron-right"></i>
+      );
+    }
+
     var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
       var category;
       if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
@@ -39,19 +78,26 @@ var UserListItem = React.createClass({
       return <div key={i} className="item">{name}</div>;
     }) : void 0;
 
+    var proposedAmount;
+    if (this.props.proposedAmount) {
+      proposedAmount = (
+        <div className="proposedAmount"><b>${this.props.proposedAmount}</b> credit</div>
+      );
+    }
+
     return (
       <div className="stackListItem userListItem" onTouchEnd={this.handleToggleDetails} style={thisStyle}>
-        <div className="list">
+        <div ref="positionedList" className="list" style={positionedListStyle}>
           <div className="item item-divider item-text-wrap">
             <h2>{this.props.user.name}</h2>
             {secondItem}
           </div>
-          <div ref="lastVisibleItem" className="item item-text-wrap item-icon-right">
-            {this.props.user.sushi}
-            <i className="icon ion-chevron-right"></i>
+          <div className={'item item-text-wrap' + (this.props.buttonsToTop ? '' : ' item-icon-right')}>
+            {sushi}
+            {more}
           </div>
         </div>
-        <div className="list">
+        <div className="list" style={positionedListStyle}>
           <div className="item">
             <i className="icon ion-earth"></i> {this.props.user.location}
           </div>
@@ -60,6 +106,7 @@ var UserListItem = React.createClass({
           </div>
           {keywords}
         </div>
+        {proposedAmount}
       </div>
     );
   }

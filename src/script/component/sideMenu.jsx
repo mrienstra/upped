@@ -5,36 +5,30 @@ var pubSub = require('../pubSub.js');
 
 var SideMenu = React.createClass({
   propTypes: {
-    changeScreen: React.PropTypes.func.isRequired
+    changeScreen: React.PropTypes.func.isRequired,
+    handleLogOut: React.PropTypes.func,
+    items: React.PropTypes.array.isRequired,
   },
   render: function(){
-    var menuOptions = [
-      {
-        screen: 'myProfileScreen',
-        text: 'Profile',
-        icon: 'ion-ios-person',
-      },
-      {
-        screen: 'walletScreen',
-        text: 'Wallet',
-        icon: 'ion-card',
-      },
-      {
-        screen: 'feedbackScreen',
-        text: 'Feedback',
-        icon: 'ion-ios-heart-outline',
-      },
-    ];
 
     var that = this;
 
-    var listItems = menuOptions.map(function (option, i) {
+    var listItems = this.props.items.map(function (option, i) {
       return (
         <a key={i} className="item item-icon-left" href="#" onTouchEnd={that.props.changeScreen.bind(null, option.screen, {state: {fromMenu: true}})}>
           <i className={'icon ' + option.icon}></i>{option.text}
         </a>
       );
     });
+
+    var logout;
+    if (this.props.handleLogOut) {
+      logout = (
+        <a key={menuOptions.length} className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
+          <i className="icon ion-android-exit"></i>Logout
+        </a>
+      );
+    }
 
     return (
       <div className="menu menu-left">
@@ -45,9 +39,7 @@ var SideMenu = React.createClass({
           <div className="scroll">
             <div className="list disable-user-behavior">
               {listItems}
-              <a key={menuOptions.length} className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
-                <i className="icon ion-android-exit"></i>Logout
-              </a>
+              {logout}
             </div>
           </div>
           <div className="scroll-bar scroll-bar-v">

@@ -9,10 +9,12 @@ var SwipeStackSliderMixin = {
       this.handleSliderUnpause();
     }
   },
-  sliderInit: function (window, document, slider, btnNext, btnPrev, undefined) {
+  sliderInit: function (window, document, slider, btnPrev, btnNext, undefined) {
     'use strict';
 
     var that = this;
+
+    var i, l;
 
     // Feature Test
     if ( 'querySelector' in document && 'addEventListener' in window && Array.prototype.forEach ) {
@@ -50,10 +52,22 @@ var SwipeStackSliderMixin = {
 
       // Toggle Previous & Next Buttons
       if (btnNext) {
-        btnNext.addEventListener('click', handleNextBtn, false);
+        if (btnNext.length) {
+          for (i = 0, l = btnNext.length; i < l; i++) {
+            btnNext[i].addEventListener('click', handleNextBtn, false);
+          }
+        } else {
+          btnNext.addEventListener('click', handleNextBtn, false);
+        }
       }
       if (btnPrev) {
-        btnPrev.addEventListener('click', handlePrevBtn, false);
+        if (btnPrev.length) {
+          for (i = 0, l = btnPrev.length; i < l; i++) {
+            btnPrev[i].addEventListener('click', handlePrevBtn, false);
+          }
+        } else {
+          btnPrev.addEventListener('click', handlePrevBtn, false);
+        }
       }
 
       // Add class to HTML element to activate conditional CSS
