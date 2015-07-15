@@ -13,8 +13,6 @@ var reactDomRoot = document.querySelector('.container');
 var appInit = function () {
   var SideMenu = require('./component/sideMenu.jsx');
 
-  var HeroesScreen = require('./screen/heroes.jsx');
-
   var WalletScreen = require('./screen/wallet.jsx');
 
     var WalletDetailScreen = require('./screen/walletDetail.jsx');
@@ -29,6 +27,24 @@ var appInit = function () {
 
   var FeedbackScreen = require('./screen/feedback.jsx');
 
+  var sideMenuItems = [
+    {
+      screen: 'myProfileScreen',
+      text: 'Profile',
+      icon: 'ion-ios-person',
+    },
+    {
+      screen: 'walletScreen',
+      text: 'Wallet',
+      icon: 'ion-card',
+    },
+    {
+      screen: 'feedbackScreen',
+      text: 'Feedback',
+      icon: 'ion-ios-heart-outline',
+    }
+  ];
+
   var App = React.createClass({
     mixins: [ScreensMixin],
     getInitialState: function(){
@@ -38,7 +54,7 @@ var appInit = function () {
         initialStack = ['walletScreen', initialScreen];
         balanceID = window.location.hash.substring(3);
       } else {
-        initialScreen = 'heroesScreen'; //'walletScreen';
+        initialScreen = 'walletScreen';
         initialStack = [initialScreen];
       }
 
@@ -48,9 +64,6 @@ var appInit = function () {
           i: initialStack.indexOf(initialScreen),
         },
         sideMenuVisible: false,
-        heroesScreen: {
-          visible: (initialScreen === 'heroesScreen') ? true : false,
-        },
         walletScreen: {
           visible: (initialScreen === 'walletScreen') ? true : false,
         },
@@ -95,11 +108,9 @@ var appInit = function () {
 
       return (
         <div className={this.state.sideMenuVisible ? 'sideMenuWrapper sideMenuVisible' : 'sideMenuWrapper'}>
-          <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
+          <SideMenu items={sideMenuItems} changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
 
           <div className={'screens' + this.state.transitionClasses}>
-            <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.firebase.userData.getAll.bind(remote.firebase.userData)} handleChoice={remote.firebase.choice.set} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
-
             <WalletScreen getBalances={remote.firebase.balance.getByUID.bind(remote.firebase.balance, remote.user.userData.id)} selfUID={remote.user.userData.id} showSideMenu={this.showSideMenu} changeScreen={this.changeScreen} {...this.state.walletScreen}/>
 
               <WalletDetailScreen selfUID={remote.user.userData.id} get={remote.firebase.balance.get} getHistory={remote.firebase.balance.getHistory} markHistoryItemRead={remote.firebase.balance.markHistoryItemRead} addNote={remote.firebase.balance.deductAndOrAddNote} confirmDeduction={remote.firebase.balance.confirmDeduction} changeScreen={this.changeScreen} handleBack={this.backToPreviousScreen} {...this.state.walletDetailScreen}/>
@@ -255,6 +266,19 @@ var newInit = function (params) {
 
   var FeedbackScreen = require('./screen/feedback.jsx');
 
+  var sideMenuItems = [
+    {
+      screen: 'heroesScreen',
+      text: 'Discover',
+      icon: 'ion-ios-person',
+    },
+    {
+      screen: 'feedbackScreen',
+      text: 'Feedback',
+      icon: 'ion-ios-heart-outline',
+    }
+  ];
+
   remote.resetUser();
   remote.user.userData = params;
 
@@ -286,7 +310,7 @@ var newInit = function (params) {
 
       return (
         <div className={this.state.sideMenuVisible ? 'sideMenuWrapper sideMenuVisible' : 'sideMenuWrapper'}>
-          <SideMenu changeScreen={this.changeScreen} handleLogOut={handleLogOut} />
+          <SideMenu items={sideMenuItems} changeScreen={this.changeScreen} />
 
           <div className={'screens' + this.state.transitionClasses}>
             <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.firebase.profiles.getAll.bind(remote.firebase.profiles)} handleChoice={remote.firebase.choice.set} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>

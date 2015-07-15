@@ -53,10 +53,16 @@ var ChooseScreenMixin = {
       match: data.match
     });
   },
-  closeMatchOverlay: function (e) {
-    this.setState({
-      match: void 0
-    });
+  closeOverlays: function (e) {
+    if (this.state.firstWant) {
+      this.setState({
+        firstWant: void 0,
+      });
+    } else if (this.state.match) {
+      this.setState({
+        match: void 0,
+      });
+    }
 
     e && e.preventDefault();
   },
