@@ -109,7 +109,7 @@ var HeroesScreen = React.createClass({
       firstWant: void 0,
       noButtons: void 0,
       yesButtons: void 0,
-      choiceCount: 0,
+      choiceCount: 1,
     };
   },
   showFirstWantOverlay: function (firstWant) {
@@ -142,7 +142,7 @@ var HeroesScreen = React.createClass({
     if (this.state.buttonsToTop) theseClassNames.push('buttonsToTop');
 
     var choiceCount;
-    if (this.state.choiceCount) {
+    if (this.state.choiceCount && this.state.choiceCount <= 15) {
       choiceCount = (
         <div className="choiceCount">{this.state.choiceCount} of 15</div>
       );
