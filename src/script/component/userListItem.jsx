@@ -47,13 +47,13 @@ var UserListItem = React.createClass({
       positionedListStyle = {top: this.state.imageHeight};
     }
 
-    var secondItem;
+    var firstItemSub;
     if (this.props.user.phrase && this.props.phrase) {
-      secondItem = (
+      firstItemSub = (
         <p>Offering: <b>{this.props.user.phrase}</b> for <b>{this.props.phrase}</b></p>
       );
     } else {
-      secondItem = (
+      firstItemSub = (
         <p>Stars?</p>
       );
     }
@@ -64,19 +64,47 @@ var UserListItem = React.createClass({
     } else {
       sushi = this.props.user.sushi.substring(0,140) + '…';
     }
-    if (!this.props.buttonsToTop) {
-      more = (
-        <i className="icon ion-chevron-right"></i>
+    var secondItem;
+    if (this.props.buttonsToTop) {
+      var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
+        var category;
+        if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
+          name = category.name;
+        }
+        return <p key={i}>» {name}</p>;
+      }) : void 0;
+      secondItem = (
+        <div className="item item-icon-left item-text-wrap">
+          <i className="icon ion-email"></i>
+          <h2>Sushi</h2>
+          {sushi}
+          {keywords}
+          <p><a href={'http://www.yelp.com/biz/' + this.props.user.yelp.id}>My Yelp Profile</a></p>
+        </div>
+      );
+    } else {
+      secondItem = (
+        <div className="item item-text-wrap item-icon-right">
+          {sushi}
+          <i className="icon ion-chevron-right"></i>
+        </div>
       );
     }
 
-    var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
-      var category;
-      if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
-        name = category.name;
-      }
-      return <div key={i} className="item">{name}</div>;
-    }) : void 0;
+    var thirdItem;
+    if (this.props.buttonsToTop) {
+      thirdItem = (
+        <div className="item item-icon-left item-text-wrap">
+          <i className="icon ion-email"></i>
+          <h2>Reviews</h2>
+          <img src={this.props.user.yelp.review.user.image_url} style={{width: '10%'}}/>
+          <p>{this.props.user.yelp.review.user.name}</p>
+          <p>{this.props.user.yelp.review.rating} stars</p>
+          <p>{this.props.user.yelp.review.excerpt}</p>
+          <p><a href={'http://www.yelp.com/biz/' + this.props.user.yelp.id + '#super-container'}>All Yelp reviews »</a></p>
+        </div>
+      );
+    }
 
     var proposedAmount;
     if (this.props.proposedAmount) {
@@ -86,25 +114,14 @@ var UserListItem = React.createClass({
     }
 
     return (
-      <div className="stackListItem userListItem" onTouchEnd={this.handleToggleDetails} style={thisStyle}>
+      <div className={'stackListItem userListItem' + (this.props.isFrontmost ? ' frontmost' : '')} onTouchEnd={this.handleToggleDetails} style={thisStyle}>
         <div ref="positionedList" className="list" style={positionedListStyle}>
           <div className="item item-divider item-text-wrap">
             <h2>{this.props.user.name}</h2>
-            {secondItem}
+            {firstItemSub}
           </div>
-          <div className={'item item-text-wrap' + (this.props.buttonsToTop ? '' : ' item-icon-right')}>
-            {sushi}
-            {more}
-          </div>
-        </div>
-        <div className="list" style={positionedListStyle}>
-          <div className="item">
-            <i className="icon ion-earth"></i> {this.props.user.location}
-          </div>
-          <div className="item item-divider">
-            <i className="icon ion-planet"></i> Keywords
-          </div>
-          {keywords}
+          {secondItem}
+          {thirdItem}
         </div>
         {proposedAmount}
       </div>
