@@ -157,8 +157,8 @@ var HeroesScreen = React.createClass({
           {userList}
 
           <div className="done">
-            <h3>Galaxy Explored</h3>
-            <p>You’ve seen all our hero profiles. We’ll reach out if you score any mutual matches.</p>
+            <h3>Profiles Explored</h3>
+            <p>You’ve seen all our profiles in your area. We’ll reach out if you score any mutual matches.</p>
           </div>
         </div>
 
