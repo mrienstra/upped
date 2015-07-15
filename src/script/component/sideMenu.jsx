@@ -24,7 +24,7 @@ var SideMenu = React.createClass({
     var logout;
     if (this.props.handleLogOut) {
       logout = (
-        <a key={menuOptions.length} className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
+        <a key={this.props.items.length} className="item item-icon-left" href="#" onTouchEnd={this.props.handleLogOut}>
           <i className="icon ion-android-exit"></i>Logout
         </a>
       );
