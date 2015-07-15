@@ -86,7 +86,7 @@ var UserListItem = React.createClass({
     }
 
     return (
-      <div className="stackListItem userListItem" onTouchEnd={this.handleToggleDetails} style={thisStyle}>
+      <div className={'stackListItem userListItem' + (this.props.isFrontmost ? ' frontmost' : '')} onTouchEnd={this.handleToggleDetails} style={thisStyle}>
         <div ref="positionedList" className="list" style={positionedListStyle}>
           <div className="item item-divider item-text-wrap">
             <h2>{this.props.user.name}</h2>

@@ -26,7 +26,7 @@ var UserList = React.createClass({
   },
   getInitialState: function(){
     return {
-      imagesToLoad: 2,
+      currentIndex: 0,
     };
   },
   componentDidMount: function(){
@@ -35,8 +35,7 @@ var UserList = React.createClass({
       console.log('UserList swipeStackCallback', this, arguments, that, that.props.users);
 
       pubSub.publish('heroes.currentIndex', {index: index + 1});
-
-      that.setState({imagesToLoad: that.state.imagesToLoad + 1});
+      that.setState({currentIndex: index + 1});
 
       var targetUser = that.props.users[that.keys[index]];
       var choice = direction === 'left' ? 0 : 1;
@@ -77,9 +76,9 @@ var UserList = React.createClass({
     var i = 0;
     _.forEach(this.props.users, function (user, key) {
       that.keys.push(key);
-      var delayImageLoad = i >= that.state.imagesToLoad ? true : false;
+      var delayImageLoad = !!(i >= (that.state.currentIndex + 2));
       userNodes.push(
-        <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={that.props.buttonsToTop} proposedAmount={150} contentTop={that.props.contentTop}></UserListItem>
+        <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={that.props.buttonsToTop} proposedAmount={150} contentTop={that.props.contentTop} isFrontmost={i === that.state.currentIndex}></UserListItem>
       );
       i++;
       //if (i > 5) return false;
@@ -196,7 +195,7 @@ var HeroesScreen = React.createClass({
           <div className="buttons right-buttons">
             <div>
               <button ref="buttonNoTop" className="button button-icon icon ion-close"></button>
-              <button ref="buttonYesTop" className="button button-icon icon ion-heart"></button>
+              <button ref="buttonYesTop" className="button button-icon icon ion-heart want-button"></button>
             </div>
           </div>
           {choiceCount}
@@ -220,7 +219,7 @@ var HeroesScreen = React.createClass({
         <div ref="footer" className="bar bar-footer bar-stable">
           <button ref="buttonNoBottom" className="button button-icon icon ion-close"></button>
           <button onTouchEnd={this.handleToggleDetails} className="button button-clear" style={{margin: "0 auto"}}>More</button>
-          <button ref="buttonYesBottom" className="button button-icon icon ion-heart"></button>
+          <button ref="buttonYesBottom" className="button button-icon icon ion-heart want-button"></button>
         </div>
       </div>
     );

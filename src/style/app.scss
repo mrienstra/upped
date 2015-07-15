@@ -408,6 +408,16 @@ html, body, .container, .sideMenuWrapper {
 
 /* heroesScreen */
 .heroes, .profileScreen {
+  .want-button:after {
+    font-size: 7px;
+    content: 'want';
+    color: #000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    line-height: 25px;
+  }
   .choiceCount {
     position: absolute;
     right: 13px;
@@ -470,10 +480,10 @@ html, body, .container, .sideMenuWrapper {
       }
     }
   }
-  &.buttonsToTop .stackListItem > .list {
+  &.buttonsToTop .stackListItem.frontmost > .list {
     position: relative;
   }
-  &.buttonsToTop .stackListItem > .list:first-child {
+  &.buttonsToTop .stackListItem.frontmost > .list:first-child {
     bottom: auto;
   }
 
