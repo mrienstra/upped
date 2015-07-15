@@ -150,14 +150,16 @@ var HeroesScreen = React.createClass({
     }
 
     var matchOverlay;
+    this.state.firstWant = {};
+    this.state.firstWant.name = 'Reiki Healing with Kim';
     if (this.state.firstWant) {
       matchOverlay = (
         <div className="overlay card">
           <div className="item item-text-wrap">
-            <h1>Great news! You’re on a roll.</h1>
-            <p>You’ve made your first want on Pay with Sushi. We’ll reach out to <b>{this.state.firstWant.name}</b>, and let you know when they respond. For now, keep exploring…</p>
+            <h1>Great news!<br/>You&#8217;re on a roll.</h1>
+            <p>You&#8217;ve made your first want on Pay with Sushi. We&#8217;ll reach out to <b>{this.state.firstWant.name}</b>, and let you know when they respond. For now, keep exploring&hellip;</p>
             <p><a href="#">How this works »</a></p>
-            <button className="button" onTouchEnd={this.closeOverlays}>Keep Exploring Offers</button>
+            <button className="button button-block button-assertive" onTouchEnd={this.closeOverlays}>Keep Exploring Offers</button>
           </div>
         </div>
       );

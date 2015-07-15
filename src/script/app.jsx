@@ -27,6 +27,8 @@ var appInit = function () {
 
   var FeedbackScreen = require('./screen/feedback.jsx');
 
+  var HowItWorksScreen = require('./screen/howItWorks.jsx');
+
   var sideMenuItems = [
     {
       screen: 'myProfileScreen',
@@ -264,18 +266,18 @@ var newInit = function (params) {
 
   var HeroesScreen = require('./screen/heroes.jsx');
 
-  var FeedbackScreen = require('./screen/feedback.jsx');
+  var HowItWorksScreen = require('./screen/howItWorks.jsx');
 
   var sideMenuItems = [
     {
       screen: 'heroesScreen',
-      text: 'Discover',
-      icon: 'ion-ios-person',
+      text: 'Offers for You',
+      icon: 'ion-images',
     },
     {
-      screen: 'feedbackScreen',
-      text: 'Feedback',
-      icon: 'ion-ios-heart-outline',
+      screen: 'howItWorksScreen',
+      text: 'How it Works',
+      icon: 'ion-ios-flower-outline',
     }
   ];
 
@@ -286,6 +288,7 @@ var newInit = function (params) {
     mixins: [ScreensMixin],
     getInitialState: function(){
       var initialScreen = 'heroesScreen';
+//      var initialScreen = 'howItWorksScreen';
       var initialStack = [initialScreen];
 
       return {
@@ -299,9 +302,9 @@ var newInit = function (params) {
           name: params.name,
           phrase: params.phrase,
         },
-        feedbackScreen: {
+        howItWorksScreen: {
           visible: false,
-          cssClass: 'loginScreen feedbackScreen',
+          cssClass: 'howItWorksScreen',
         },
       }
     },
@@ -315,7 +318,7 @@ var newInit = function (params) {
           <div className={'screens' + this.state.transitionClasses}>
             <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.firebase.profiles.getAll.bind(remote.firebase.profiles)} handleChoice={remote.firebase.choice.set} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
 
-            <FeedbackScreen showSideMenu={this.showSideMenu} {...this.state.feedbackScreen}/>
+            <HowItWorksScreen showSideMenu={this.showSideMenu} {...this.state.howItWorksScreen}/>
           </div>
 
           <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>
