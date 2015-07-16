@@ -81,8 +81,10 @@ var UserList = React.createClass({
     _.forEach(this.props.users, function (user, key) {
       that.keys.push(key);
       var delayImageLoad = !!(i >= (that.state.currentIndex + 2));
+      var isFrontmost = i === that.state.currentIndex;
+      var buttonsToTop = that.props.buttonsToTop && isFrontmost;
       userNodes.push(
-        <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={that.props.buttonsToTop} proposedAmount={150} contentTop={that.props.contentTop} isFrontmost={i === that.state.currentIndex}></UserListItem>
+        <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={buttonsToTop} proposedAmount={150} contentTop={that.props.contentTop} isFrontmost={isFrontmost}></UserListItem>
       );
       i++;
       //if (i > 5) return false;
@@ -247,7 +249,6 @@ var HeroesScreen = React.createClass({
 
         <div ref="footer" className="bar bar-footer bar-stable">
           <button ref="buttonNoBottom" className="button button-icon icon ion-close"></button>
-          <button onTouchEnd={this.handleToggleDetails} className="button button-clear" style={{margin: "0 auto"}}>More</button>
           <button ref="buttonYesBottom" className="button button-icon icon ion-heart want-button"></button>
         </div>
       </div>

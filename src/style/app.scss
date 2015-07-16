@@ -469,10 +469,34 @@ iframe.fullframe {
 
   .stackListItem {
     background: #fff;
-    > .list:first-child {
+    > .list {
       position: absolute;
       bottom: 44px;
       margin-bottom: 0;
+      .item-icon-left .icon {
+        align-items: inherit;
+        top: 11px;
+      }
+      h2 {
+        font-size: 18px;
+      }
+      h3 {
+        font-weight: bold;
+        font-size: 18px;
+      }
+      h4 {
+        font-weight: bold;
+        font-size: 16px;
+      }
+      .stars .ion-ios-star {
+        position: inherit;
+        font-size: inherit;
+        display: inline-block;
+        width: 1em;
+        &:before {
+          width: 1em;
+        }
+      }
     }
     .blockImageBehindFooter {
       position: absolute;
@@ -500,8 +524,6 @@ iframe.fullframe {
   }
   &.buttonsToTop .stackListItem.frontmost > .list {
     position: relative;
-  }
-  &.buttonsToTop .stackListItem.frontmost > .list:first-child {
     bottom: auto;
   }
 
