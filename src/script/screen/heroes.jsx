@@ -45,8 +45,12 @@ var UserList = React.createClass({
         console.log('UserList swipeStackCallback match', match);
 
         pubSub.publish('heroes.showMatchOverlay', {match: match});
-      } else if (choice === 1) {
+      }
+
+      if (that.props.showFirstWantOverlay && choice === 1) {
         that.props.showFirstWantOverlay({name: targetUser.name});
+      } else {
+        that.props.incrementChoiceCount();
       }
 
       if (index + 1 === that.props.users.length) {
@@ -54,8 +58,6 @@ var UserList = React.createClass({
       } else if (that.props.buttonsToTop) {
         pubSub.publish('heroes.toggleButtons', {expanded: false});
       }
-
-      that.props.incrementChoiceCount();
     };
 
     var el = this.getDOMNode();
@@ -116,7 +118,7 @@ var HeroesScreen = React.createClass({
   },
   showFirstWantOverlay: function (firstWant) {
     this.setState({firstWant: firstWant});
-    this.showFirstWantOverlay = function(){};
+    this.showFirstWantOverlay = void 0;
   },
   incrementChoiceCount: function(){
     this.setState({choiceCount: this.state.choiceCount + 1});

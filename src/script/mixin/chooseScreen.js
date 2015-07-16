@@ -58,6 +58,7 @@ var ChooseScreenMixin = {
       this.setState({
         firstWant: void 0,
       });
+      this.incrementChoiceCount && this.incrementChoiceCount();
     } else if (this.state.match) {
       this.setState({
         match: void 0,
