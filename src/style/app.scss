@@ -416,6 +416,11 @@ iframe.fullframe {
 
 /* heroesScreen */
 .heroes {
+  .bar-header {
+    .right-buttons .button {
+      padding: 0 4px;
+    }
+  }
   .bar-footer {
   height: 80px;
     .button {
