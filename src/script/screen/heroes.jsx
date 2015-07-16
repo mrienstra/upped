@@ -83,9 +83,15 @@ var UserList = React.createClass({
       var delayImageLoad = !!(i >= (that.state.currentIndex + 2));
       var isFrontmost = i === that.state.currentIndex;
       var buttonsToTop = that.props.buttonsToTop && isFrontmost;
-      userNodes.push(
-        <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={buttonsToTop} proposedAmount={150} contentTop={that.props.contentTop} isFrontmost={isFrontmost}></UserListItem>
-      );
+      if (i + 1 < that.state.currentIndex) {
+        userNodes.push(
+          <div key={key} className="stackListItem userListItem hide"/>
+        );
+      } else {
+        userNodes.push(
+          <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={buttonsToTop} proposedAmount={150} contentTop={that.props.contentTop} isFrontmost={isFrontmost}></UserListItem>
+        );
+      }
       i++;
       //if (i > 5) return false;
     });
