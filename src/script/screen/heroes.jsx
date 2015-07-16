@@ -86,7 +86,7 @@ var UserList = React.createClass({
         );
       } else {
         userNodes.push(
-          <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={buttonsToTop} proposedAmount={150} isFrontmost={isFrontmost}></UserListItem>
+          <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={buttonsToTop} proposedAmount={300} isFrontmost={isFrontmost}></UserListItem>
         );
       }
       i++;

@@ -21,76 +21,48 @@ var UserListItem = React.createClass({
     };
 
     var firstItemSub;
-    if (this.props.user.phrase && this.props.phrase) {
-      firstItemSub = (
-        <p>Offering: <b>{this.props.user.phrase}</b> for <b>{this.props.phrase}</b></p>
-      );
-    } else {
-      firstItemSub = (
-        <p>Stars?</p>
+    var i, reviewStars = [];
+    for (i = 0, l = this.props.user.yelp.review.rating; i < l; i++) {
+      reviewStars.push(
+        <i key={i} className="icon ion-ios-star"></i>
       );
     }
 
-    var secondItem;
-    if (this.props.buttonsToTop) {
-      var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
-        var category;
-        if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
-          name = category.name;
-        }
-        return <p key={i}>» {name}</p>;
-      }) : void 0;
-      secondItem = (
-        <div className="item item-icon-left item-text-wrap">
-          <i className="icon ion-ribbon-b"></i>
-          <h3>Sushi</h3>
-          {this.props.user.sushi}
-          {keywords}
-          <p><a href={'http://www.yelp.com/biz/' + this.props.user.yelp.id}>My Yelp Profile</a></p>
-        </div>
-      );
-    }
-
-    var thirdItem;
-    if (this.props.buttonsToTop) {
-      var i, reviewStars = [];
-      for (i = 0, l = this.props.user.yelp.review.rating; i < l; i++) {
-        reviewStars.push(
-          <i className="icon ion-ios-star"></i>
-        );
+    var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
+      var category;
+      if (name === parseInt(name.toString()) && (category = _.find(categories, {id: name}))) {
+        name = category.name;
       }
-      thirdItem = (
-        <div className="item item-icon-left item-text-wrap">
-          <i className="icon ion-ribbon-b"></i>
-          <h3>Reviews</h3>
-          <img src={this.props.user.yelp.review.user.image_url} style={{width: '10%', float: 'left', marginRight: '10px'}}/>
-          <h4>{this.props.user.yelp.review.user.name}</h4>
-          <div className="stars">{reviewStars}</div>
-          <p>{this.props.user.yelp.review.excerpt}</p>
-          <p><a href={'http://www.yelp.com/biz/' + this.props.user.yelp.id + '#super-container'}>All Yelp reviews »</a></p>
-        </div>
-      );
-    }
-
-    var proposedAmount;
-    if (this.props.proposedAmount) {
-      proposedAmount = (
-        <div className="proposedAmount"><b>${this.props.proposedAmount}</b> credit</div>
-      );
-    }
+      return <p key={i}>» {name}</p>;
+    }) : void 0;
 
     return (
       <div className={'stackListItem userListItem' + (this.props.isFrontmost ? ' frontmost' : '')} onTouchEnd={this.handleToggleDetails} style={thisStyle}>
         <div className="list">
           <div className="item item-divider">
             <h2>{this.props.user.name}</h2>
-            {firstItemSub}
+            <div>
+              <p>Up to <b>${this.props.proposedAmount}</b> credit </p>
+              <p>{reviewStars}</p>
+            </div>
           </div>
-          {secondItem}
-          {thirdItem}
+          <div className="item item-icon-left item-text-wrap">
+            <i className="icon ion-ribbon-b"></i>
+            <h3>Sushi</h3>
+            {this.props.user.sushi}
+            {keywords}
+            <p><a href={'http://www.yelp.com/biz/' + this.props.user.yelp.id}>My Yelp Profile</a></p>
+          </div>
+          <div className="item item-icon-left item-text-wrap">
+            <i className="icon ion-ribbon-b"></i>
+            <h3>Reviews</h3>
+            <img src={this.props.user.yelp.review.user.image_url} style={{width: '10%', float: 'left', marginRight: '10px'}}/>
+            <h4>{this.props.user.yelp.review.user.name}</h4>
+            <div className="stars">{reviewStars}</div>
+            <p>{this.props.user.yelp.review.excerpt}</p>
+            <p><a href={'http://www.yelp.com/biz/' + this.props.user.yelp.id + '#super-container'}>All Yelp reviews »</a></p>
+          </div>
         </div>
-        <div className="blockImageBehindFooter"></div>
-        {proposedAmount}
       </div>
     );
   }
