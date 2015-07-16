@@ -90,7 +90,7 @@ var UserList = React.createClass({
         );
       }
       i++;
-      //if (i > 5) return false;
+      if (i > 5) return false;
     });
 
     return (
@@ -234,8 +234,8 @@ var HeroesScreen = React.createClass({
           <h1 className="title">Offers for You</h1>
           <div className="buttons right-buttons">
             <div>
-              <button ref="buttonNoTop" className="button button-icon icon ion-close"></button>
-              <button ref="buttonYesTop" className="button button-icon icon ion-heart want-button"></button>
+              <button ref="buttonNoTop" className="button button-icon icon ion-ios-close-outline"></button>
+              <button ref="buttonYesTop" className="button button-icon icon ion-ios-heart-outline"></button>
             </div>
           </div>
           {choiceCount}
@@ -250,8 +250,8 @@ var HeroesScreen = React.createClass({
         </div>
 
         <div ref="footer" className="bar bar-footer bar-stable">
-          <button ref="buttonNoBottom" className="button button-icon icon ion-close"></button>
-          <button ref="buttonYesBottom" className="button button-icon icon ion-heart want-button"></button>
+          <button ref="buttonNoBottom" className="button button-dark icon-left ion-ios-close-outline"><span>Not now</span></button>
+          <button ref="buttonYesBottom" className="button button-assertive icon-left ion-ios-heart-outline"><span>Want</span></button>
         </div>
       </div>
     );

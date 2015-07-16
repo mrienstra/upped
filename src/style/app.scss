@@ -415,17 +415,57 @@ iframe.fullframe {
 }
 
 /* heroesScreen */
-.heroes, .profileScreen {
-  .want-button:after {
-    font-size: 7px;
-    content: 'want';
-    color: #000;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    line-height: 25px;
+.heroes {
+  .bar-footer {
+  height: 80px;
+    .button {
+      padding: 2px 20px 2px 10px;
+      margin: 4px;
+      font-size: 150%;
+    }
+    .button:before {
+      font-size: 200%;
+      padding-right: 14px;
+    }
   }
+  .list .item:first-child {
+    padding-top: 8px;
+  }
+  .list .item {
+    h2, .rating, .credit {
+      color: #000;
+    }
+    .rating {
+      font-size: 150%;
+      color: gold;
+    }
+    .credit {
+      color: #666;
+      font-size: 80%;
+      strong {
+        font-weight: normal;
+        font-size: 180%;
+        color: #000;
+      }
+    }
+  }
+  .review, .sushi {
+    h3 {
+      padding-bottom: 4px;
+    }
+    a {
+      display: block;
+      padding: 10px 0;
+      color: #333;
+    }
+    img {
+      border-radius: 100px;
+      border: 1px solid #ef4136;
+    }
+  }
+}
+
+.heroes, .profileScreen {
   .choiceCount {
     position: absolute;
     right: 13px;
@@ -467,7 +507,7 @@ iframe.fullframe {
     background: #fff;
     > .list {
       position: absolute;
-      top: calc(100% - 105px); // 61 + 44
+      top: calc(100% - 158px); // 78 + 80
       margin-bottom: 0;
       width: 100%;
       .item:first-child div p:first-child {
@@ -476,18 +516,12 @@ iframe.fullframe {
           font-size: 1.2em;
         }
       }
-      .item-icon-left {
-        display: none;
-      }
-      .item-icon-left .icon {
-        align-items: inherit;
-        top: 11px;
-      }
       h2 {
-        font-size: 18px;
+        font-size: 22px;
+        padding-bottom: 6px;
       }
       h3 {
-        font-weight: bold;
+        font-weight: normal;
         font-size: 18px;
       }
       h4 {
@@ -506,10 +540,6 @@ iframe.fullframe {
     }
   }
 
-  .stackListItem.frontmost > .list .item-icon-left {
-    display: block;
-  }
-
   &.buttonsToTop .slider .slides {
     overflow-x: hidden;
     overflow-y: scroll;
@@ -520,8 +550,8 @@ iframe.fullframe {
     z-index: 100;
   }
   &.buttonsToTop .bar-footer {
-    -webkit-transform: translate(0, 44px);
-    transform: translate(0, 44px);
+    -webkit-transform: translate(0, 80px);
+    transform: translate(0, 80px);
   }
 
   .overlay {
