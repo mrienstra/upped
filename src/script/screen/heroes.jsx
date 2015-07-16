@@ -100,6 +100,7 @@ var HeroesScreen = React.createClass({
     remote: React.PropTypes.object.isRequired,
     getItems: React.PropTypes.func.isRequired, // for mixin
     handleChoice: React.PropTypes.func.isRequired, // passed into `UserList`
+    handleHowChange: React.PropTypes.func.isRequired,
     handleMatchesChange: React.PropTypes.func.isRequired, // for mixin
     showSideMenu: React.PropTypes.func.isRequired,
     visible: React.PropTypes.bool.isRequired
@@ -159,21 +160,21 @@ var HeroesScreen = React.createClass({
       );
     }
 
-    var matchOverlay;
+    var overlay;
     //this.state.firstWant = {name: 'Reiki Healing with Kim'};
     if (this.state.firstWant) {
-      matchOverlay = (
+      overlay = (
         <div className="overlay card">
           <div className="item item-text-wrap">
             <h1>Great news!<br/>You&#8217;re on a roll.</h1>
             <p>You&#8217;ve made your first want on Pay with Sushi. We&#8217;ll reach out to <b>{this.state.firstWant.name}</b>, and let you know when they respond. For now, keep exploring&hellip;</p>
-            <p><a href="#">How this works »</a></p>
+            <p><a href="#" onTouchEnd={this.props.handleHowChange}>How this works »</a></p>
             <button className="button button-block button-assertive" onTouchEnd={this.closeOverlays}>Keep Exploring Offers</button>
           </div>
         </div>
       );
     } else if (this.state.match) {
-      matchOverlay = (
+      overlay = (
         <div className="aMatch">
           <h1>A Match!</h1>
           <p>You’ve matched with {this.state.match.name}!</p>
@@ -222,7 +223,7 @@ var HeroesScreen = React.createClass({
 
           {userList}
 
-          {matchOverlay}
+          {overlay}
         </div>
 
         <div ref="footer" className="bar bar-footer bar-stable">

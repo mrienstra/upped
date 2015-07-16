@@ -304,6 +304,7 @@ var newInit = function (params) {
         },
         howItWorksScreen: {
           visible: false,
+          fromMenu: void 0,
           cssClass: 'howItWorksScreen',
         },
       }
@@ -316,9 +317,9 @@ var newInit = function (params) {
           <SideMenu items={sideMenuItems} changeScreen={this.changeScreen} />
 
           <div className={'screens' + this.state.transitionClasses}>
-            <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.firebase.profiles.getAll.bind(remote.firebase.profiles)} handleChoice={remote.firebase.choice.set} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
+            <HeroesScreen pubSubDomain="heroes" remote={remote} getItems={remote.firebase.profiles.getAll.bind(remote.firebase.profiles)} handleChoice={remote.firebase.choice.set} handleHowChange={this.changeScreen.bind(null, 'howItWorksScreen', {state: {fromMenu: false}})} handleMatchesChange={this.changeScreen.bind(null, 'matchesScreen', void 0)} showSideMenu={this.showSideMenu} {...this.state.heroesScreen}/>
 
-            <HowItWorksScreen showSideMenu={this.showSideMenu} {...this.state.howItWorksScreen}/>
+            <HowItWorksScreen showSideMenu={this.showSideMenu} handleBack={this.backToPreviousScreen} {...this.state.howItWorksScreen}/>
           </div>
 
           <div className="sideMenuBlockerCloser" onTouchEnd={this.hideSideMenu}/>
