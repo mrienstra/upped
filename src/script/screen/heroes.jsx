@@ -62,14 +62,11 @@ var UserList = React.createClass({
       }
     };
 
-    var el = this.getDOMNode();
-    var slider = el.parentNode.querySelector('[data-slider]')
-    var btnNext = el.parentNode.querySelector('[data-slider-nav-next]');
-    var btnPrev = el.parentNode.querySelector('[data-slider-nav-prev]');
-    this.sliderInit(window, document, slider, this.props.noButtons, this.props.yesButtons);
+    this.sliderInit(window, document, React.findDOMNode(this.refs.slider), this.props.noButtons, this.props.yesButtons);
   },
   componentWillReceiveProps: function (nextProps) {
     if (this.props.buttonsToTop && !nextProps.buttonsToTop) {
+      console.warn('Hitting the DOM');
       React.findDOMNode(this.refs.scrollable).scrollTop = 0;
     }
   },
@@ -89,7 +86,7 @@ var UserList = React.createClass({
         );
       } else {
         userNodes.push(
-          <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={buttonsToTop} proposedAmount={150} contentTop={that.props.contentTop} isFrontmost={isFrontmost}></UserListItem>
+          <UserListItem key={key} index={key} user={user} phrase={that.props.phrase} delayImageLoad={delayImageLoad} buttonsToTop={buttonsToTop} proposedAmount={150} isFrontmost={isFrontmost}></UserListItem>
         );
       }
       i++;
@@ -97,7 +94,7 @@ var UserList = React.createClass({
     });
 
     return (
-      <div className="slider" data-slider>
+      <div ref="slider" className="slider">
         <div ref="scrollable" className="slides">
           {userNodes}
         </div>
@@ -141,7 +138,6 @@ var HeroesScreen = React.createClass({
     var that = this;
     _.defer(function(){
       that.setState({
-        'contentTop':  React.findDOMNode(that.refs.contentArea).getBoundingClientRect().top,
         'noButtons': [
           React.findDOMNode(that.refs.buttonNoTop),
           React.findDOMNode(that.refs.buttonNoBottom),
@@ -220,7 +216,7 @@ var HeroesScreen = React.createClass({
         </div>
       );
     } else {
-      userList = <UserList users={this.state.items} phrase={this.props.phrase} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop} showFirstWantOverlay={this.showFirstWantOverlay} showFirst15ChoicesOverlay={this.showFirst15ChoicesOverlay} noButtons={this.state.noButtons} yesButtons={this.state.yesButtons} incrementChoiceCount={this.incrementChoiceCount} contentTop={this.state.contentTop}></UserList>
+      userList = <UserList users={this.state.items} phrase={this.props.phrase} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop} showFirstWantOverlay={this.showFirstWantOverlay} showFirst15ChoicesOverlay={this.showFirst15ChoicesOverlay} noButtons={this.state.noButtons} yesButtons={this.state.yesButtons} incrementChoiceCount={this.incrementChoiceCount}></UserList>
 
       _.delay(function(){
         that.setState({fullyRendered: true});

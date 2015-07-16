@@ -11,28 +11,6 @@ var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');
 
 var UserListItem = React.createClass({
   mixins: [ToggleStackListItemMixin],
-  getInitialState: function(){
-    return {
-      imageHeight: 0,
-    };
-  },
-  setMarginTop: function(){
-    var that = this;
-    if (!this.props.buttonsToTop && this.props.contentTop) {
-      var imageHeight = React.findDOMNode(this.refs.positionedList).getBoundingClientRect().top - this.props.contentTop;
-      if (imageHeight !== this.state.imageHeight) {
-        _.defer(function(){
-          that.setState({'imageHeight': imageHeight});
-        });
-      }
-    }
-  },
-  componentDidMount: function(){
-    this.setMarginTop();
-  },
-  componentDidUpdate: function(){
-    this.setMarginTop();
-  },
   render: function() {
     var thisStyle;
     if (!this.props.delayImageLoad && this.props.user.photoURL) {
@@ -41,11 +19,6 @@ var UserListItem = React.createClass({
         backgroundSize: 'contain',
       };
     };
-
-    var positionedListStyle;
-    if (this.props.buttonsToTop) {
-      positionedListStyle = {top: this.state.imageHeight};
-    }
 
     var firstItemSub;
     if (this.props.user.phrase && this.props.phrase) {
@@ -58,12 +31,6 @@ var UserListItem = React.createClass({
       );
     }
 
-    var sushi, more;
-    if (this.props.buttonsToTop || this.props.user.sushi.length < 140) {
-      sushi = this.props.user.sushi;
-    } else {
-      sushi = this.props.user.sushi.substring(0,140) + '…';
-    }
     var secondItem;
     if (this.props.buttonsToTop) {
       var keywords = this.props.user.keywords ? this.props.user.keywords.map(function (name, i) {
@@ -77,16 +44,9 @@ var UserListItem = React.createClass({
         <div className="item item-icon-left item-text-wrap">
           <i className="icon ion-ribbon-b"></i>
           <h3>Sushi</h3>
-          {sushi}
+          {this.props.user.sushi}
           {keywords}
           <p><a href={'http://www.yelp.com/biz/' + this.props.user.yelp.id}>My Yelp Profile</a></p>
-        </div>
-      );
-    } else {
-      secondItem = (
-        <div className="item item-text-wrap item-icon-right">
-          {sushi}
-          <i className="icon ion-chevron-right"></i>
         </div>
       );
     }
@@ -121,8 +81,8 @@ var UserListItem = React.createClass({
 
     return (
       <div className={'stackListItem userListItem' + (this.props.isFrontmost ? ' frontmost' : '')} onTouchEnd={this.handleToggleDetails} style={thisStyle}>
-        <div ref="positionedList" className="list" style={positionedListStyle}>
-          <div className="item item-divider item-text-wrap">
+        <div className="list">
+          <div className="item item-divider">
             <h2>{this.props.user.name}</h2>
             {firstItemSub}
           </div>

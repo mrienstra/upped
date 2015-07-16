@@ -471,8 +471,9 @@ iframe.fullframe {
     background: #fff;
     > .list {
       position: absolute;
-      bottom: 44px;
+      top: calc(100% - 105px); // 61 + 44
       margin-bottom: 0;
+      width: 100%;
       .item-icon-left .icon {
         align-items: inherit;
         top: 11px;
@@ -521,10 +522,6 @@ iframe.fullframe {
         font-size: 25px;
       }
     }
-  }
-  &.buttonsToTop .stackListItem.frontmost > .list {
-    position: relative;
-    bottom: auto;
   }
 
   &.buttonsToTop .slider .slides {
