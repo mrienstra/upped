@@ -106,6 +106,7 @@ var HeroesScreen = React.createClass({
   },
   getInitialState: function(){
     return {
+      fullyRendered: false,
       firstWant: void 0,
       noButtons: void 0,
       yesButtons: void 0,
@@ -148,9 +149,18 @@ var HeroesScreen = React.createClass({
       );
     }
 
+    var done;
+    if (this.state.fullyRendered) {
+      done = (
+        <div className="done">
+          <h3>Profiles Explored</h3>
+          <p>You’ve seen all our profiles in your area. We’ll reach out if you score any mutual matches.</p>
+        </div>
+      );
+    }
+
     var matchOverlay;
-    this.state.firstWant = {};
-    this.state.firstWant.name = 'Reiki Healing with Kim';
+    //this.state.firstWant = {name: 'Reiki Healing with Kim'};
     if (this.state.firstWant) {
       matchOverlay = (
         <div className="overlay card">
@@ -177,12 +187,16 @@ var HeroesScreen = React.createClass({
     var userList;
     if (this.state.items === void 0) {
       userList = (
-        <div className="content content-main">
-          <span className="icon ion-loading-d"></span>
+        <div className="loadingOverlay">
+          <p><span className="icon ion-load-b"></span></p>
         </div>
       );
     } else {
       userList = <UserList users={this.state.items} phrase={this.props.phrase} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop} showFirstWantOverlay={this.showFirstWantOverlay} noButtons={this.state.noButtons} yesButtons={this.state.yesButtons} incrementChoiceCount={this.incrementChoiceCount} contentTop={this.state.contentTop}></UserList>
+
+      _.delay(function(){
+        that.setState({fullyRendered: true});
+      }, 1000);
     }
 
     return (
@@ -204,18 +218,11 @@ var HeroesScreen = React.createClass({
         </div>
 
         <div ref="contentArea" className="scroll-content overflow-scroll has-header">
-          <div className="done">
-            <h3>Profiles Explored</h3>
-            <p>You’ve seen all our profiles in your area. We’ll reach out if you score any mutual matches.</p>
-          </div>
+          {done}
 
           {userList}
 
           {matchOverlay}
-
-          <div className="loadingOverlay">
-            <p><span className="icon ion-ios7-reloading"></span></p>
-          </div>
         </div>
 
         <div ref="footer" className="bar bar-footer bar-stable">

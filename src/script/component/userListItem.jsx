@@ -123,6 +123,7 @@ var UserListItem = React.createClass({
           {secondItem}
           {thirdItem}
         </div>
+        <div className="blockImageBehindFooter"></div>
         {proposedAmount}
       </div>
     );
