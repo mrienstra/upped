@@ -63,6 +63,11 @@ var ChooseScreenMixin = {
       this.setState({
         match: void 0,
       });
+    } else if (this.state.first15Choices) {
+      this.setState({
+        first15Choices: void 0,
+      });
+      this.incrementChoiceCount && this.incrementChoiceCount();
     }
 
     e && e.preventDefault();

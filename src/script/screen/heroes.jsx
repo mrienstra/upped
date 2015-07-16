@@ -49,6 +49,8 @@ var UserList = React.createClass({
 
       if (that.props.showFirstWantOverlay && choice === 1) {
         that.props.showFirstWantOverlay({name: targetUser.name});
+      } else if (index + 1 === 15) {
+        that.props.showFirst15ChoicesOverlay();
       } else {
         that.props.incrementChoiceCount();
       }
@@ -111,6 +113,7 @@ var HeroesScreen = React.createClass({
     return {
       fullyRendered: false,
       firstWant: void 0,
+      first15Choices: void 0,
       noButtons: void 0,
       yesButtons: void 0,
       choiceCount: 1,
@@ -119,6 +122,9 @@ var HeroesScreen = React.createClass({
   showFirstWantOverlay: function (firstWant) {
     this.setState({firstWant: firstWant});
     this.showFirstWantOverlay = void 0;
+  },
+  showFirst15ChoicesOverlay: function(){
+    this.setState({first15Choices: true});
   },
   incrementChoiceCount: function(){
     this.setState({choiceCount: this.state.choiceCount + 1});
@@ -175,6 +181,17 @@ var HeroesScreen = React.createClass({
           </div>
         </div>
       );
+    } else if (this.state.first15Choices) {
+      overlay = (
+        <div className="overlay card">
+          <div className="item item-text-wrap">
+            <h1>Great news!<br/>You&#8217;re *still* on a roll.</h1>
+            <p>You&#8217;ve made 15 choices on Pay with Sushi. We&#8217;ll reach out and let you know when they respond. For now, keep exploring&hellip;</p>
+            <p><a href="#" onTouchEnd={this.props.handleHowChange}>How this works »</a></p>
+            <button className="button button-block button-assertive" onTouchEnd={this.closeOverlays}>Keep Exploring Offers</button>
+          </div>
+        </div>
+      );
     } else if (this.state.match) {
       overlay = (
         <div className="aMatch">
@@ -195,7 +212,7 @@ var HeroesScreen = React.createClass({
         </div>
       );
     } else {
-      userList = <UserList users={this.state.items} phrase={this.props.phrase} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop} showFirstWantOverlay={this.showFirstWantOverlay} noButtons={this.state.noButtons} yesButtons={this.state.yesButtons} incrementChoiceCount={this.incrementChoiceCount} contentTop={this.state.contentTop}></UserList>
+      userList = <UserList users={this.state.items} phrase={this.props.phrase} handleChoice={this.props.handleChoice} buttonsToTop={this.state.buttonsToTop} showFirstWantOverlay={this.showFirstWantOverlay} showFirst15ChoicesOverlay={this.showFirst15ChoicesOverlay} noButtons={this.state.noButtons} yesButtons={this.state.yesButtons} incrementChoiceCount={this.incrementChoiceCount} contentTop={this.state.contentTop}></UserList>
 
       _.delay(function(){
         that.setState({fullyRendered: true});
