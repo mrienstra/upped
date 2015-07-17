@@ -178,7 +178,8 @@ var HeroesScreen = React.createClass({
       overlay = (
         <div className="overlay card">
           <div className="item item-text-wrap">
-            <h1>Great news!<br/>You&#8217;re on a roll.</h1>
+            <h1>Miso Horny!</h1>
+            <div className="icon ion-coffee"></div>
             <p>You&#8217;ve made your first want on Pay with Sushi. We&#8217;ll reach out to <b>{this.state.firstWant.name}</b>, and let you know when they respond. For now, keep exploring&hellip;</p>
             <p><a href="#" onTouchEnd={this.props.handleHowChange}>How this works »</a></p>
             <button className="button button-block button-assertive" onTouchEnd={this.closeOverlays}>Keep Exploring Offers</button>

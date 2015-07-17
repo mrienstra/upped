@@ -40,26 +40,29 @@ var FeedbackScreen = React.createClass({
             <li>
               <h4><div className="counter">1</div>Swipe through local businesses to find a match</h4>
               <img src="http://static1.squarespace.com/static/552367eae4b0fb7c9860d7af/t/55a6db3ce4b0a494fbb3aa27/1436999778654/" alt="Step one" />
-              <p>We have 1000&#8217;s of great businesses near you who want what you have &mdash;
-              web designers, plumbers, photographers, massage therapists, yoga teachers, or even sumo masters.
-              When you find one you want too, just click &#8220;want&#8221;. When there&#8217;s a match we&#8217;ll let you know!
-              (Don&#8217;t worry, you can figure out the details in the next step!)</p>
+              <p>There are 1000&#8217;s of great businesses near you on Pay with Sushi &mdash;
+              web designers, plumbers, photographers, massage therapists, yoga teachers, even sumo masters.
+              Swipe through their profiles and when you find one that has something you want, just click &#8220;want&#8221;.
+              We&#8217;ll let you know when there&#8217;s a match!</p>
             </li>
             <li>
-              <h4><div className="counter">2</div>Agree on the value you want to exchange</h4>
+              <h4><div className="counter">2</div>Agree on the value of the exchange</h4>
               <img src="http://static1.squarespace.com/static/552367eae4b0fb7c9860d7af/t/55a6db3ce4b0a494fbb3aa28/1435988371661/" alt="Step two" />
-              <p>Once you&#8217;ve found a match, settle on the cash value you want to exchange.
-              Most transactions are about $250.</p>
+              <p>Buying massages with yoga privates? Tango lessons with photography? Sushi dinners with Kung Fu?
+              Once you&#8217;ve found a match, just settle on the cash value you want to exchange and hit confirm.
+              We&#8217;ll issue you a credit to their store and vice versa.</p>
             </li>
             <li>
               <h4><div className="counter">3</div>Track it like cash</h4>
               <img src="http://static1.squarespace.com/static/552367eae4b0fb7c9860d7af/t/55a6db3ce4b0a494fbb3aa29/1435990231806/" alt="Step three" />
-              <p>We keep track of everything for you. Check in to our app any time to see how much credit you have remaining, redeem offers, and track payment activity. Simple.</p>
+              <p>We keep track of everything for you.
+              Check in to our app any time to see how much credit you have remaining, redeem offers, and track payment activity.
+              Simple.</p>
             </li>
           </ol>
           <hr/>
-          <h3>That&#8217;s it!</h3>
-          <p className="center">Have questions? Get in touch with us and a real live person will get back to you directly!<br/>
+          <h3>We&#8217;ve Got You Covered!</h3>
+          <p className="center">Have questions? Shoot us an email and a real live person will get back to you directly.<br/>
           <a href="mailto:sushi@paywithsushi.com">sushi@paywithsushi.com</a></p>
         </div>
       </div>

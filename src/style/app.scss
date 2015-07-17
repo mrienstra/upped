@@ -639,5 +639,11 @@ iframe.fullframe {
     background-color: white;
     margin: 0;
     text-align: center;
+    h1 {
+      padding: 0 40px;
+    }
+    .icon {
+      font-size: 400%;
+    }
   }
 }
