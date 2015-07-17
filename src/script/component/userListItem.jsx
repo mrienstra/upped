@@ -12,12 +12,16 @@ var ToggleStackListItemMixin = require('../mixin/toggleStackListItem.js');
 var UserListItem = React.createClass({
   mixins: [ToggleStackListItemMixin],
   render: function() {
-    var thisStyle;
+    var img, thisStyle;
     if (!this.props.delayImageLoad && this.props.user.photoURL) {
-      thisStyle = {
-        background: '#fff url(' + this.props.user.photoURL + ') no-repeat',
-        backgroundSize: 'contain',
-      };
+      img = (
+        <img src={this.props.user.photoURL}/>
+      );
+      if (this.props.user.color) {
+        thisStyle = {
+          backgroundColor: this.props.user.color,
+        };
+      }
     };
 
     var firstItemSub;
@@ -38,6 +42,7 @@ var UserListItem = React.createClass({
 
     return (
       <div className={'stackListItem userListItem' + (this.props.isFrontmost ? ' frontmost' : '')} onTouchEnd={this.handleToggleDetails} style={thisStyle}>
+        {img}
         <div className="list">
           <div className="item item-divider">
             <h2>{this.props.user.name}</h2>
