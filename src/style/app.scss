@@ -422,11 +422,11 @@ iframe.fullframe {
     }
   }
   .bar-footer {
-  height: 80px;
+  height: 74px;
     .button {
-      padding: 2px 20px 2px 10px;
+      padding: 0px 25px 0px 15px;
       margin: 4px;
-      font-size: 150%;
+      font-size: 120%;
     }
     .button:before {
       font-size: 200%;
@@ -512,7 +512,7 @@ iframe.fullframe {
     background: #fff;
     > .list {
       position: absolute;
-      top: calc(100% - 158px); // 78 + 80
+      top: calc(100% - 154px); // 74 + 80
       margin-bottom: 0;
       width: 100%;
       .item:first-child div p:first-child {
@@ -555,8 +555,8 @@ iframe.fullframe {
     z-index: 100;
   }
   &.buttonsToTop .bar-footer {
-    -webkit-transform: translate(0, 80px);
-    transform: translate(0, 80px);
+    -webkit-transform: translate(0, 78px);
+    transform: translate(0, 78px);
   }
 
   .overlay {
