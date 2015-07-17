@@ -548,6 +548,38 @@ iframe.fullframe {
 
   .stackListItem {
     background: #fff;
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 10px;
+      width: 500px;
+      height: 1000px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+    &:after {
+      -webkit-transform: rotate(135deg);
+      -moz-transform: rotate(135deg);
+      -ms-transform: rotate(135deg);
+      -o-transform: rotate(135deg);
+      transform: rotate(135deg);
+    }
+    > img:first-child {
+      width: 90%;
+      margin: 0 auto;
+      display: block;
+      -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+      -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+      z-index: 1;
+      position: relative;
+    }
     > .list {
       position: absolute;
       top: calc(100% - 154px); // 74 + 80
